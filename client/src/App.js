@@ -1,12 +1,12 @@
 import "./styles/output.css";
-import Nav from "./Components/navbar";
-import Classroom from "./Components/Classroom/Classroom";
+import Nav from "./Components/navbar.jsx";
+import StudentHomePage from "./pages/StudentHomePage";
 
 const App = () => {
   return (
     <>
-    <Nav/>
-    <Classroom />
+      <Nav />
+      <StudentHomePage />
     </>
   );
 };
