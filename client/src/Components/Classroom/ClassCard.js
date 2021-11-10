@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 function ClassCard({ classroom }) {
   return (
-    <a href={classroom.classroomLink}>
+    <Link to={`${classroom.classroomId}`}>
       <div className="px-4 py-4 bg-white border-2 border-gray-400 rounded">
         <h3 className="text-xl text-gray-800">{classroom.classroomName}</h3>
         <div>
@@ -10,7 +12,7 @@ function ClassCard({ classroom }) {
         </div>
         <h5 className="text-sm  text-gray-800">{classroom.admin}</h5>
       </div>
-    </a>
+    </Link>
   );
 }
 
