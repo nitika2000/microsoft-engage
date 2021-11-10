@@ -2,6 +2,7 @@ import "./styles/output.css";
 import Nav from "./Components/navbar.jsx";
 import StudentHomePage from "./pages/StudentHomePage";
 import { Route, Routes } from "react-router-dom";
+import ClassView from "./Components/Classroom/ClassView";
 
 const App = () => {
   return (
@@ -9,6 +10,7 @@ const App = () => {
       <Nav />
       <Routes>
         <Route path="/classroom" exact element={<StudentHomePage />} />
+        <Route path="classroom/:classId" element={<ClassView />} />
       </Routes>
     </div>
   );
