@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Transition } from '@headlessui/react'
+import { Transition } from "@headlessui/react";
+import { Link } from "react-router-dom";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,18 +26,18 @@ function Nav() {
                     Chats
                   </a>
 
-                  <a
-                    href="#"
+                  <Link
+                    to="/classroom"
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Classroom
-                  </a>
+                  </Link>
 
                   <a
                     href="#"
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
-                   Join Meet
+                    Join Meet
                   </a>
 
                   <a
