@@ -1,6 +1,6 @@
 import "./styles/output.css";
-import Nav from "./Components/navbar";
-import Classroom from "./Components/Classroom/Classroom";
+import Nav from "./Components/navbar.jsx";
+import StudentHomePage from "./pages/StudentHomePage";
 import { Route, Routes } from "react-router-dom";
 
 const App = () => {
@@ -8,7 +8,7 @@ const App = () => {
     <div>
       <Nav />
       <Routes>
-        <Route path="/classroom" exact element={<Classroom />} />
+        <Route path="/classroom" exact element={<StudentHomePage />} />
       </Routes>
     </div>
   );
