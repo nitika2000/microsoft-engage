@@ -41,12 +41,11 @@ function Nav() {
                     Create Meet
                   </a>
 
-                  <a
-                    href="#"
+                  <Link to="/signup"
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
-                    Login/Logout
-                  </a>
+                    SignUp/Login
+                  </Link>
                 </div>
               </div>
             </div>
