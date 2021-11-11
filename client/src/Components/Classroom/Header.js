@@ -2,6 +2,8 @@ import React from "react";
 import { useState } from "react";
 import CreateClass from "./CreateClass";
 import JoinClass from "./JoinClass";
+import db from "../../services/firebase-config";
+import { collection, addDoc } from "firebase/firestore";
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
@@ -12,8 +14,15 @@ function Header() {
     setshowJoinForm(false);
   };
 
-  const createClass = (className, uname) => {
+  const createClass = async (className, uname) => {
     console.log(className, uname);
+    const classObj = {
+      name: className,
+      admin: uname,
+      classCode: "wrw4w",
+    };
+    await addDoc(collection(db, "classrooms"), classObj);
+
     setshowCreateForm(false);
   };
 
