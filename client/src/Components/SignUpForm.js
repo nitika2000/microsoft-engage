@@ -2,6 +2,8 @@ import React from "react";
 import { useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router";
+import db from "../services/firebase-config";
+import { addDoc, collection } from "@firebase/firestore";
 
 function SignupForm() {
   const emailRef = useRef(null);
@@ -16,6 +18,13 @@ function SignupForm() {
   const navigate = useNavigate();
   console.log(navigate);
 
+  const createUser = async (email, role) => {
+    const userObj = {
+      email: email,
+      role: role,
+    };
+    await addDoc(collection(db, "users"), userObj);
+  };
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -27,13 +36,13 @@ function SignupForm() {
       seterror("");
       setloading(true);
       await signup(emailRef.current.value, pwdRef.current.value);
+      await createUser(emailRef.current.value, roleRef.current.value);
       navigate("/login");
     } catch {
       seterror("Failed to create an account");
     }
     setloading(false);
   }
-
   return (
     <div>
       <h3>Signup form</h3>
