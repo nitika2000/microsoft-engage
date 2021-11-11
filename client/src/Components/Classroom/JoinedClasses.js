@@ -1,5 +1,6 @@
 import React from "react";
 import ClassCard from "./ClassCard";
+import db from "../../services/firebase-config";
 
 function JoinedClasses({ classes }) {
   return (
