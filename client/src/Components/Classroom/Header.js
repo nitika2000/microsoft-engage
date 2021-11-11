@@ -5,6 +5,11 @@ import JoinClass from "./JoinClass";
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
 
+  const joinClass = (classCode) => {
+    console.log(classCode);
+    setshowJoinForm(false);
+  };
+
   return (
     <div className="p-4">
       <button
@@ -17,7 +22,10 @@ function Header() {
       </button>
 
       {showJoinForm ? (
-        <JoinClass closeForm={() => setshowJoinForm(false)} />
+        <JoinClass
+          joinClass={joinClass}
+          closeForm={() => setshowJoinForm(false)}
+        />
       ) : null}
     </div>
   );
