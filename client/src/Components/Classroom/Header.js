@@ -12,6 +12,11 @@ function Header() {
     setshowJoinForm(false);
   };
 
+  const createClass = (className, uname) => {
+    console.log(className, uname);
+    setshowCreateForm(false);
+  };
+
   return (
     <div className="p-4">
       <button
@@ -40,7 +45,10 @@ function Header() {
       ) : null}
 
       {showCreateForm ? (
-        <CreateClass closeForm={() => setshowCreateForm(false)} />
+        <CreateClass
+          createClass={createClass}
+          closeForm={() => setshowCreateForm(false)}
+        />
       ) : null}
     </div>
   );
