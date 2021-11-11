@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 
 function ClassCard({ classroom }) {
   return (
-    <Link to={`${classroom.classroomId}`}>
+    <Link to={`${classroom.classCode}`}>
       <div className="px-4 py-4 bg-white border-2 border-gray-400 rounded">
-        <h3 className="text-xl text-gray-800">{classroom.classroomName}</h3>
+        <h3 className="text-xl text-gray-800">{classroom.name}</h3>
         <div>
           <h1>Assignments</h1>
           <p>Do this</p>
