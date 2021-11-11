@@ -23,12 +23,12 @@ export function AuthProvider({ children }) {
   }
 
   function login(email, password) {
-    
     return signInWithEmailAndPassword(auth, email, password);
   }
 
   function logout() {
-    return signOut(auth);
+    signOut(auth);
+    setcurrentUser(null);
   }
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     login,
-    signOut,
+    logout,
   };
   return (
     <AuthContext.Provider value={value}>

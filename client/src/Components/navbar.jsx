@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Transition } from "@headlessui/react";
 import { Link } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const { currentUser } = useAuth();
+  const { logout } = useAuth();
   return (
     <div>
       <nav className="bg-gray-800">
@@ -40,12 +43,22 @@ function Nav() {
                   >
                     Create Meet
                   </a>
-
-                  <Link to="/signup"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    SignUp/Login
-                  </Link>
+                  {!currentUser ? (
+                    <Link
+                      to="/signup"
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      SignUp/Login
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/"
+                      onClick={logout}
+                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      Logout
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
