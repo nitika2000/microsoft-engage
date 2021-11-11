@@ -5,6 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import ClassView from "./Components/Classroom/ClassView";
 import SignUpForm from "./Components/SignUpForm";
 import { AuthProvider } from "./Components/AuthContext";
+import LoginForm from "./Components/LoginForm";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/classroom" exact element={<StudentHomePage />} />
           <Route path="classroom/:classId" element={<ClassView />} />
           <Route path="/signup" exact element={<SignUpForm />} />
+          <Route path="/login" exact element={<LoginForm />} />
         </Routes>
       </AuthProvider>
     </div>

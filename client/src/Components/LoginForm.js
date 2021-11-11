@@ -1,38 +1,36 @@
+import { useAuth } from "./AuthContext";
 import React from "react";
 import { useRef, useState } from "react";
-import { useAuth } from "./AuthContext";
 
-function SignupForm() {
+function LoginForm() {
   const emailRef = useRef(null);
   const pwdRef = useRef(null);
-  const rptPwdRef = useRef(null);
-  const roleRef = useRef(null);
   const [error, seterror] = useState("");
   const [loading, setloading] = useState(false);
-  const { signup } = useAuth();
+  const { login } = useAuth();
   const { currentUser } = useAuth();
   console.log(currentUser);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    if (pwdRef.current.value !== rptPwdRef.current.value) {
-      return seterror("Password doesnot match");
-    }
-
     try {
       seterror("");
       setloading(true);
-      await signup(emailRef.current.value, pwdRef.current.value);
+      await login(emailRef.current.value, pwdRef.current.value).catch(
+        (error) => {
+          console.log(error);
+        },
+      );
     } catch {
-      seterror("Failed to create an account");
+      seterror("Failed to log in");
     }
     setloading(false);
   }
 
   return (
     <div>
-      <h3>Signup form</h3>
+      <h3>Login form</h3>
       <form onSubmit={handleSubmit}>
         {error && (
           <div
@@ -64,34 +62,17 @@ function SignupForm() {
           ref={pwdRef}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         ></input>
-        <label htmlFor="psw-repeat">
-          <b>Repeat Password</b>
-        </label>
-        <input
-          type="password"
-          placeholder="Repeat Password"
-          name="psw-repeat"
-          required
-          ref={rptPwdRef}
-          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-        ></input>
-        <label htmlFor="role">Role</label>
-        <select name="role" id="role" ref={roleRef}>
-          <option value="Student" defaultValue>
-            Student
-          </option>
-          <option value="Teacher">Teacher</option>
-        </select>
+
         <button
           type="submit"
           disabled={loading}
           className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
         >
-          Sign Up
+          Login
         </button>
       </form>
     </div>
   );
 }
 
-export default SignupForm;
+export default LoginForm;
