@@ -1,6 +1,7 @@
 import { useAuth } from "./AuthContext";
 import React from "react";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
   const emailRef = useRef(null);
@@ -10,6 +11,8 @@ function LoginForm() {
   const { login } = useAuth();
   const { currentUser } = useAuth();
   console.log(currentUser);
+  const navigate = useNavigate();
+  console.log(navigate);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -22,6 +25,7 @@ function LoginForm() {
           console.log(error);
         },
       );
+      navigate("/");
     } catch {
       seterror("Failed to log in");
     }

@@ -1,6 +1,7 @@
 import React from "react";
 import { useRef, useState } from "react";
 import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router";
 
 function SignupForm() {
   const emailRef = useRef(null);
@@ -12,6 +13,8 @@ function SignupForm() {
   const { signup } = useAuth();
   const { currentUser } = useAuth();
   console.log(currentUser);
+  const navigate = useNavigate();
+  console.log(navigate);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -24,6 +27,7 @@ function SignupForm() {
       seterror("");
       setloading(true);
       await signup(emailRef.current.value, pwdRef.current.value);
+      navigate("/");
     } catch {
       seterror("Failed to create an account");
     }
