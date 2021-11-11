@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "autoprefixer": "^9",
     "cross-env": "^7.0.3",
     "postcss": "^8",
