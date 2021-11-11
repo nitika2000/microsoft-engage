@@ -4,6 +4,9 @@ import CreateClass from "./CreateClass";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc } from "firebase/firestore";
+import { getSlug } from "../../services/helper";
+
+const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
@@ -19,7 +22,7 @@ function Header() {
     const classObj = {
       name: className,
       admin: uname,
-      classCode: "wrw4w",
+      classCode: getSlug(classCodeLen),
     };
     await addDoc(collection(db, "classrooms"), classObj);
 
