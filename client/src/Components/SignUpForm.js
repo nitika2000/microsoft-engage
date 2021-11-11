@@ -1,71 +1,97 @@
-import React from 'react'
+import React from "react";
+import { useRef, useState } from "react";
+import { useAuth } from "./AuthContext";
 
-function SignUpForm() {
+function SignupTemp() {
+  const emailRef = useRef(null);
+  const pwdRef = useRef(null);
+  const rptPwdRef = useRef(null);
+  const roleRef = useRef(null);
+  const [error, seterror] = useState("");
+  const [loading, setloading] = useState(false);
+  const { signup } = useAuth();
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (pwdRef.current.value !== rptPwdRef.current.value) {
+      return seterror("Password doesnot match");
+    }
+
+    try {
+      seterror("");
+      setloading(true);
+      await signup(emailRef.current.value, pwdRef.current.value);
+    } catch {
+      seterror("Failed to create an account");
+    }
+    setloading(false);
+  }
+
   return (
-    <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-md w-full space-y-8">
-        <div>
-          {/* <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow"> */}
-          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form class="mt-8 space-y-6" action="#" method="POST">
-          <input type="hidden" name="remember" value="true"/>
-          <div class="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label for="email-address" class="sr-only">Email address</label>
-              <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email address"/>
-            </div>
-            <div>
-              <label for="password" class="sr-only">Password</label>
-              <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password"/>
-            </div>
-            <div>
-                <button type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
-                  Role
-                  <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-
-                <div class="py-1" role="none">
-                  <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-indigo-500" role="menuitem" tabindex="-1" id="menu-item-0">Teacher</a>
-                  <a href="#" class="text-gray-700 block px-4 py-2 text-sm hover:bg-indigo-500" role="menuitem" tabindex="-1" id="menu-item-1">Student</a>
-                </div>
-            </div>
+    <div>
+      <h3>Signup form</h3>
+      <form onSubmit={handleSubmit}>
+        {error && (
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <strong className="font-bold">{error}</strong>
           </div>
-          
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"/>
-              <label for="remember-me" class="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-
-            <div class="text-sm">
-              <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                </svg>
-              </span>
-              Sign in
-            </button>
-          </div>
-        </form>
-      </div>
+        )}
+        <label htmlFor="email">
+          <b>Email</b>
+        </label>
+        <input
+          type="text"
+          placeholder="Enter Email"
+          name="email"
+          required
+          ref={emailRef}
+          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+        />
+        <label htmlFor="psw">
+          <b>Password</b>
+        </label>
+        <input
+          type="password"
+          placeholder="Enter Password"
+          name="psw"
+          required
+          ref={pwdRef}
+          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+        ></input>
+        <label htmlFor="psw-repeat">
+          <b>Repeat Password</b>
+        </label>
+        <input
+          type="password"
+          placeholder="Repeat Password"
+          name="psw-repeat"
+          required
+          ref={rptPwdRef}
+          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+        ></input>
+        <label htmlFor="role">Role</label>
+        <select name="role" id="role" ref={roleRef}>
+          <option value="Student" defaultValue>
+            Student
+          </option>
+          <option value="Teacher">Teacher</option>
+        </select>
+        <button
+          type="submit"
+          disabled={loading}
+          className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
+        >
+          Sign Up
+        </button>
+      </form>
     </div>
-
-  )
+  );
 }
 
-export default SignUpForm
+export default SignupTemp;
