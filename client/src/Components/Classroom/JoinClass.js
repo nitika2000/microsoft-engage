@@ -1,8 +1,7 @@
-import React from "react";
-import { useState } from "react";
+import React, { useRef } from "react";
 
 function JoinClass({ closeForm, joinClass }) {
-  const [inputValue, setinputValue] = useState("hello world");
+  const inputRef = useRef(null);
 
   return (
     <>
@@ -30,7 +29,7 @@ function JoinClass({ closeForm, joinClass }) {
                 id="classCode"
                 type="text"
                 placeholder="Class code"
-                ref="classCode"
+                ref={inputRef}
               ></input>
             </div>
             {/*footer*/}
@@ -45,7 +44,7 @@ function JoinClass({ closeForm, joinClass }) {
               <button
                 className="bg-green-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={() => joinClass(inputValue)}
+                onClick={() => joinClass(inputRef.current.value)}
               >
                 Join Class
               </button>
