@@ -27,7 +27,7 @@ function SignupForm() {
       seterror("");
       setloading(true);
       await signup(emailRef.current.value, pwdRef.current.value);
-      navigate("/");
+      navigate("/login");
     } catch {
       seterror("Failed to create an account");
     }
