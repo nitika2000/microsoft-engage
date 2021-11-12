@@ -7,6 +7,7 @@ import {
   signOut,
 } from "@firebase/auth";
 import { auth } from "../services/firebase-config";
+import Loading from "./Loading";
 
 export const AuthContext = React.createContext();
 
@@ -42,6 +43,10 @@ export function AuthProvider({ children }) {
 
     return unsubscribe;
   });
+
+  if (loading) {
+    return <Loading />;
+  }
 
   const value = {
     currentUser,

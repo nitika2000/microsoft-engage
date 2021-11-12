@@ -1,48 +1,65 @@
 import React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router";
 import db from "../services/firebase-config";
-import { addDoc, collection } from "@firebase/firestore";
+import { doc, setDoc } from "@firebase/firestore";
 
 function SignupForm() {
-  const emailRef = useRef(null);
-  const pwdRef = useRef(null);
-  const rptPwdRef = useRef(null);
-  const roleRef = useRef(null);
-  const [error, seterror] = useState("");
-  const [loading, setloading] = useState(false);
+  const [data, setData] = useState({
+    uname: "",
+    email: "",
+    password: "",
+    repPassword: "",
+    role: "Student",
+    error: null,
+    loading: "",
+  });
+
+  const { uname, email, password, repPassword, role, error, loading } = data;
+
   const { signup } = useAuth();
   const { currentUser } = useAuth();
-  console.log(currentUser);
   const navigate = useNavigate();
-  console.log(navigate);
 
-  const createUser = async (email, role) => {
-    const userObj = {
-      email: email,
-      role: role,
-    };
-    await addDoc(collection(db, "users"), userObj);
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
   };
-  async function handleSubmit(e) {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setData({ ...data, error: null, loading: true });
 
-    if (pwdRef.current.value !== rptPwdRef.current.value) {
-      return seterror("Password doesnot match");
+    if (!uname || !email || !password || !repPassword || !role) {
+      setData({ ...data, error: "All fields are required" });
+    } else if (password !== repPassword) {
+      setData({ ...data, error: "Password doesnot match" });
+    } else {
+      try {
+        const result = await signup(email, password);
+        await setDoc(doc(db, "users", result.user.uid), {
+          uid: result.user.uid,
+          uname: uname,
+          email: email,
+          role: role,
+        });
+        setData({
+          uname: "",
+          email: "",
+          password: "",
+          repPassword: "",
+          role: "Student",
+          error: null,
+          loading: false,
+        });
+        navigate("/login");
+      } catch (err) {
+        setData({ ...data, error: "Failed", loading: false });
+      }
     }
+  };
+  console.log(currentUser);
 
-    try {
-      seterror("");
-      setloading(true);
-      await signup(emailRef.current.value, pwdRef.current.value);
-      await createUser(emailRef.current.value, roleRef.current.value);
-      navigate("/login");
-    } catch {
-      seterror("Failed to create an account");
-    }
-    setloading(false);
-  }
   return (
     <div>
       <h3>Signup form</h3>
@@ -55,6 +72,17 @@ function SignupForm() {
             <strong className="font-bold">{error}</strong>
           </div>
         )}
+        <label htmlFor="uname">
+          <b>Name</b>
+        </label>
+        <input
+          type="text"
+          placeholder="Enter name"
+          name="uname"
+          required
+          onChange={handleChange}
+          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+        />
         <label htmlFor="email">
           <b>Email</b>
         </label>
@@ -63,33 +91,33 @@ function SignupForm() {
           placeholder="Enter Email"
           name="email"
           required
-          ref={emailRef}
+          onChange={handleChange}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         />
-        <label htmlFor="psw">
+        <label htmlFor="password">
           <b>Password</b>
         </label>
         <input
           type="password"
           placeholder="Enter Password"
-          name="psw"
+          name="password"
           required
-          ref={pwdRef}
+          onChange={handleChange}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         ></input>
-        <label htmlFor="psw-repeat">
+        <label htmlFor="repPassword">
           <b>Repeat Password</b>
         </label>
         <input
           type="password"
           placeholder="Repeat Password"
-          name="psw-repeat"
+          name="repPassword"
           required
-          ref={rptPwdRef}
+          onChange={handleChange}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         ></input>
         <label htmlFor="role">Role</label>
-        <select name="role" id="role" ref={roleRef}>
+        <select name="role" id="role" onChange={handleChange}>
           <option value="Student" defaultValue>
             Student
           </option>
