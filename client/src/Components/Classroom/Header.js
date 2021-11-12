@@ -5,27 +5,30 @@ import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc } from "firebase/firestore";
 import { getSlug } from "../../services/helper";
+import { getAuth } from "@firebase/auth";
 
 const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
-
+  const { currentUser } = getAuth();
+  console.log("current user uid", currentUser.uid);
   const joinClass = (classCode) => {
     console.log(classCode);
     setshowJoinForm(false);
   };
 
+  const currentUserUid = currentUser.uid;
   const createClass = async (className, uname) => {
     console.log(className, uname);
     const classObj = {
-      name: className,
-      admin: uname,
+      className: className,
+      creatorName: uname,
+      creatorUid: currentUserUid,
       classCode: getSlug(classCodeLen),
     };
     await addDoc(collection(db, "classrooms"), classObj);
-
     setshowCreateForm(false);
   };
 
