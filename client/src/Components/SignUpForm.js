@@ -48,6 +48,7 @@ function SignupForm() {
           email: "",
           password: "",
           repPassword: "",
+          role: "Student",
           error: null,
           loading: false,
         });

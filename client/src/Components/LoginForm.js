@@ -1,36 +1,48 @@
 import { useAuth } from "./AuthContext";
 import React from "react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const emailRef = useRef(null);
-  const pwdRef = useRef(null);
-  const [error, seterror] = useState("");
-  const [loading, setloading] = useState(false);
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+    error: null,
+    loading: "",
+  });
+
+  const { email, password, error, loading } = data;
+
   const { login } = useAuth();
   const { currentUser } = useAuth();
-  console.log(currentUser);
   const navigate = useNavigate();
-  console.log(navigate);
 
-  async function handleSubmit(e) {
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setData({ ...data, error: null, loading: true });
 
-    try {
-      seterror("");
-      setloading(true);
-      await login(emailRef.current.value, pwdRef.current.value).catch(
-        (error) => {
-          console.log(error);
-        },
-      );
-      navigate("/");
-    } catch {
-      seterror("Failed to log in");
+    if (!email || !password) {
+      setData({ ...data, error: "All fields are required" });
+    } else {
+      try {
+        await login(email, password);
+        setData({
+          email: "",
+          password: "",
+          error: null,
+          loading: false,
+        });
+        navigate("/");
+      } catch (err) {
+        setData({ ...data, error: "Failed to login", loading: false });
+      }
     }
-    setloading(false);
-  }
+  };
+  console.log(currentUser);
 
   return (
     <div>
@@ -52,18 +64,18 @@ function LoginForm() {
           placeholder="Enter Email"
           name="email"
           required
-          ref={emailRef}
+          onChange={handleChange}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         />
-        <label htmlFor="psw">
+        <label htmlFor="password">
           <b>Password</b>
         </label>
         <input
           type="password"
           placeholder="Enter Password"
-          name="psw"
+          name="password"
           required
-          ref={pwdRef}
+          onChange={handleChange}
           className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
         ></input>
 
