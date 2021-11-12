@@ -44,20 +44,36 @@ function Nav() {
                     Create Meet
                   </a>
                   {!currentUser ? (
-                    <Link
-                      to="/signup"
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                      SignUp/Login
-                    </Link>
+                    <>
+                      <Link
+                        to="/signup"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        SignUp
+                      </Link>
+                      <Link
+                        to="/login"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Login
+                      </Link>
+                    </>
                   ) : (
-                    <Link
-                      to="/"
-                      onClick={logout}
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                      Logout
-                    </Link>
+                    <>
+                      <Link
+                        to="/profile"
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Profile
+                      </Link>
+                      <Link
+                        to="/"
+                        onClick={logout}
+                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Logout
+                      </Link>
+                    </>
                   )}
                 </div>
               </div>
