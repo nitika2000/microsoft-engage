@@ -1,30 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import ClassCard from "./ClassCard";
-import db from "../../services/firebase-config";
-import { collection, query, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useAuth } from "../AuthContext";
+import { getCurrentUserData } from "../../services/helper";
 
-function JoinedClasses() {
-  const [classes, setclasses] = useState([]);
+const JoinedClasses = () => {
+  const [enrolledClasses, setEnrolledClasses] = useState();
 
-  useEffect(() => {
-    const q = query(collection(db, "classrooms"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const classes = [];
-      querySnapshot.forEach((doc) => {
-        classes.push(doc.data());
-      });
-      setclasses(classes);
-    });
-  }, []);
-
+  const currentUserData = async (currentUser) => {
+    const data = await getCurrentUserData(currentUser);
+    return data;
+  };
+  const { currentUser } = useAuth();
+  const user = currentUserData(currentUser);
+  user.then((data) => setEnrolledClasses(data.enrolledClasses));
+  console.log("enrolled classes = ", enrolledClasses);
   return (
     <div className="p-4 flex flex-wrap content-evenly gap-4">
-      {classes.map((classroom, key) => {
-        return <ClassCard key={key} classroom={classroom} />;
-      })}
+      {enrolledClasses ? (
+        enrolledClasses.map((classroom, key) => {
+          return <ClassCard key={key} classroom={classroom} />;
+        })
+      ) : (
+        <div>No class</div>
+      )}
     </div>
   );
-}
+};
 
 export default JoinedClasses;
