@@ -4,20 +4,24 @@ import CreateClassForm from "./CreateClassForm";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import { getClassFromCode, getSlug } from "../../services/helper";
-import { getAuth } from "@firebase/auth";
-import { getCurrentUserData } from "../../services/helper";
+import { getClassFromCode, getSlug, isTeacher } from "../../services/helper";
+import { useAuth } from "../AuthContext";
 
 const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
-  const { currentUser } = getAuth();
+  const { currentUserData } = useAuth();
+  const [error, seterror] = useState(null);
 
   const joinClass = async (classCode) => {
-    const currentUserData = await getCurrentUserData(currentUser);
     const classObj = await getClassFromCode(classCode);
+    if (!classObj) {
+      seterror("Invalid class code");
+      return;
+    }
+
     const isAlreadyJoined = currentUserData.enrolledClasses.find(
       (enrolledClass) => enrolledClass.classId === classObj.classId,
     );
@@ -26,19 +30,19 @@ function Header() {
       currentUserData.enrolledClasses.push({
         className: classObj.className,
         classId: classObj.classId,
+        creatorName: classObj.creatorName,
       });
-      await setDoc(doc(collection(db, "users"), currentUser.uid), {
+      await setDoc(doc(collection(db, "users"), currentUserData.uid), {
         ...currentUserData,
         enrolledClasses: currentUserData.enrolledClasses,
       });
       setshowJoinForm(false);
     } else {
-      console.log("Already joined class");
+      seterror("Class is already joined");
     }
   };
 
   const createClass = async (className) => {
-    const currentUserData = await getCurrentUserData(currentUser);
     const classObj = {
       className: className,
       creatorName: currentUserData.uname,
@@ -55,10 +59,11 @@ function Header() {
 
     currentUserData.enrolledClasses.push({
       className: classObj.className,
-      classId: classObj.classId,
+      classId: classRef.id,
+      creatorName: classObj.creatorName,
     });
 
-    await setDoc(doc(collection(db, "users"), currentUser.uid), {
+    await setDoc(doc(collection(db, "users"), currentUserData.uid), {
       ...currentUserData,
       enrolledClasses: currentUserData.enrolledClasses,
     });
@@ -67,24 +72,25 @@ function Header() {
 
   return (
     <div className="p-4">
-      <button
-        onClick={() => {
-          setshowJoinForm(true);
-        }}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Join classroom
-      </button>
-
-      <button
-        onClick={() => {
-          setshowCreateForm(true);
-        }}
-        className="bg-blue-500 mx-1 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Create classroom
-      </button>
-
+      {!isTeacher(currentUserData.role) ? (
+        <button
+          onClick={() => {
+            setshowJoinForm(true);
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Join classroom
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            setshowCreateForm(true);
+          }}
+          className="bg-blue-500 mx-1 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Create classroom
+        </button>
+      )}
       {showJoinForm ? (
         <JoinClass
           joinClass={joinClass}

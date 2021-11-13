@@ -40,3 +40,7 @@ export const getClassFromCode = async (classCode) => {
   });
   return classObj;
 };
+
+export const isTeacher = (role) => {
+  return role === "Teacher";
+};

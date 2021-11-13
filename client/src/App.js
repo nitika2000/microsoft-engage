@@ -4,15 +4,17 @@ import StudentHomePage from "./pages/StudentHomePage";
 import { Route, Routes } from "react-router-dom";
 import ClassView from "./Components/Classroom/ClassView";
 import SignUpForm from "./Components/SignUpForm";
-import { AuthProvider } from "./Components/AuthContext";
+import { useAuth } from "./Components/AuthContext";
 import LoginForm from "./Components/LoginForm";
 import Dashboard from "./pages/Dashboard";
+import Loading from "./Components/Loading";
 
 const App = () => {
+  const { currentUserData } = useAuth();
   return (
     <div>
-      <AuthProvider>
-        <Nav />
+      <Nav />
+      {currentUserData ? (
         <Routes>
           <Route path="/" exact element={<Dashboard />} />
           <Route path="/classroom" exact element={<StudentHomePage />} />
@@ -20,7 +22,9 @@ const App = () => {
           <Route path="/signup" exact element={<SignUpForm />} />
           <Route path="/login" exact element={<LoginForm />} />
         </Routes>
-      </AuthProvider>
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 };
