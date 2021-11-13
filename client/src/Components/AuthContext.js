@@ -8,7 +8,7 @@ import {
 } from "@firebase/auth";
 import { auth } from "../services/firebase-config";
 import Loading from "./Loading";
-
+import { getCurrentUserData } from "../services/helper";
 export const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -18,6 +18,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setcurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [currentUserData, setCurrentUserData] = useState();
 
   function signup(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
@@ -36,6 +37,7 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setcurrentUser(user);
+        getCurrentUserData(user).then((data) => setCurrentUserData(data));
       } else {
       }
       setLoading(false);
@@ -50,6 +52,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    currentUserData,
     signup,
     login,
     logout,
