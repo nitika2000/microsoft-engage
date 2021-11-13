@@ -14,7 +14,7 @@ function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUser } = getAuth();
-  console.log("current user uid", currentUser);
+
   const joinClass = (classCode) => {
     console.log(classCode);
     setshowJoinForm(false);
