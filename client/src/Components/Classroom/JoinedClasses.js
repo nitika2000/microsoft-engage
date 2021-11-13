@@ -4,9 +4,7 @@ import { useAuth } from "../AuthContext";
 
 const JoinedClasses = () => {
   const { currentUserData } = useAuth();
-  var enrolledClasses = currentUserData
-    ? currentUserData.enrolledClasses
-    : null;
+  var enrolledClasses = currentUserData.enrolledClasses;
 
   return (
     <div className="p-4 flex flex-wrap content-evenly gap-4">

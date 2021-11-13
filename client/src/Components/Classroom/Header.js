@@ -4,7 +4,7 @@ import CreateClassForm from "./CreateClassForm";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import { getClassFromCode, getSlug } from "../../services/helper";
+import { getClassFromCode, getSlug, isTeacher } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 
 const classCodeLen = 6;
@@ -66,24 +66,25 @@ function Header() {
 
   return (
     <div className="p-4">
-      <button
-        onClick={() => {
-          setshowJoinForm(true);
-        }}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Join classroom
-      </button>
-
-      <button
-        onClick={() => {
-          setshowCreateForm(true);
-        }}
-        className="bg-blue-500 mx-1 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Create classroom
-      </button>
-
+      {!isTeacher(currentUserData.role) ? (
+        <button
+          onClick={() => {
+            setshowJoinForm(true);
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Join classroom
+        </button>
+      ) : (
+        <button
+          onClick={() => {
+            setshowCreateForm(true);
+          }}
+          className="bg-blue-500 mx-1 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Create classroom
+        </button>
+      )}
       {showJoinForm ? (
         <JoinClass
           joinClass={joinClass}
