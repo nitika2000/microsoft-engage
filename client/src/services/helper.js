@@ -26,6 +26,13 @@ export const getCurrentUserData = async (currentUser) => {
   return user;
 };
 
+export const getClassFromId = async (classId) => {
+  const docRef = doc(db, "classrooms", classId);
+  const docSnap = await getDoc(docRef);
+  const classObj = docSnap.data();
+  return classObj;
+};
+
 export const getClassFromCode = async (classCode) => {
   const q = query(
     collection(db, "classrooms"),
