@@ -3,7 +3,7 @@ import { useState } from "react";
 import CreateClass from "./CreateClass";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, getDoc, doc, setDoc } from "firebase/firestore";
 import { getSlug } from "../../services/helper";
 import { getAuth } from "@firebase/auth";
 
@@ -13,7 +13,7 @@ function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUser } = getAuth();
-  console.log("current user uid", currentUser.uid);
+  console.log("current user uid", currentUser);
   const joinClass = (classCode) => {
     console.log(classCode);
     setshowJoinForm(false);
@@ -28,7 +28,16 @@ function Header() {
       creatorUid: currentUserUid,
       classCode: getSlug(classCodeLen),
     };
-    await addDoc(collection(db, "classrooms"), classObj);
+    const classRef = await addDoc(collection(db, "classrooms"), classObj);
+    const docRef = doc(db, "users", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    const userRef = docSnap.data();
+    userRef.enrolledClasses.push(classRef.id);
+    console.log(classRef.id);
+    await setDoc(doc(collection(db, "users"), currentUser.uid), {
+      ...userRef,
+      enrolledClasses: userRef.enrolledClasses,
+    });
     setshowCreateForm(false);
   };
 
