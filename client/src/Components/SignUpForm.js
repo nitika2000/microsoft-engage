@@ -42,6 +42,7 @@ function SignupForm() {
           uname: uname,
           email: email,
           role: role,
+          enrolledClasses: [],
         });
         setData({
           uname: "",

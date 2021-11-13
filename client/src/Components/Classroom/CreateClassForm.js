@@ -1,9 +1,8 @@
 import React from "react";
 import { useState } from "react";
 
-function CreateClass({ closeForm, createClass }) {
+function CreateClassForm({ closeForm, createClass }) {
   const [className, setclassName] = useState("");
-  const [uname, setuname] = useState("");
   return (
     <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
@@ -41,19 +40,6 @@ function CreateClass({ closeForm, createClass }) {
                   setclassName(event.target.value);
                 }}
               />
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="username"
-              >
-                Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="classCode"
-                type="text"
-                placeholder="Name"
-                onChange={(event) => setuname(event.target.value)}
-              />
             </div>
             {/*footer*/}
             <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
@@ -67,7 +53,7 @@ function CreateClass({ closeForm, createClass }) {
               <button
                 className="bg-green-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                onClick={() => createClass(className, uname)}
+                onClick={() => createClass(className)}
               >
                 Create className
               </button>
@@ -80,4 +66,4 @@ function CreateClass({ closeForm, createClass }) {
   );
 }
 
-export default CreateClass;
+export default CreateClassForm;

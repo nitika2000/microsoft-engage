@@ -1,32 +1,49 @@
 import React from "react";
 import { useState } from "react";
-import CreateClass from "./CreateClass";
+import CreateClassForm from "./CreateClassForm";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { getSlug } from "../../services/helper";
+import { getAuth } from "@firebase/auth";
+import { getCurrentUserData } from "../../services/helper";
 
 const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
+  const { currentUser } = getAuth();
 
   const joinClass = (classCode) => {
     console.log(classCode);
     setshowJoinForm(false);
   };
 
-  const createClass = async (className, uname) => {
-    console.log(className, uname);
+  const createClass = async (className) => {
+    const currentUserData = await getCurrentUserData(currentUser);
     const classObj = {
-      name: className,
-      admin: uname,
+      className: className,
+      creatorName: currentUserData.uname,
+      creatorUid: currentUserData.uid,
       classCode: getSlug(classCodeLen),
     };
-    await addDoc(collection(db, "classrooms"), classObj);
 
-    setshowCreateForm(false);
+    try {
+      const classRef = await addDoc(collection(db, "classrooms"), classObj);
+
+      currentUserData.enrolledClasses.push({
+        className: classObj.className,
+        classId: classRef.id,
+      });
+      await setDoc(doc(collection(db, "users"), currentUser.uid), {
+        ...currentUserData,
+        enrolledClasses: currentUserData.enrolledClasses,
+      });
+      setshowCreateForm(false);
+    } catch {
+      console.log("Something bad happened");
+    }
   };
 
   return (
@@ -57,7 +74,7 @@ function Header() {
       ) : null}
 
       {showCreateForm ? (
-        <CreateClass
+        <CreateClassForm
           createClass={createClass}
           closeForm={() => setshowCreateForm(false)}
         />
