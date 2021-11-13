@@ -18,16 +18,23 @@ function Header() {
   const joinClass = async (classCode) => {
     const currentUserData = await getCurrentUserData(currentUser);
     const classObj = await getClassFromCode(classCode);
+    const isAlreadyJoined = currentUserData.enrolledClasses.find(
+      (enrolledClass) => enrolledClass.classId === classObj.classId,
+    );
 
-    currentUserData.enrolledClasses.push({
-      className: classObj.className,
-      classId: classObj.classId,
-    });
-    await setDoc(doc(collection(db, "users"), currentUser.uid), {
-      ...currentUserData,
-      enrolledClasses: currentUserData.enrolledClasses,
-    });
-    setshowJoinForm(false);
+    if (!isAlreadyJoined) {
+      currentUserData.enrolledClasses.push({
+        className: classObj.className,
+        classId: classObj.classId,
+      });
+      await setDoc(doc(collection(db, "users"), currentUser.uid), {
+        ...currentUserData,
+        enrolledClasses: currentUserData.enrolledClasses,
+      });
+      setshowJoinForm(false);
+    } else {
+      console.log("Already joined class");
+    }
   };
 
   const createClass = async (className) => {
