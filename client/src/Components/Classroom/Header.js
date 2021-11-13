@@ -5,15 +5,15 @@ import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { getClassFromCode, getSlug } from "../../services/helper";
-import { getAuth } from "@firebase/auth";
 import { getCurrentUserData } from "../../services/helper";
+import { useAuth } from "../AuthContext";
 
 const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
-  const { currentUser } = getAuth();
+  const { currentUser } = useAuth();
 
   const joinClass = async (classCode) => {
     const currentUserData = await getCurrentUserData(currentUser);
@@ -26,6 +26,7 @@ function Header() {
       currentUserData.enrolledClasses.push({
         className: classObj.className,
         classId: classObj.classId,
+        creatorName: classObj.creatorName,
       });
       await setDoc(doc(collection(db, "users"), currentUser.uid), {
         ...currentUserData,
@@ -55,7 +56,8 @@ function Header() {
 
     currentUserData.enrolledClasses.push({
       className: classObj.className,
-      classId: classObj.classId,
+      classId: classRef.id,
+      creatorName: classObj.creatorName,
     });
 
     await setDoc(doc(collection(db, "users"), currentUser.uid), {
