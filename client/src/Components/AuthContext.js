@@ -18,6 +18,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setcurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [restrictedLoading, setRestrictedLoading] = useState(true);
   const [currentUserData, setCurrentUserData] = useState();
 
   function signup(email, password) {
@@ -37,7 +38,10 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setcurrentUser(user);
-        getCurrentUserData(user).then((data) => setCurrentUserData(data));
+        getCurrentUserData(user).then((data) => {
+          setCurrentUserData(data);
+          setRestrictedLoading(false);
+        });
       } else {
       }
       setLoading(false);
@@ -53,6 +57,7 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser,
     currentUserData,
+    restrictedLoading,
     signup,
     login,
     logout,
