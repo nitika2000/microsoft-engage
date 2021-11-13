@@ -13,9 +13,15 @@ function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUserData } = useAuth();
+  const [error, seterror] = useState(null);
 
   const joinClass = async (classCode) => {
     const classObj = await getClassFromCode(classCode);
+    if (!classObj) {
+      seterror("Invalid class code");
+      return;
+    }
+
     const isAlreadyJoined = currentUserData.enrolledClasses.find(
       (enrolledClass) => enrolledClass.classId === classObj.classId,
     );
@@ -32,7 +38,7 @@ function Header() {
       });
       setshowJoinForm(false);
     } else {
-      console.log("Already joined class");
+      seterror("Class is already joined");
     }
   };
 
