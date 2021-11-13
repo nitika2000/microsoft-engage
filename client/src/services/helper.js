@@ -1,4 +1,12 @@
-import { doc, getDoc } from "@firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  limit,
+} from "@firebase/firestore";
 import db from "./firebase-config";
 
 export const getSlug = (length) => {
@@ -15,5 +23,20 @@ export const getCurrentUserData = async (currentUser) => {
   const docRef = doc(db, "users", currentUser.uid);
   const docSnap = await getDoc(docRef);
   const user = docSnap.data();
-  return user
+  return user;
+};
+
+export const getClassFromCode = async (classCode) => {
+  const q = query(
+    collection(db, "classrooms"),
+    where("classCode", "==", classCode),
+    limit(1),
+  );
+
+  const querySnapshot = await getDocs(q);
+  var classObj = null;
+  querySnapshot.forEach((doc) => {
+    classObj = doc.data();
+  });
+  return classObj;
 };

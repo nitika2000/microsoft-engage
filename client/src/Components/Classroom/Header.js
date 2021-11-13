@@ -4,7 +4,7 @@ import CreateClassForm from "./CreateClassForm";
 import JoinClass from "./JoinClass";
 import db from "../../services/firebase-config";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import { getSlug } from "../../services/helper";
+import { getClassFromCode, getSlug } from "../../services/helper";
 import { getAuth } from "@firebase/auth";
 import { getCurrentUserData } from "../../services/helper";
 
@@ -15,8 +15,18 @@ function Header() {
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUser } = getAuth();
 
-  const joinClass = (classCode) => {
-    console.log(classCode);
+  const joinClass = async (classCode) => {
+    const currentUserData = await getCurrentUserData(currentUser);
+    const classObj = await getClassFromCode(classCode);
+
+    currentUserData.enrolledClasses.push({
+      className: classObj.className,
+      classId: classObj.classId,
+    });
+    await setDoc(doc(collection(db, "users"), currentUser.uid), {
+      ...currentUserData,
+      enrolledClasses: currentUserData.enrolledClasses,
+    });
     setshowJoinForm(false);
   };
 
@@ -27,23 +37,25 @@ function Header() {
       creatorName: currentUserData.uname,
       creatorUid: currentUserData.uid,
       classCode: getSlug(classCodeLen),
+      classId: "",
     };
 
-    try {
-      const classRef = await addDoc(collection(db, "classrooms"), classObj);
+    const classRef = await addDoc(collection(db, "classrooms"), classObj);
+    await setDoc(doc(collection(db, "classrooms"), classRef.id), {
+      ...classObj,
+      classId: classRef.id,
+    });
 
-      currentUserData.enrolledClasses.push({
-        className: classObj.className,
-        classId: classRef.id,
-      });
-      await setDoc(doc(collection(db, "users"), currentUser.uid), {
-        ...currentUserData,
-        enrolledClasses: currentUserData.enrolledClasses,
-      });
-      setshowCreateForm(false);
-    } catch {
-      console.log("Something bad happened");
-    }
+    currentUserData.enrolledClasses.push({
+      className: classObj.className,
+      classId: classObj.classId,
+    });
+
+    await setDoc(doc(collection(db, "users"), currentUser.uid), {
+      ...currentUserData,
+      enrolledClasses: currentUserData.enrolledClasses,
+    });
+    setshowCreateForm(false);
   };
 
   return (
