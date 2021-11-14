@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
     });
 
     return unsubscribe;
-  });
+  }, []);
 
   if (loading) {
     return <Loading />;
