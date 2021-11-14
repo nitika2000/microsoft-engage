@@ -93,7 +93,9 @@ function MainView({ selectedUser }) {
 
   return (
     <>
-      <div className="bg-blue-400 break-words max-w-full px-2 pr-4 mt-2 py-1 mx-auto rounded-full">{chatDate}</div>
+      <div className="pr-4 flex justify-center">
+        <div className="bg-blue-400 break-words max-w-full px-4 mt-2 py-1 mx-auto rounded-full">{chatDate}</div>
+      </div>
       <div ref={msgRef} onScroll={onScroll} className="flex-grow py-4 relative pr-2 space-y-2 overflow-y-scroll">
         {loading ? "Loading..." : null}
         {msgs.map((msg) => {
@@ -104,7 +106,7 @@ function MainView({ selectedUser }) {
           const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-2" : "bg-blue-400  rounded-tl-none";
 
           return (
-            <div key={msg.createdAt.seconds} className={`bg-blue-400 break-words max-w-full pl-4 pr-4 py-2 pb-3 w-[fit-content] rounded-md ${className}`}>
+            <div key={msg.createdAt.seconds} className={`bg-blue-400 break-words max-w-[80%] pl-4 pr-4 py-2 pb-3 w-[fit-content] rounded-md ${className}`}>
               {msg.text}
               <span className="relative -bottom-2 -right-2 text-[0.65rem] ml-auto text-gray-800">{msg.timeString}</span>
             </div>
