@@ -14,7 +14,7 @@ function ChatView({ selectedUser }) {
     e.preventDefault();
     const user2 = selectedUser.uid;
     const user1 = currentUser.uid;
-
+    setText("");
     const msgId = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
     await addDoc(collection(db, "messages", msgId, "chats"), {
       text,
@@ -22,14 +22,19 @@ function ChatView({ selectedUser }) {
       to: user2,
       createdAt: Timestamp.fromDate(new Date()),
     });
-    setText("");
   };
 
   return (
-    <div>
-      this is selected {selectedUser.uname}
-      <MainView selectedUser={selectedUser} />
-      <MessageForm handleSubmit={handleSubmit} text={text} setText={setText} />
+    <div className="w-3/4 pl-4 flex flex-col justify-between ">
+      {selectedUser ? (
+        <>
+          <h1 className="bg-gray-200 py-2 px-4">{selectedUser.uname}</h1>
+          <MainView selectedUser={selectedUser} />
+          <MessageForm handleSubmit={handleSubmit} text={text} setText={setText} />{" "}
+        </>
+      ) : (
+        <div>Select user to start chat</div>
+      )}
     </div>
   );
 }

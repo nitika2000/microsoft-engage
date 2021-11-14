@@ -13,15 +13,9 @@ function Dashboard() {
   };
 
   return (
-    <div>
+    <div className="flex h-[80vh] inset-0 container mx-auto shadow-md p-4 gap-4 mt-8 divide-x-2 ">
       <LeftPane onSelect={onSelect} />
-      {selectedUser ? <ChatView selectedUser={selectedUser} /> : null}
-      This is dashboard.
-      {currentUser ? (
-        <div> Login user {currentUser.email} </div>
-      ) : (
-        <div> No user is logged in </div>
-      )}
+      <ChatView selectedUser={selectedUser} />
     </div>
   );
 }
