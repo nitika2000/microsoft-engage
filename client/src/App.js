@@ -7,6 +7,7 @@ import { AuthProvider } from "./Components/AuthContext";
 import LoginForm from "./Components/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import ClassesHomePage from "./pages/ClassroomPage";
+import { RequireAuth } from "./Components/RequireAuth";
 
 const App = () => {
   return (
@@ -14,9 +15,32 @@ const App = () => {
       <AuthProvider>
         <Nav />
         <Routes>
-          <Route path="/" exact element={<Dashboard />} />
-          <Route path="/classroom" exact element={<ClassesHomePage />} />
-          <Route path="classroom/:classId" element={<ClassView />} />
+          <Route
+            path="/"
+            exact
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/classroom"
+            exact
+            element={
+              <RequireAuth>
+                <ClassesHomePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="classroom/:classId"
+            element={
+              <RequireAuth>
+                <ClassView />
+              </RequireAuth>
+            }
+          />
           <Route path="/signup" exact element={<SignUpForm />} />
           <Route path="/login" exact element={<LoginForm />} />
         </Routes>

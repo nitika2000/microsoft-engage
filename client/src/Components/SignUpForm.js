@@ -53,7 +53,7 @@ function SignupForm() {
           error: null,
           loading: false,
         });
-        navigate("/login");
+        navigate("/");
       } catch (err) {
         setData({ ...data, error: "Failed", loading: false });
       }
