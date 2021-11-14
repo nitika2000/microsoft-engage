@@ -9,11 +9,8 @@ function Dashboard() {
   const [selectedUser, setselectedUser] = useState();
 
   const onSelect = (user) => {
-    console.log("on select is clicked");
     setselectedUser(user);
   };
-
-  console.log(selectedUser);
 
   return (
     <div>

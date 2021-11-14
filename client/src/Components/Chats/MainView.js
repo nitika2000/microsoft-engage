@@ -12,21 +12,22 @@ function MainView({ selectedUser }) {
     const user1 = currentUser.uid;
     const user2 = selectedUser.uid;
     console.log(user1, user2);
-    const msgsId = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
+    const msgId = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
 
-    const msgsRef = collection(db, "messages", msgsId, "chat");
+    const msgsRef = collection(db, "messages", msgId, "chats");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
-    onSnapshot(q, (querySnapshot) => {
+    const unsub = onSnapshot(q, (querySnapshot) => {
       let msgs = [];
       querySnapshot.forEach((doc) => {
+        console.log(doc.data());
         msgs.push(doc.data());
       });
       setMsgs(msgs);
     });
-  }, []);
-  
-  console.log(msgs);
+    return () => unsub();
+  }, [selectedUser.uid]);
+
   return (
     <div>
       <h1>These are messages </h1>

@@ -22,8 +22,6 @@ function LeftPane({ onSelect }) {
     return () => unsub();
   }, []);
 
-  console.log(userList);
-
   return (
     <div>
       {userList.map((user) => (
