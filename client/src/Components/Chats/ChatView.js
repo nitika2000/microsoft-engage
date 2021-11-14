@@ -28,7 +28,10 @@ function ChatView({ selectedUser }) {
     <div className="w-3/4 pl-4 flex flex-col justify-between ">
       {selectedUser ? (
         <>
-          <h1 className="bg-gray-200 py-2 px-4">{selectedUser.uname}</h1>
+          <div className="bg-gray-200 py-2 px-4">
+            <h1 className="text-xl">{selectedUser.uname}</h1>
+            <p className="text-gray-400 text-sm">Online</p>
+          </div>
           <MainView selectedUser={selectedUser} />
           <MessageForm handleSubmit={handleSubmit} text={text} setText={setText} />{" "}
         </>

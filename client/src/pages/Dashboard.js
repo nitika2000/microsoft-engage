@@ -13,7 +13,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="flex h-[80vh] inset-0 container mx-auto shadow-md p-4 gap-4 mt-8 divide-x-2 ">
+    <div className="flex h-[80vh] inset-0 container mx-auto shadow-md border p-4 gap-4 mt-8 divide-x-2 ">
       <LeftPane onSelect={onSelect} />
       <ChatView selectedUser={selectedUser} />
     </div>
