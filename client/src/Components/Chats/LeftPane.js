@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { collection, onSnapshot, query, where } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 
-function LeftPane() {
+function LeftPane({ onSelect }) {
   const { currentUser } = useAuth();
   const [userList, setuserList] = useState([]);
 
@@ -27,7 +27,7 @@ function LeftPane() {
   return (
     <div>
       {userList.map((user) => (
-        <div>{user.uname}</div>
+        <div onClick={() => onSelect(user)}>{user.uname}</div>
       ))}
     </div>
   );

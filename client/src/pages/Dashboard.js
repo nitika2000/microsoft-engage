@@ -1,18 +1,30 @@
 import React from "react";
 import { useAuth } from "../Components/AuthContext";
 import LeftPane from "../Components/Chats/LeftPane";
+import { useState } from "react";
+import ChatView from "../Components/Chats/ChatView";
 
 function Dashboard() {
-  console.log("this is dashboard");
+  const { currentUser } = useAuth();
+  const [selectedUser, setselectedUser] = useState();
+
+  const onSelect = (user) => {
+    console.log("on select is clicked");
+    setselectedUser(user);
+  };
+
+  console.log(selectedUser);
+
   return (
     <div>
-      <LeftPane />
-      {/* This is dashboard.
+      <LeftPane onSelect={onSelect} />
+      {selectedUser ? <ChatView selectedUser={selectedUser} /> : null}
+      This is dashboard.
       {currentUser ? (
         <div> Login user {currentUser.email} </div>
       ) : (
         <div> No user is logged in </div>
-      )} */}
+      )}
     </div>
   );
 }
