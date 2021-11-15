@@ -10,13 +10,18 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { addDoc, collection, setDoc } from "@firebase/firestore";
+import db from "../../services/firebase-config";
 
 function ClassView() {
   const searchParams = useParams();
   const [classDetails, setClassDetails] = useState();
   const [loading, setLoading] = useState(true);
-  const [files, setFiles] = useState();
+  const [desc, setDesc] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [files, setFiles] = useState([]);
   const storage = getStorage();
+  const [submitLoader, setSubmitLoader] = useState(false);
 
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
@@ -25,43 +30,61 @@ function ClassView() {
     });
   }, []);
 
-  const uploadFiles = () => {
-    console.log("inside upload");
-    if (files.length !== 0) {
-      console.log("here it is");
-      const metadata = {
-        contentType: "any",
-      };
+  const uploadFile = (path, file) => {
+    const metadata = {
+      contentType: "any",
+    };
 
-      const storageRef = ref(storage, "images/" + files[0].name);
-      const uploadTask = uploadBytesResumable(storageRef, files[0], metadata);
+    const storageRef = ref(storage, path + file.name);
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
-        },
-        (error) => {
-          console.log("error occured");
-        },
-        () => {
-          // Upload completed successfully, now we can get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
-          });
-        },
-      );
-    }
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is paused");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        console.log("error occured", error);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+        });
+      },
+    );
+  };
+
+  const handleSubmit = async () => {
+    setSubmitLoader(true);
+    const assignmentObj = {
+      classId: classDetails.classId,
+      description: desc,
+      deadline: deadline,
+      files: [],
+    };
+
+    const assignRef = await addDoc(
+      collection(db, "classposts", classDetails.classId, "assignments"),
+      assignmentObj,
+    );
+
+    await setDoc(assignRef, { assignId: assignRef.id }, { merge: true });
+
+    console.log(assignRef);
+    // const path = `classposts/${classDetails.classId}/`;
+    // files.forEach((file) => {
+    //   uploadFile(path, file);
+    // });
   };
 
   const onFileChange = (e) => {
@@ -82,12 +105,34 @@ function ClassView() {
       <h1>This is class view</h1>
       <h1>{classDetails.className}</h1>
       <h1>{classDetails.creatorName}</h1>
-
+      <label>
+        Description
+        <input
+          type="text"
+          placeholder="Description"
+          onChange={(event) => {
+            setDesc(event.target.value);
+          }}
+        />
+      </label>
+      <br />
+      <label>
+        Deadline
+        <input
+          type="date"
+          placeholder="Deadline"
+          onChange={(event) => {
+            setDeadline(event.target.value);
+          }}
+        />
+      </label>
+      <br />
       <label>
         Select Files
         <input type="file" multiple onChange={onFileChange} />
       </label>
-      <button onClick={uploadFiles}>Upload</button>
+      <br />
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 }
