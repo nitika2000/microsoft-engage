@@ -19,18 +19,15 @@ function ClassView() {
     });
   }, []);
 
-
   return loading ? (
     <Loading />
   ) : (
     <div>
       <ClassBanner classroom={classDetails} />
 
-      <PostAssignmentForm
-        classDetails = {classDetails}
-      />
+      <PostAssignmentForm classDetails={classDetails} />
 
-      <ClassAssignmentsView />
+      <ClassAssignmentsView classId={classDetails.classId} />
     </div>
   );
 }
