@@ -4,14 +4,9 @@ import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { getClassFromId } from "../../services/helper";
 import Loading from "../Loading";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
 import { addDoc, collection, setDoc } from "@firebase/firestore";
 import db from "../../services/firebase-config";
+import { uploadFiles } from "../../services/helper";
 
 function ClassView() {
   const searchParams = useParams();
@@ -20,7 +15,6 @@ function ClassView() {
   const [desc, setDesc] = useState("");
   const [deadline, setDeadline] = useState("");
   const [files, setFiles] = useState([]);
-  const storage = getStorage();
   const [submitLoader, setSubmitLoader] = useState(false);
 
   useEffect(() => {
@@ -29,53 +23,6 @@ function ClassView() {
       setLoading(false);
     });
   }, []);
-
-  const uploadFiles = (path) => {
-    const promises = [];
-    files.forEach((file) => {
-      const metadata = {
-        contentType: "any",
-      };
-      const promise = new Promise((resolve, reject) => {
-        const storageRef = ref(storage, path + file.name);
-        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("Upload is " + progress + "% done");
-            switch (snapshot.state) {
-              case "paused":
-                console.log("Upload is paused");
-                break;
-              case "running":
-                console.log("Upload is running");
-                break;
-            }
-          },
-          (error) => {
-            console.log("error occured", error);
-            reject(error.code);
-          },
-          async () => {
-            await getDownloadURL(uploadTask.snapshot.ref).then(
-              (downloadURL) => {
-                resolve({
-                  downloadUrl: downloadURL,
-                  fileName: file.name,
-                });
-              },
-            );
-          },
-        );
-      });
-      promises.push(promise);
-    });
-
-    return Promise.all(promises);
-  };
 
   const handleSubmit = async (e) => {
     setSubmitLoader(true);
@@ -95,7 +42,7 @@ function ClassView() {
 
     const path = `classPosts/${classDetails.classId}/${assignRef.id}/`;
 
-    uploadFiles(path).then(async (data) => {
+    uploadFiles(path, files).then(async (data) => {
       console.log("data", data);
       await setDoc(assignRef, { files: data }, { merge: true }).then(() => {
         setSubmitLoader(false);
@@ -111,8 +58,6 @@ function ClassView() {
     }
     setFiles(files);
   };
-
-  console.log("files", files);
 
   return loading ? (
     <Loading />
