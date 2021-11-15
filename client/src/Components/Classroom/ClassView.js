@@ -87,13 +87,13 @@ function ClassView() {
     };
 
     const assignRef = await addDoc(
-      collection(db, "classposts", classDetails.classId, "assignments"),
+      collection(db, "classPosts", classDetails.classId, "assignments"),
       assignmentObj,
     );
 
     await setDoc(assignRef, { assignId: assignRef.id }, { merge: true });
 
-    const path = `classposts/${classDetails.classId}/${assignRef.id}/`;
+    const path = `classPosts/${classDetails.classId}/${assignRef.id}/`;
 
     uploadFiles(path).then(async (data) => {
       console.log("data", data);
