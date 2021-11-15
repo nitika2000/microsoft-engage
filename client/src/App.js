@@ -5,7 +5,6 @@ import ClassView from "./Components/Classroom/ClassView";
 import SignUpForm from "./Components/SignUpForm";
 import { AuthProvider } from "./Components/AuthContext";
 import LoginForm from "./Components/LoginForm";
-import Dashboard from "./pages/Dashboard";
 import ClassesHomePage from "./pages/ClassroomPage";
 import { RequireAuth } from "./Components/RequireAuth";
 import ChatPage from "./pages/ChatPage";
