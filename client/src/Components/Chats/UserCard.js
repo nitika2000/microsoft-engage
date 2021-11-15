@@ -1,19 +1,21 @@
 import { onSnapshot, doc } from "@firebase/firestore";
 import React, { useState, useEffect } from "react";
 import db from "../../services/firebase-config";
-import { getMessageId } from "../../services/helper";
+import { getMessageId, truncate } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 
 function UserCard({ onSelect, user }) {
   const { currentUser } = useAuth();
-  const [lastMsg, setLastMsg] = useState(" ");
+  const [lastMsg, setLastMsg] = useState("--");
   const [unread, setUnread] = useState(false);
 
   useEffect(() => {
     const msgId = getMessageId(currentUser, user);
     const unsub = onSnapshot(doc(db, "lastMsgs", msgId), (doc) => {
       if (doc.data()) {
-        setLastMsg(doc.data().text);
+        const lastMsg = doc.data().text;
+        const truncMsg = truncate(lastMsg, 20);
+        setLastMsg(truncMsg);
         if (doc.data().from !== currentUser.uid) {
           setUnread(doc.data().unread);
         }

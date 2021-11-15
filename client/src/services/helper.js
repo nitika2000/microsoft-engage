@@ -60,3 +60,15 @@ export const getMessageId = (currentUser, selectedUser) => {
   const msgId = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
   return msgId;
 };
+
+export function truncate(str, n, useWordBoundary) {
+  if (str.length <= n) {
+    return str;
+  }
+  const subString = str.substr(0, n - 1);
+  return (
+    (useWordBoundary
+      ? subString.substr(0, subString.lastIndexOf(" "))
+      : subString) + "..."
+  );
+}
