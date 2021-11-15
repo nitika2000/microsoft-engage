@@ -8,7 +8,7 @@ import LoginForm from "./Components/LoginForm";
 import ClassesHomePage from "./pages/ClassroomPage";
 import { RequireAuth } from "./Components/RequireAuth";
 import ChatPage from "./pages/ChatPage";
-import AssignmentView from "./Components/Classroom/AssignmentView";
+import AssignmentView from "./pages/AssignmentView";
 
 const App = () => {
   return (
