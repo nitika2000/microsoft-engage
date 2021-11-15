@@ -51,3 +51,12 @@ export const getClassFromCode = async (classCode) => {
 export const isTeacher = (role) => {
   return role === "Teacher";
 };
+
+export const getMessageId = (currentUser, selectedUser) => {
+  console.log(currentUser, selectedUser);
+  const user1 = currentUser.uid;
+  const user2 = selectedUser.uid;
+
+  const msgId = user1 > user2 ? `${user1 + user2}` : `${user2 + user1}`;
+  return msgId;
+};

@@ -1,12 +1,14 @@
 import React from "react";
 import { useAuth } from "../AuthContext";
+import UserCard from "./UserCard";
 import { useState, useEffect } from "react";
-import { collection, onSnapshot, query, where } from "@firebase/firestore";
+import { collection, where, query, onSnapshot } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 
 function LeftPane({ onSelect }) {
   const { currentUser } = useAuth();
-  const [userList, setuserList] = useState([]);
+  const [usersList, setUsersList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const usersRef = collection(db, "users");
@@ -17,17 +19,26 @@ function LeftPane({ onSelect }) {
       querySnapshot.forEach((doc) => {
         users.push(doc.data());
       });
-      setuserList(users);
+      setUsersList(users);
+      setLoading(false);
     });
-    return () => unsub();
+    return () => {
+      unsub();
+    };
   }, []);
 
   return (
-    <div>
-      {userList.map((user) => (
-        <div onClick={() => onSelect(user)}>{user.uname}</div>
-      ))}
-    </div>
+    <>
+      {loading ? (
+        <h1>Loading</h1>
+      ) : (
+        <div className="bg-gray-100 w-1/4 flex flex-col divide-y-2">
+          {usersList.map((user) => (
+            <UserCard onSelect={onSelect} user={user} key={user.uid} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 

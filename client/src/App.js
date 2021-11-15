@@ -8,6 +8,7 @@ import LoginForm from "./Components/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import ClassesHomePage from "./pages/ClassroomPage";
 import { RequireAuth } from "./Components/RequireAuth";
+import ChatPage from "./pages/ChatPage";
 
 const App = () => {
   return (
@@ -20,7 +21,7 @@ const App = () => {
             exact
             element={
               <RequireAuth>
-                <Dashboard />
+                <ChatPage />
               </RequireAuth>
             }
           />
