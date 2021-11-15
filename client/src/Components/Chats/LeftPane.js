@@ -32,10 +32,13 @@ function LeftPane({ onSelect }) {
       {loading ? (
         <h1>Loading</h1>
       ) : (
-        <div className="bg-gray-100 w-1/4 flex flex-col divide-y-2">
-          {usersList.map((user) => (
-            <UserCard onSelect={onSelect} user={user} key={user.uid} />
-          ))}
+        <div className="flex flex-col">
+          <h1 className="text-xl px-2 py-2">Users</h1>
+          <div className=" divide-y-2">
+            {usersList.map((user) => (
+              <UserCard onSelect={onSelect} user={user} key={user.uid} />
+            ))}
+          </div>
         </div>
       )}
     </>

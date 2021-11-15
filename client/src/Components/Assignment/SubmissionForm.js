@@ -28,8 +28,10 @@ function SubmissionForm({ classId, assignId }) {
   const getSubmission = () => {
     setLoading(true);
     getDoc(docRef).then((doc) => {
-      setSubmission(doc.data());
-      setIsSubmitted(true);
+      if (doc.data()) {
+        setSubmission(doc.data());
+        setIsSubmitted(true);
+      }
     });
     setLoading(false);
   };
