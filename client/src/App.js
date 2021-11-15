@@ -8,6 +8,7 @@ import LoginForm from "./Components/LoginForm";
 import ClassesHomePage from "./pages/ClassroomPage";
 import { RequireAuth } from "./Components/RequireAuth";
 import ChatPage from "./pages/ChatPage";
+import AssignmentView from "./Components/Classroom/AssignmentView";
 
 const App = () => {
   return (
@@ -38,6 +39,14 @@ const App = () => {
             element={
               <RequireAuth>
                 <ClassView />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="classroom/:classId/:assignId"
+            element={
+              <RequireAuth>
+                <AssignmentView />
               </RequireAuth>
             }
           />

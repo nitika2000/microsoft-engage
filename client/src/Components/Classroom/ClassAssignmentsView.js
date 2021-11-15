@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { collection, orderBy, query, onSnapshot } from "@firebase/firestore";
 import db from "../../services/firebase-config";
+import AssignmentCard from "./AssignmentCard";
 
 function ClassAssignmentsView({ classId }) {
   const [assignList, setAssignList] = useState([]);
@@ -25,13 +26,12 @@ function ClassAssignmentsView({ classId }) {
     };
   }, []);
 
-  console.log("assignlist", assignList);
   return loading ? (
     <div>Loading.... </div>
   ) : (
     <div>
       {assignList.map((assignment) => (
-        <h1>{assignment.description}</h1>
+        <AssignmentCard asssignment={assignment} />
       ))}
     </div>
   );
