@@ -30,41 +30,54 @@ function ClassView() {
     });
   }, []);
 
-  const uploadFile = (path, file) => {
-    const metadata = {
-      contentType: "any",
-    };
+  const uploadFiles = (path) => {
+    const promises = [];
+    files.forEach((file) => {
+      const metadata = {
+        contentType: "any",
+      };
+      const promise = new Promise((resolve, reject) => {
+        const storageRef = ref(storage, path + file.name);
+        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
 
-    const storageRef = ref(storage, path + file.name);
-    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+            }
+          },
+          (error) => {
+            console.log("error occured", error);
+            reject(error.code);
+          },
+          async () => {
+            await getDownloadURL(uploadTask.snapshot.ref).then(
+              (downloadURL) => {
+                resolve({
+                  downloadUrl: downloadURL,
+                  fileName: file.name,
+                });
+              },
+            );
+          },
+        );
+      });
+      promises.push(promise);
+    });
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        switch (snapshot.state) {
-          case "paused":
-            console.log("Upload is paused");
-            break;
-          case "running":
-            console.log("Upload is running");
-            break;
-        }
-      },
-      (error) => {
-        console.log("error occured", error);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-        });
-      },
-    );
+    return Promise.all(promises);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
     setSubmitLoader(true);
     const assignmentObj = {
       classId: classDetails.classId,
@@ -80,11 +93,14 @@ function ClassView() {
 
     await setDoc(assignRef, { assignId: assignRef.id }, { merge: true });
 
-    console.log(assignRef);
-    // const path = `classposts/${classDetails.classId}/`;
-    // files.forEach((file) => {
-    //   uploadFile(path, file);
-    // });
+    const path = `classposts/${classDetails.classId}/${assignRef.id}/`;
+
+    uploadFiles(path).then(async (data) => {
+      console.log("data", data);
+      await setDoc(assignRef, { files: data }, { merge: true }).then(() => {
+        setSubmitLoader(false);
+      });
+    });
   };
 
   const onFileChange = (e) => {
@@ -132,7 +148,9 @@ function ClassView() {
         <input type="file" multiple onChange={onFileChange} />
       </label>
       <br />
-      <button onClick={handleSubmit}>Submit</button>
+      <button onClick={() => handleSubmit()}>
+        {submitLoader ? <>Submitting</> : <>Submit</>}
+      </button>
     </div>
   );
 }
