@@ -24,6 +24,7 @@ function SubmissionForm({ classId, assignId }) {
     "submissions",
     currentUser.uid,
   );
+  const assignRef = doc(db, "classPosts", classId, "assignments", assignId);
 
   const getSubmission = () => {
     setLoading(true);
@@ -46,6 +47,7 @@ function SubmissionForm({ classId, assignId }) {
 
   const postSubmit = () => {
     setSubmitLoader(false);
+
     setFiles([]);
     setComments("");
     setIsSubmitted(true);
@@ -79,6 +81,12 @@ function SubmissionForm({ classId, assignId }) {
       await setDoc(docRef, { files: data }, { merge: true }).then(() => {
         postSubmit();
       });
+    });
+
+    getDoc(assignRef).then((data) => {
+      console.log("now I am submittiing");
+      let updatedList = data.submissionList.push(currentUser.uid);
+      setDoc(assignRef, { submissionList: updatedList }, { merge: true });
     });
   };
 

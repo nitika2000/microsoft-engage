@@ -11,20 +11,16 @@ function ChatView({ selectedUser, onBackClick }) {
   const [text, setText] = useState("");
   const { currentUser } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (filesUploaded) => {
     const inputText = text;
-    console.log(inputText, text);
     setText("");
-    console.log(inputText, text);
-
     const msgId = getMessageId(currentUser, selectedUser);
-
     await addDoc(collection(db, "messages", msgId, "chats"), {
       text: inputText,
       from: currentUser.uid,
       to: selectedUser.uid,
       createdAt: Timestamp.fromDate(new Date()),
+      attachments: filesUploaded,
       unread: true,
     });
 

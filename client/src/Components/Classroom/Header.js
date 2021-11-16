@@ -36,6 +36,16 @@ function Header() {
         ...currentUserData,
         enrolledClasses: currentUserData.enrolledClasses,
       });
+
+      let updatedEnrolledList = classObj.enrolledStudents;
+      updatedEnrolledList.push(currentUserData.uid);
+      await setDoc(
+        doc(collection(db, "classrooms"), classObj.classId),
+        {
+          enrolledStudents: updatedEnrolledList,
+        },
+        { merge: true },
+      );
       setshowJoinForm(false);
     } else {
       seterror("Class is already joined");
@@ -49,6 +59,7 @@ function Header() {
       creatorUid: currentUserData.uid,
       classCode: getSlug(classCodeLen),
       classId: "",
+      enrolledStudents: [],
     };
 
     const classRef = await addDoc(collection(db, "classrooms"), classObj);

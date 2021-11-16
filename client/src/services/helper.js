@@ -1,21 +1,8 @@
 /* eslint-disable default-case */
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  limit,
-} from "@firebase/firestore";
+import { doc, getDoc, getDocs, collection, query, where, limit } from "@firebase/firestore";
 import db from "./firebase-config";
 
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export const getSlug = (length) => {
   var result = "";
@@ -42,11 +29,7 @@ export const getClassFromId = async (classId) => {
 };
 
 export const getClassFromCode = async (classCode) => {
-  const q = query(
-    collection(db, "classrooms"),
-    where("classCode", "==", classCode),
-    limit(1),
-  );
+  const q = query(collection(db, "classrooms"), where("classCode", "==", classCode), limit(1));
 
   const querySnapshot = await getDocs(q);
   var classObj = null;
@@ -61,7 +44,6 @@ export const isTeacher = (role) => {
 };
 
 export const getMessageId = (currentUser, selectedUser) => {
-  console.log(currentUser, selectedUser);
   const user1 = currentUser.uid;
   const user2 = selectedUser.uid;
 
@@ -74,11 +56,7 @@ export function truncate(str, n, useWordBoundary) {
     return str;
   }
   const subString = str.substr(0, n - 1);
-  return (
-    (useWordBoundary
-      ? subString.substr(0, subString.lastIndexOf(" "))
-      : subString) + "..."
-  );
+  return (useWordBoundary ? subString.substr(0, subString.lastIndexOf(" ")) : subString) + "...";
 }
 
 export const uploadFiles = (path, files) => {
@@ -86,7 +64,7 @@ export const uploadFiles = (path, files) => {
   const promises = [];
   files.forEach((file) => {
     const metadata = {
-      contentType: "any",
+      contentType: file.type,
     };
     const promise = new Promise((resolve, reject) => {
       const storageRef = ref(storage, path + file.name);
@@ -95,8 +73,7 @@ export const uploadFiles = (path, files) => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case "paused":

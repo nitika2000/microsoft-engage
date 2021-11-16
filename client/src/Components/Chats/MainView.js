@@ -5,6 +5,9 @@ import db from "../../services/firebase-config";
 import { useAuth } from "../AuthContext";
 import moment from "moment";
 import { getMessageId } from "../../services/helper";
+import Linkify from "react-linkify";
+import Attachments from "./Attachments";
+import ImageViewer from "react-simple-image-viewer";
 
 function MainView({ selectedUser }) {
   const { currentUser } = useAuth();
@@ -16,6 +19,12 @@ function MainView({ selectedUser }) {
   const msgRef = React.createRef();
 
   const chatsDivRef = React.createRef();
+
+  const [images, setImages] = useState([]);
+
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [imageIndex, setImageIndex] = useState(0);
+
 
   useEffect(() => {
     if (msgRef.current) {
@@ -34,6 +43,11 @@ function MainView({ selectedUser }) {
         { merge: true },
       );
     }
+  };
+
+  const handleImageClick = (index) => {
+    setImageIndex(index);
+    setImageViewerOpen(true);
   };
 
   useEffect(() => {
@@ -71,6 +85,7 @@ function MainView({ selectedUser }) {
 
     const unsub = onSnapshot(q, (querySnapshot) => {
       let msgs = [];
+      const allImages = [];
       querySnapshot.forEach(async (msgDoc) => {
         const data = msgDoc.data();
         var date = moment.utc(msgDoc.data().createdAt.seconds * 1000).local();
@@ -78,23 +93,29 @@ function MainView({ selectedUser }) {
         if (msgDoc.data().to === currentUser.uid && msgDoc.data().unread === true) {
           await setDoc(msgDoc.ref, { unread: false }, { merge: true });
         }
-
         msgs.push(data);
+        if (data.attachments) {
+          let i = allImages.length;
+          for (let attach of data.attachments) {
+            attach.index = i;
+            i++;
+          }
+          allImages.push(...data.attachments.map((val) => val.downloadUrl));
+        }
       });
+      setImages(allImages);
       const msgsWithDate = [];
       if (msgs.length > 0) {
         const startDate = moment.utc(msgs[0].createdAt.seconds * 1000).local();
         msgsWithDate.push({ date: formatDate(startDate) });
         msgsWithDate.push(msgs[0]);
       }
-      console.log(msgsWithDate);
       for (let i = 1; i < msgs.length; i++) {
         const prevDate = moment.utc(msgs[i - 1].createdAt.seconds * 1000).local();
         const currentDate = moment.utc(msgs[i].createdAt.seconds * 1000).local();
         msgsWithDate.push(msgs[i]);
         if (!prevDate.isSame(currentDate, "day")) {
           msgsWithDate.push({ date: formatDate(currentDate) });
-          console.log(formatDate(currentDate));
         }
       }
       setLoading(false);
@@ -110,7 +131,7 @@ function MainView({ selectedUser }) {
       setOpacity(100);
       setTimeout(() => {
         setOpacity(0);
-      }, 2000);
+      }, 4000);
     }
     let minDist = 1000000;
     let cDate = "";
@@ -153,19 +174,42 @@ function MainView({ selectedUser }) {
                   return <h1 className="date-capsule text-xs mb-4 bg-blue-200 px-4 rounded-full py-1 mx-auto w-[max-content]">{msg.date}</h1>;
                 }
 
-                const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-2" : "bg-blue-400  rounded-tl-none";
+                const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-1" : "bg-blue-200  rounded-tl-none";
 
                 return (
-                  <div key={msg.createdAt.seconds} className={`bg-blue-400 text-sm md:text-base break-words max-w-[80%] pl-4 pr-4 py-2 pb-3 w-[fit-content] rounded-md ${className}`}>
-                    {msg.text}
-                    <span className="relative -bottom-2 -right-1 text-[0.65rem] ml-auto text-gray-800">{msg.timeString}</span>
+                  <div
+                    key={msg.createdAt.seconds}
+                    className={`flex gap-2 justify-between relative text-sm md:text-base break-words max-w-[80%] pl-4 pr-4 py-2 w-[fit-content] rounded-md ${className}`}
+                  >
+                    <Linkify
+                      componentDecorator={(decoratedHref, decoratedText, key) => (
+                        <a className="underline text-blue-600 font-bold" target="blank" href={decoratedHref} key={key}>
+                          {decoratedText}
+                        </a>
+                      )}
+                    >
+                      {msg.attachments ? <Attachments attachments={msg.attachments} imageClick={handleImageClick} /> : null}
+                      {msg.text}
+                    </Linkify>
+                    <div className="flex gap-1 self-end whitespace-nowrap">
+                      <span className="relative text-[0.65rem] bottom-[-2px] ml-auto text-gray-800">{msg.timeString}</span>
+                      {msg.from === currentUser.uid ? (
+                        msg.unread ? (
+                          <span class="material-icons bottom-0 right-1 text-base ">done</span>
+                        ) : (
+                          <span class="text-base material-icons text-blue-600">done_all</span>
+                        )
+                      ) : null}
+                    </div>
                   </div>
                 );
               })}
             </>
           )}
         </div>
+        {/* {JSON.stringify(images)} */}
       </div>
+      {imageViewerOpen ? <ImageViewer closeOnClickOutside={true} src={images} currentIndex={imageIndex} disableScroll={true} onClose={() => setImageViewerOpen(false)} /> : null}
     </div>
   );
 }

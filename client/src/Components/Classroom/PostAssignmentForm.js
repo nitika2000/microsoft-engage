@@ -7,6 +7,7 @@ import { useRef } from "react";
 
 function PostAssignmentForm({ classDetails }) {
   const [desc, setDesc] = useState("");
+  const [title, setTitle] = useState("");
   const [deadline, setDeadline] = useState("");
   const [files, setFiles] = useState([]);
   const [submitLoader, setSubmitLoader] = useState(false);
@@ -38,9 +39,11 @@ function PostAssignmentForm({ classDetails }) {
     setSubmitLoader(true);
     const assignmentObj = {
       classId: classDetails.classId,
+      title: title,
       description: desc,
       deadline: deadline,
       files: [],
+      submissionList: [],
     };
 
     const assignRef = await addDoc(
@@ -62,6 +65,17 @@ function PostAssignmentForm({ classDetails }) {
 
   return (
     <div>
+      <label>
+        Title
+        <input
+          type="text"
+          value={title}
+          placeholder="Title"
+          onChange={(event) => {
+            setTitle(event.target.value);
+          }}
+        />
+      </label>
       <label>
         Description
         <input

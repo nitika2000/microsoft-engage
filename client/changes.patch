@@ -1,0 +1,509 @@
+diff --git a/client/package-lock.json b/client/package-lock.json
+index 4adc83d..7c3aad3 100644
+--- a/client/package-lock.json
++++ b/client/package-lock.json
+@@ -10526,6 +10526,14 @@
+       "resolved": "https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.1.6.tgz",
+       "integrity": "sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA="
+     },
++    "linkify-it": {
++      "version": "2.2.0",
++      "resolved": "https://registry.npmjs.org/linkify-it/-/linkify-it-2.2.0.tgz",
++      "integrity": "sha512-GnAl/knGn+i1U/wjBz3akz2stz+HrHLsxMwHQGofCDfPvlf+gDKN58UtfmUquTY4/MXeE2x7k19KQmeoZi94Iw==",
++      "requires": {
++        "uc.micro": "^1.0.1"
++      }
++    },
+     "loader-runner": {
+       "version": "2.4.0",
+       "resolved": "https://registry.npmjs.org/loader-runner/-/loader-runner-2.4.0.tgz",
+@@ -14904,6 +14912,15 @@
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz",
+       "integrity": "sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w=="
+     },
++    "react-linkify": {
++      "version": "1.0.0-alpha",
++      "resolved": "https://registry.npmjs.org/react-linkify/-/react-linkify-1.0.0-alpha.tgz",
++      "integrity": "sha512-7gcIUvJkAXXttt1fmBK9cwn+1jTa4hbKLGCZ9J1U6EOkyb2/+LKL1Z28d9rtDLMnpvImlNlLPdTPooorl5cpmg==",
++      "requires": {
++        "linkify-it": "^2.0.3",
++        "tlds": "^1.199.0"
++      }
++    },
+     "react-refresh": {
+       "version": "0.8.3",
+       "resolved": "https://registry.npmjs.org/react-refresh/-/react-refresh-0.8.3.tgz",
+@@ -15024,6 +15041,11 @@
+         }
+       }
+     },
++    "react-simple-image-viewer": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/react-simple-image-viewer/-/react-simple-image-viewer-1.1.1.tgz",
++      "integrity": "sha512-xqAWUXfgllvahqIP2K4nmofZ1Y1Fml2mZqysTCzhEm0CtihTI1K9Hcf2fJYFyzE0qCplDmiYP6l4n8XtCimwPA=="
++    },
+     "read-cache": {
+       "version": "1.0.0",
+       "resolved": "https://registry.npmjs.org/read-cache/-/read-cache-1.0.0.tgz",
+@@ -17354,6 +17376,11 @@
+       "resolved": "https://registry.npmjs.org/timsort/-/timsort-0.3.0.tgz",
+       "integrity": "sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q="
+     },
++    "tlds": {
++      "version": "1.226.0",
++      "resolved": "https://registry.npmjs.org/tlds/-/tlds-1.226.0.tgz",
++      "integrity": "sha512-8zUqBmpXX573ZrvqfL1pDYcnKq/12IROcipqmSSgj5ro/KvyPUnpsXAIAojpgNchVo5LXJwlV0anZGL1l1vr9Q=="
++    },
+     "tmp": {
+       "version": "0.2.1",
+       "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.2.1.tgz",
+@@ -17570,6 +17597,11 @@
+         "is-typedarray": "^1.0.0"
+       }
+     },
++    "uc.micro": {
++      "version": "1.0.6",
++      "resolved": "https://registry.npmjs.org/uc.micro/-/uc.micro-1.0.6.tgz",
++      "integrity": "sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA=="
++    },
+     "unbox-primitive": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/unbox-primitive/-/unbox-primitive-1.0.1.tgz",
+diff --git a/client/package.json b/client/package.json
+index db69850..c7be8cb 100644
+--- a/client/package.json
++++ b/client/package.json
+@@ -18,8 +18,10 @@
+     "react": "^17.0.2",
+     "react-dom": "^17.0.2",
+     "react-icons": "^4.2.0",
++    "react-linkify": "^1.0.0-alpha",
+     "react-router-dom": "^6.0.2",
+     "react-scripts": "4.0.3",
++    "react-simple-image-viewer": "^1.1.1",
+     "rxjs": "^7.3.0",
+     "web-vitals": "^1.0.1"
+   },
+diff --git a/client/public/index.html b/client/public/index.html
+index de9871f..c692585 100644
+--- a/client/public/index.html
++++ b/client/public/index.html
+@@ -26,6 +26,8 @@
+     -->
+   <title>React App</title>
+   <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.7/css/all.css">
++  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
++    rel="stylesheet">
+ </head>
+ 
+ <body class="min-h-fill">
+diff --git a/client/src/Components/Chats/ChatView.js b/client/src/Components/Chats/ChatView.js
+index da30394..e848387 100644
+--- a/client/src/Components/Chats/ChatView.js
++++ b/client/src/Components/Chats/ChatView.js
+@@ -11,20 +11,16 @@ function ChatView({ selectedUser, onBackClick }) {
+   const [text, setText] = useState("");
+   const { currentUser } = useAuth();
+ 
+-  const handleSubmit = async (e) => {
+-    e.preventDefault();
++  const handleSubmit = async (filesUploaded) => {
+     const inputText = text;
+-    console.log(inputText, text);
+     setText("");
+-    console.log(inputText, text);
+-
+     const msgId = getMessageId(currentUser, selectedUser);
+-
+     await addDoc(collection(db, "messages", msgId, "chats"), {
+       text: inputText,
+       from: currentUser.uid,
+       to: selectedUser.uid,
+       createdAt: Timestamp.fromDate(new Date()),
++      attachments: filesUploaded,
+       unread: true,
+     });
+ 
+diff --git a/client/src/Components/Chats/LeftPane.js b/client/src/Components/Chats/LeftPane.js
+index f3b4f96..a3fb4a8 100644
+--- a/client/src/Components/Chats/LeftPane.js
++++ b/client/src/Components/Chats/LeftPane.js
+@@ -9,6 +9,7 @@ function LeftPane({ onSelect }) {
+   const { currentUser } = useAuth();
+   const [usersList, setUsersList] = useState([]);
+   const [loading, setLoading] = useState(true);
++  const [activeTab, setActiveTab] = useState("social");
+ 
+   useEffect(() => {
+     const usersRef = collection(db, "users");
+@@ -27,13 +28,50 @@ function LeftPane({ onSelect }) {
+     };
+   }, []);
+ 
++  const activeTabClasses = " bg-purple-600 text-white";
++  const deactiveTabClasses = " bg-transparent text-purple-500";
++
+   return (
+     <>
+       {loading ? (
+         <h1>Loading</h1>
+       ) : (
+         <div className="flex flex-col">
+-          <h1 className="text-xl px-2 py-2">Users</h1>
++          <div>
++            <div className="flex py-2 w-full items-center justify-start">
++              <button
++                className={
++                  "border-l border-t border-b border-purple-500 hover:bg-purple-500 hover:text-white active:bg-purple-600 font-bold uppercase text-xs px-4 py-2 rounded-l outline-none focus:outline-none ease-linear transition-all duration-150" +
++                  (activeTab === "social" ? activeTabClasses : deactiveTabClasses)
++                }
++                type="button"
++                onClick={() => setActiveTab("social")}
++              >
++                Social
++              </button>
++              <button
++                className={
++                  "border-t border-b border-r border-purple-500 hover:bg-purple-500 hover:text-white active:bg-purple-600 font-bold uppercase text-xs px-4 py-2 rounded-r outline-none focus:outline-none ease-linear transition-all duration-150" +
++                  (activeTab === "academic" ? activeTabClasses : deactiveTabClasses)
++                }
++                type="button"
++                onClick={() => setActiveTab("academic")}
++              >
++                Academic
++              </button>
++            </div>
++            <div className="relative py-2 flex w-full flex-wrap items-center">
++              <span className="z-10 leading-snug font-normal absolute z-10 text-center text-gray-400 bg-transparent rounded text-base items-center justify-center w-8 pl-2 py-1">
++                <i className="fas fa-search"></i>
++              </span>
++              <input
++                type="text"
++                placeholder="Search"
++                className=" px-2 py-2 placeholder-gray-400 text-gray-600 relative bg-white rounded text-sm border border-gray-400 outline-none focus:outline-none focus:ring w-full pl-10"
++              />
++            </div>
++            <h1 className="text-xl px-2 py-2">{activeTab === "social" ? "Users" : "Classes"}</h1>
++          </div>
+           <div className=" divide-y-2">
+             {usersList.map((user) => (
+               <UserCard onSelect={onSelect} user={user} key={user.uid} />
+diff --git a/client/src/Components/Chats/MainView.js b/client/src/Components/Chats/MainView.js
+index 7a0999d..4dff1a5 100644
+--- a/client/src/Components/Chats/MainView.js
++++ b/client/src/Components/Chats/MainView.js
+@@ -5,6 +5,9 @@ import db from "../../services/firebase-config";
+ import { useAuth } from "../AuthContext";
+ import moment from "moment";
+ import { getMessageId } from "../../services/helper";
++import Linkify from "react-linkify";
++import Attachments from "./Attachments";
++import ImageViewer from "react-simple-image-viewer";
+ 
+ function MainView({ selectedUser }) {
+   const { currentUser } = useAuth();
+@@ -17,6 +20,17 @@ function MainView({ selectedUser }) {
+ 
+   const chatsDivRef = React.createRef();
+ 
++  const [images, setImages] = useState([]);
++
++  const [imageViewerOpen, setImageViewerOpen] = useState(false);
++  const [imageIndex, setImageIndex] = useState(0);
++
++  // useEffect(() => {
++  //   if (chatsDivRef.current) {
++
++  //   }
++  // }, [chatsDivRef])
++
+   useEffect(() => {
+     if (msgRef.current) {
+       msgRef.current.scrollTop = msgRef.current.scrollHeight;
+@@ -36,6 +50,11 @@ function MainView({ selectedUser }) {
+     }
+   };
+ 
++  const handleImageClick = (index) => {
++    setImageIndex(index);
++    setImageViewerOpen(true);
++  };
++
+   useEffect(() => {
+     setLoading(true);
+ 
+@@ -71,6 +90,7 @@ function MainView({ selectedUser }) {
+ 
+     const unsub = onSnapshot(q, (querySnapshot) => {
+       let msgs = [];
++      const allImages = [];
+       querySnapshot.forEach(async (msgDoc) => {
+         const data = msgDoc.data();
+         var date = moment.utc(msgDoc.data().createdAt.seconds * 1000).local();
+@@ -78,23 +98,29 @@ function MainView({ selectedUser }) {
+         if (msgDoc.data().to === currentUser.uid && msgDoc.data().unread === true) {
+           await setDoc(msgDoc.ref, { unread: false }, { merge: true });
+         }
+-
+         msgs.push(data);
++        if (data.attachments) {
++          let i = allImages.length;
++          for (let attach of data.attachments) {
++            attach.index = i;
++            i++;
++          }
++          allImages.push(...data.attachments.map((val) => val.downloadUrl));
++        }
+       });
++      setImages(allImages);
+       const msgsWithDate = [];
+       if (msgs.length > 0) {
+         const startDate = moment.utc(msgs[0].createdAt.seconds * 1000).local();
+         msgsWithDate.push({ date: formatDate(startDate) });
+         msgsWithDate.push(msgs[0]);
+       }
+-      console.log(msgsWithDate);
+       for (let i = 1; i < msgs.length; i++) {
+         const prevDate = moment.utc(msgs[i - 1].createdAt.seconds * 1000).local();
+         const currentDate = moment.utc(msgs[i].createdAt.seconds * 1000).local();
+         msgsWithDate.push(msgs[i]);
+         if (!prevDate.isSame(currentDate, "day")) {
+           msgsWithDate.push({ date: formatDate(currentDate) });
+-          console.log(formatDate(currentDate));
+         }
+       }
+       setLoading(false);
+@@ -110,7 +136,7 @@ function MainView({ selectedUser }) {
+       setOpacity(100);
+       setTimeout(() => {
+         setOpacity(0);
+-      }, 2000);
++      }, 4000);
+     }
+     let minDist = 1000000;
+     let cDate = "";
+@@ -153,19 +179,42 @@ function MainView({ selectedUser }) {
+                   return <h1 className="date-capsule text-xs mb-4 bg-blue-200 px-4 rounded-full py-1 mx-auto w-[max-content]">{msg.date}</h1>;
+                 }
+ 
+-                const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-2" : "bg-blue-400  rounded-tl-none";
++                const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-1" : "bg-blue-200  rounded-tl-none";
+ 
+                 return (
+-                  <div key={msg.createdAt.seconds} className={`bg-blue-400 text-sm md:text-base break-words max-w-[80%] pl-4 pr-4 py-2 pb-3 w-[fit-content] rounded-md ${className}`}>
+-                    {msg.text}
+-                    <span className="relative -bottom-2 -right-1 text-[0.65rem] ml-auto text-gray-800">{msg.timeString}</span>
++                  <div
++                    key={msg.createdAt.seconds}
++                    className={`flex gap-2 justify-between relative text-sm md:text-base break-words max-w-[80%] pl-4 pr-4 py-2 w-[fit-content] rounded-md ${className}`}
++                  >
++                    <Linkify
++                      componentDecorator={(decoratedHref, decoratedText, key) => (
++                        <a className="underline text-blue-600 font-bold" target="blank" href={decoratedHref} key={key}>
++                          {decoratedText}
++                        </a>
++                      )}
++                    >
++                      {msg.attachments ? <Attachments attachments={msg.attachments} imageClick={handleImageClick} /> : null}
++                      {msg.text}
++                    </Linkify>
++                    <div className="flex gap-1 self-end whitespace-nowrap">
++                      <span className="relative text-[0.65rem] bottom-[-2px] ml-auto text-gray-800">{msg.timeString}</span>
++                      {msg.from === currentUser.uid ? (
++                        msg.unread ? (
++                          <span class="material-icons bottom-0 right-1 text-base ">done</span>
++                        ) : (
++                          <span class="text-base material-icons text-blue-600">done_all</span>
++                        )
++                      ) : null}
++                    </div>
+                   </div>
+                 );
+               })}
+             </>
+           )}
+         </div>
++        {/* {JSON.stringify(images)} */}
+       </div>
++      {imageViewerOpen ? <ImageViewer closeOnClickOutside={true} src={images} currentIndex={imageIndex} disableScroll={true} onClose={() => setImageViewerOpen(false)} /> : null}
+     </div>
+   );
+ }
+diff --git a/client/src/Components/Chats/MessageForm.js b/client/src/Components/Chats/MessageForm.js
+index 328a0de..bd803f8 100644
+--- a/client/src/Components/Chats/MessageForm.js
++++ b/client/src/Components/Chats/MessageForm.js
+@@ -1,8 +1,54 @@
+-import React from "react";
++import React, { useState } from "react";
++import { uploadFiles } from "../../services/helper";
+ 
+ const MessageForm = ({ handleSubmit, text, setText }) => {
++  const [selectedFiles, setSelectedFiles] = useState(null);
++  const [filesUploading, setFilesUploading] = useState(false);
++  const inputFileRef = React.useRef();
++
++  const onFileChange = (e) => {
++    const files = [];
++    const selectedFiles = e.target.files;
++    for (let i = 0; i < selectedFiles.length; i++) {
++      files.push(selectedFiles[0]);
++    }
++    setSelectedFiles(files);
++  };
++
++  const handleSend = (e) => {
++    e.preventDefault();
++    if (!text && !selectedFiles) {
++      return;
++    }
++    if (selectedFiles) {
++      setFilesUploading(true);
++      const path = `chat-attachments/`;
++      uploadFiles(path, selectedFiles)
++        .then((data) => {
++          setFilesUploading(false);
++          handleSubmit(data);
++          setSelectedFiles(null);
++        })
++        .catch((err) => {
++          setFilesUploading(false);
++          selectedFiles(null);
++        });
++    } else {
++      handleSubmit(null);
++    }
++  };
++
+   return (
+-    <form className="message_form w-full flex gap-2 pt-2" onSubmit={handleSubmit}>
++    <form className="message_form relative w-full  flex gap-2 pt-2" onSubmit={handleSend}>
++      <div className="absolute bottom-[100%]">{selectedFiles ? <h1>{selectedFiles.length} selected</h1> : null}</div>
++      <button
++        type="button"
++        onClick={() => inputFileRef.current.click()}
++        className="disabled:opacity-70 btn px-4 py-2 bg-green-400 flex items-center justify-center rounded-md hover:opacity-80 active:scale-95"
++      >
++        <span class="material-icons">attachment</span>
++        <input className="hidden" type="file" multiple ref={inputFileRef} onChange={onFileChange} />
++      </button>
+       <input
+         className="px-4 min-w-0 py-2 bg-gray-200 outline-none ring-0 rounded-md focus:ring-2 focus:ring-indigo-600 border-gray-300 flex-grow"
+         type="text"
+@@ -10,8 +56,8 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
+         value={text}
+         onChange={(e) => setText(e.target.value)}
+       />
+-      <button className="btn px-4 py-2 bg-green-400 rounded-md hover:opacity-80 active:scale-95" type="submit">
+-        Send
++      <button className="btn px-4 py-2 bg-green-400 flex items-center justify-center rounded-md hover:opacity-80 active:scale-95" type="submit">
++        {filesUploading ? <span className="inline-block w-4 h-4 border-2 border-gray-200 rounded-full border-t-blue-400 animate-spin"></span> : <span class="material-icons">send</span>}
+       </button>
+     </form>
+   );
+diff --git a/client/src/Components/Chats/UserCard.js b/client/src/Components/Chats/UserCard.js
+index 37fae99..80c369a 100644
+--- a/client/src/Components/Chats/UserCard.js
++++ b/client/src/Components/Chats/UserCard.js
+@@ -27,18 +27,13 @@ function UserCard({ onSelect, user }) {
+ 
+   return (
+     <div>
+-      <div
+-        className="bg-gray-100 py-2 px-2  hover:bg-gray-200 cursor-pointer active:scale-95"
+-        onClick={() => onSelect(user)}
+-      >
++      <div className="bg-gray-100 py-2 px-2  hover:bg-gray-200 cursor-pointer active:scale-95" onClick={() => onSelect(user)}>
+         <div className="flex items-center justify-between">
+           {user.uname}
+           {/* <p className="w-2 h-2 rounded-full bg-green-500"></p> */}
+           <p className="w-2 h-2 rounded-full bg-red-500"></p>
+         </div>
+-        <p className="text-sm text-gray-600">
+-          {unread ? <b>{lastMsg}</b> : <p>{lastMsg}</p>}
+-        </p>
++        <div className="text-sm text-gray-600">{unread ? <b>{lastMsg}</b> : <p>{lastMsg}</p>}</div>
+       </div>
+     </div>
+   );
+diff --git a/client/src/services/helper.js b/client/src/services/helper.js
+index 080d6be..084ec5f 100644
+--- a/client/src/services/helper.js
++++ b/client/src/services/helper.js
+@@ -1,21 +1,8 @@
+ /* eslint-disable default-case */
+-import {
+-  doc,
+-  getDoc,
+-  getDocs,
+-  collection,
+-  query,
+-  where,
+-  limit,
+-} from "@firebase/firestore";
++import { doc, getDoc, getDocs, collection, query, where, limit } from "@firebase/firestore";
+ import db from "./firebase-config";
+ 
+-import {
+-  getStorage,
+-  ref,
+-  uploadBytesResumable,
+-  getDownloadURL,
+-} from "firebase/storage";
++import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+ 
+ export const getSlug = (length) => {
+   var result = "";
+@@ -42,11 +29,7 @@ export const getClassFromId = async (classId) => {
+ };
+ 
+ export const getClassFromCode = async (classCode) => {
+-  const q = query(
+-    collection(db, "classrooms"),
+-    where("classCode", "==", classCode),
+-    limit(1),
+-  );
++  const q = query(collection(db, "classrooms"), where("classCode", "==", classCode), limit(1));
+ 
+   const querySnapshot = await getDocs(q);
+   var classObj = null;
+@@ -61,7 +44,6 @@ export const isTeacher = (role) => {
+ };
+ 
+ export const getMessageId = (currentUser, selectedUser) => {
+-  console.log(currentUser, selectedUser);
+   const user1 = currentUser.uid;
+   const user2 = selectedUser.uid;
+ 
+@@ -74,11 +56,7 @@ export function truncate(str, n, useWordBoundary) {
+     return str;
+   }
+   const subString = str.substr(0, n - 1);
+-  return (
+-    (useWordBoundary
+-      ? subString.substr(0, subString.lastIndexOf(" "))
+-      : subString) + "..."
+-  );
++  return (useWordBoundary ? subString.substr(0, subString.lastIndexOf(" ")) : subString) + "...";
+ }
+ 
+ export const uploadFiles = (path, files) => {
+@@ -86,7 +64,7 @@ export const uploadFiles = (path, files) => {
+   const promises = [];
+   files.forEach((file) => {
+     const metadata = {
+-      contentType: "any",
++      contentType: file.type,
+     };
+     const promise = new Promise((resolve, reject) => {
+       const storageRef = ref(storage, path + file.name);
+@@ -95,8 +73,7 @@ export const uploadFiles = (path, files) => {
+       uploadTask.on(
+         "state_changed",
+         (snapshot) => {
+-          const progress =
+-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
++          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+           console.log("Upload is " + progress + "% done");
+           switch (snapshot.state) {
+             case "paused":
