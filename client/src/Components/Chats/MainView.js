@@ -25,11 +25,6 @@ function MainView({ selectedUser }) {
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
 
-  // useEffect(() => {
-  //   if (chatsDivRef.current) {
-
-  //   }
-  // }, [chatsDivRef])
 
   useEffect(() => {
     if (msgRef.current) {

@@ -41,6 +41,7 @@ function PostAssignmentForm({ classDetails }) {
       description: desc,
       deadline: deadline,
       files: [],
+      submissionList: [],
     };
 
     const assignRef = await addDoc(

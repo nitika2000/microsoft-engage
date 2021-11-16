@@ -14,7 +14,7 @@ function Header() {
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUserData } = useAuth();
   const [error, seterror] = useState(null);
-  console.log("in header", currentUserData.uid);
+  
   const joinClass = async (classCode) => {
     const classObj = await getClassFromCode(classCode);
     if (!classObj) {
