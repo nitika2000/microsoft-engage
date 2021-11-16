@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { collection, orderBy, query, onSnapshot } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import AssignmentCard from "./AssignmentCard";
+import Loading from "../Loading";
 
 function ClassAssignmentsView({ classId }) {
   const [assignList, setAssignList] = useState([]);
@@ -27,7 +28,9 @@ function ClassAssignmentsView({ classId }) {
   }, []);
 
   return loading ? (
-    <div>Loading.... </div>
+    <div>
+      <Loading />
+    </div>
   ) : (
     <div>
       {assignList.map((assignment) => (
