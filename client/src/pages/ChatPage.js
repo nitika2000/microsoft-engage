@@ -25,12 +25,13 @@ function ChatPage() {
   }, []);
 
   const onUserSelect = (user) => {
+    console.log("run selecte");
     setActivePage("chat");
     setSelectedUser(user);
   };
 
   return (
-    <div className="flex h-[80vh] inset-0 container mx-auto shadow-md border px-2 py-2 md:p-4 gap-4 mt-2 md:mt-8 divide-x-0 md:divide-x-2 ">
+    <div className="flex h-[calc(100vh-72px)] md:h-[calc(100vh-128px)] bg-blueGray-100 rounded-md container mx-auto shadow-md border px-2 py-2 md:p-4 gap-4 mt-2 md:mt-8 divide-x-0 md:divide-x-2 ">
       <div className={`w-full md:w-1/4 ${phoneView && activePage === "chat" ? "hidden" : "block"}`}>
         <LeftPane onSelect={onUserSelect} />
       </div>

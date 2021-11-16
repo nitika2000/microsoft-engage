@@ -10,7 +10,7 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
     const files = [];
     const selectedFiles = e.target.files;
     for (let i = 0; i < selectedFiles.length; i++) {
-      files.push(selectedFiles[0]);
+      files.push(selectedFiles[i]);
     }
     setSelectedFiles(files);
   };
@@ -25,6 +25,7 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
       const path = `chat-attachments/`;
       uploadFiles(path, selectedFiles)
         .then((data) => {
+          console.log(data);
           setFilesUploading(false);
           handleSubmit(data);
           setSelectedFiles(null);

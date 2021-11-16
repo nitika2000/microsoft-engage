@@ -93,6 +93,7 @@ export const uploadFiles = (path, files) => {
             resolve({
               downloadUrl: downloadURL,
               fileName: file.name,
+              contentType: file.type,
             });
           });
         },
