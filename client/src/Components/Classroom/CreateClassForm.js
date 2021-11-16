@@ -65,7 +65,10 @@ function CreateClassForm({ closeForm }) {
               </h2>
             </div>
             <div className="w-full max-w-xs mx-auto my-2">
-              <form className="bg-white rounded px-8 pt-6 pb-8" onSubmit={(e) => createClass()}>
+              <form
+                className="bg-white rounded px-8 pt-6 pb-8"
+                onSubmit={createClass}
+              >
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm mb-3"
@@ -91,9 +94,8 @@ function CreateClassForm({ closeForm }) {
                 <div className="flex items-center space-x-2 pt-2">
                   <button
                     disabled={loading || className.length === 0}
-                    onClick={(e) => createClass}
                     className="bg-transparent hover:bg-blue-500 disabled:opacity-30 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-                    type="button"
+                    type="submit"
                   >
                     {loading ? <span>Creating..</span> : <span>Create</span>}
                   </button>
