@@ -3,17 +3,20 @@ import React, { useState, useEffect } from "react";
 import db from "../../services/firebase-config";
 import { getMessageId, truncate } from "../../services/helper";
 import { useAuth } from "../AuthContext";
+import Avatar from "./Avatar";
 
-function UserCard({ onSelect, user }) {
+function UserCard({ onSelect, user, isSelected }) {
   const { currentUser } = useAuth();
-  const [lastMsg, setLastMsg] = useState("--");
+  const [lastMsg, setLastMsg] = useState("");
   const [unread, setUnread] = useState(false);
+  const [lastMsgDoc, setLastMsgDoc] = useState(null);
 
   useEffect(() => {
     const msgId = getMessageId(currentUser, user);
     const unsub = onSnapshot(doc(db, "lastMsgs", msgId), (doc) => {
       if (doc.data()) {
         const lastMsg = doc.data().text;
+        setLastMsgDoc(doc.data());
         const truncMsg = truncate(lastMsg, 20);
         setLastMsg(truncMsg);
         if (doc.data().from !== currentUser.uid) {
@@ -26,14 +29,21 @@ function UserCard({ onSelect, user }) {
   }, []);
 
   return (
-    <div>
-      <div className="bg-gray-100 py-2 px-2  hover:bg-gray-200 cursor-pointer active:scale-95" onClick={() => onSelect(user)}>
-        <div className="flex items-center justify-between">
-          {user.uname}
-          {/* <p className="w-2 h-2 rounded-full bg-green-500"></p> */}
-          <p className="w-2 h-2 rounded-full bg-red-500"></p>
+    <div
+      className={(isSelected ? "bg-blue-400" : "bg-white") + " flex gap-2 items-center shadow-sm py-4 rounded-md transition-all hover:scale-105 hover:shadow-md px-2 cursor-pointer active:scale-95"}
+      onClick={() => onSelect(user)}
+    >
+      <Avatar name={user.uname} w="w-12" h="h-12" />
+      <div>
+        <div>{user.uname}</div>
+        <div className="text-sm flex items-center gap-2 text-gray-700">
+          <b>{lastMsg}</b>
+          {lastMsgDoc?.to === currentUser.uid || !lastMsg ? null : lastMsgDoc?.unread ? (
+            <span class="material-icons bottom-0 right-1 text-base ">done</span>
+          ) : (
+            <span class="text-base material-icons text-blue-600">done_all</span>
+          )}
         </div>
-        <div className="text-sm text-gray-600">{unread ? <b>{lastMsg}</b> : <p>{lastMsg}</p>}</div>
       </div>
     </div>
   );

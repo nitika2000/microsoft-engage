@@ -57,7 +57,7 @@ function SignupForm() {
         });
         navigate("/");
       } catch (err) {
-        let message = "Filed to signup";
+        let message = "Failed to signup";
         switch (err.code) {
           case "auth/email-already-in-use":
             message = "Email already in use";
@@ -66,7 +66,7 @@ function SignupForm() {
             message = "Weak Password: Password must be 6 characters length";
             break;
           default:
-            message = "Filed to signup";
+            message = "Failed to signup";
         }
         setData({ ...data, error: message, loading: false });
       }

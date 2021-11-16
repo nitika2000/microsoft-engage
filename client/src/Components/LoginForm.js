@@ -37,13 +37,13 @@ function LoginForm() {
         });
         navigate("/");
       } catch (err) {
-        let message = "Filed to login";
+        let message = "Failed to login";
         switch (err.code) {
           case "auth/user-not-found":
             message = "User not found with this email";
             break;
           default:
-            message = "Filed to login";
+            message = "Failed to login";
         }
         console.log(err.code);
         setData({ ...data, error: message, loading: false });
@@ -53,7 +53,6 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-xs mx-auto my-10">
-      {error ? <p className="text-red-500 text-xs italic">{error}</p> : null}
       <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
           <label
@@ -71,7 +70,7 @@ function LoginForm() {
             placeholder="Username"
           />
         </div>
-        <div className="mb-6">
+        <div className="mb-2">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="password"
@@ -87,6 +86,10 @@ function LoginForm() {
             placeholder="******************"
           />
         </div>
+        {error ? (
+          <p className="text-red-500 text-xs italic text-center">{error}</p>
+        ) : null}
+
         <div className="flex items-center justify-between">
           <button
             disabled={loading || email.length === 0 || password.length === 0}

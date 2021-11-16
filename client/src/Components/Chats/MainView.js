@@ -25,7 +25,6 @@ function MainView({ selectedUser }) {
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
 
-
   useEffect(() => {
     if (msgRef.current) {
       msgRef.current.scrollTop = msgRef.current.scrollHeight;
@@ -156,15 +155,15 @@ function MainView({ selectedUser }) {
 
   return (
     <div className="overflow-hidden flex-grow relative">
-      <div ref={msgRef} onScroll={onScroll} className="h-full overflow-y-scroll">
+      <div ref={msgRef} onScroll={onScroll} className="hide-scrollbar h-full max-w-full overflow-x-hidden overflow-y-scroll">
         <p
-          className={`absolute bg-blue-200 text-xs break-words max-w-full px-4 mt-4 left-1/2 -translate-x-1/2  py-1 mx-auto transition-all duration-500 rounded-full ${
+          className={`absolute shadow-sm z-50 bg-blue-300 text-xs break-words max-w-full px-4 mt-4 left-1/2 -translate-x-1/2  py-1 mx-auto transition-all duration-500 rounded-full ${
             opacity === 0 ? "opacity-0 " : "opacity-100"
           }`}
         >
           {chatDate}
         </p>
-        <div ref={chatsDivRef} className="py-4 md:pr-2 flex flex-col gap-2">
+        <div ref={chatsDivRef} className="py-4 px-1 md:px-8 flex flex-col gap-2">
           {loading ? (
             "Loading..."
           ) : (
@@ -174,12 +173,12 @@ function MainView({ selectedUser }) {
                   return <h1 className="date-capsule text-xs mb-4 bg-blue-200 px-4 rounded-full py-1 mx-auto w-[max-content]">{msg.date}</h1>;
                 }
 
-                const className = msg.from === currentUser.uid ? "bg-red-200 ml-auto rounded-tr-none pr-1" : "bg-blue-200  rounded-tl-none";
+                const className = msg.from === currentUser.uid ? "bg-blue-200 ml-auto rounded-tr-none pr-1" : "bg-white  rounded-tl-none";
 
                 return (
                   <div
-                    key={msg.createdAt.seconds}
-                    className={`flex gap-2 justify-between relative text-sm md:text-base break-words max-w-[80%] pl-4 pr-4 py-2 w-[fit-content] rounded-md ${className}`}
+                    key={msg.createdAt.seconds * 1000000 + msg.createdAt.nanoseconds}
+                    className={`shadow-sm flex gap-2 items-center justify-between relative text-gray-800 text-sm break-words font-light  max-w-[80%] pl-4 pr-4 py-2 w-[fit-content] rounded-md ${className}`}
                   >
                     <Linkify
                       componentDecorator={(decoratedHref, decoratedText, key) => (
@@ -192,7 +191,7 @@ function MainView({ selectedUser }) {
                       {msg.text}
                     </Linkify>
                     <div className="flex gap-1 self-end whitespace-nowrap">
-                      <span className="relative text-[0.65rem] bottom-[-2px] ml-auto text-gray-800">{msg.timeString}</span>
+                      <span className="relative text-[0.65rem] bottom-[-2px] ml-auto text-gray-600">{msg.timeString}</span>
                       {msg.from === currentUser.uid ? (
                         msg.unread ? (
                           <span class="material-icons bottom-0 right-1 text-base ">done</span>

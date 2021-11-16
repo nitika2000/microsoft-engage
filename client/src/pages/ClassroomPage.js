@@ -6,6 +6,7 @@ import JoinedClasses from "../Components/Classroom/JoinedClasses";
 
 function ClassesHomePage() {
   const { currentUserData } = useAuth();
+
   return currentUserData ? (
     <div>
       <Header />
