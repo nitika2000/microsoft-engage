@@ -1,62 +1,108 @@
 import React from "react";
 import { useState } from "react";
+import db from "../../services/firebase-config";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { getSlug } from "../../services/helper";
+import { useAuth } from "../AuthContext";
 
-function CreateClassForm({ closeForm, createClass }) {
+const classCodeLen = 6;
+
+function CreateClassForm({ closeForm }) {
   const [className, setclassName] = useState("");
+  const { currentUserData } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
+
+  const createClass = async () => {
+    setLoading(true);
+    try {
+      const classObj = {
+        className: className,
+        creatorName: currentUserData.uname,
+        creatorUid: currentUserData.uid,
+        classCode: getSlug(classCodeLen),
+        classId: "",
+        enrolledStudents: [],
+      };
+
+      const classRef = await addDoc(collection(db, "classrooms"), classObj);
+      await setDoc(doc(collection(db, "classrooms"), classRef.id), {
+        ...classObj,
+        classId: classRef.id,
+      });
+
+      currentUserData.enrolledClasses.push({
+        className: classObj.className,
+        classId: classRef.id,
+        creatorName: classObj.creatorName,
+      });
+
+      await setDoc(doc(collection(db, "users"), currentUserData.uid), {
+        ...currentUserData,
+        enrolledClasses: currentUserData.enrolledClasses,
+      });
+      setLoading(false);
+      closeForm();
+    } catch {
+      setError("Error-404");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
         <div className="relative w-auto my-6 mx-auto max-w-3xl">
           {/*content*/}
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-            {/*header*/}
-            <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-              <h4 className="text-3xl font-semibold">Create Class</h4>
-              <button
-                className="p-1 ml-auto bg-transparent border-0 text-black opacity-3 float-right text-3xl leading-none font-bold outline-none focus:outline-none"
-                onClick={closeForm}
-              >
-                ×
-              </button>
+            <div className="text-center p-4 bg-gray-600  rounded-t-lg">
+              <h2 className="center mx-auto text-xl font-bold h-7 overflow-visible text-white">
+                Create Class
+              </h2>
             </div>
-            {/*body*/}
+            <div className="w-full max-w-xs mx-auto my-2">
+              <form className="bg-white rounded px-8 pt-6 pb-8">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm mb-3"
+                    htmlFor="code"
+                  >
+                    Please enter the name of the class
+                    <span className="text-red-500 italic ">*</span>
+                  </label>
+                  <input
+                    className="focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="classname"
+                    type="text"
+                    value={className}
+                    onChange={(e) => setclassName(e.target.value)}
+                    name="classname"
+                    placeholder="Class Name"
+                  />
+                  {error ? (
+                    <p className="text-red-500 text-xs italic">{error}</p>
+                  ) : null}
+                </div>
 
-            <div className="relative p-6 flex-auto">
-              <p className="my-4 text-blueGray-500 text-md leading-relaxed">
-                Please enter details to create className
-              </p>
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="username"
-              >
-                Class Name
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="classCode"
-                type="text"
-                placeholder="Class Name"
-                onChange={(event) => {
-                  setclassName(event.target.value);
-                }}
-              />
-            </div>
-            {/*footer*/}
-            <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-              <button
-                className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={closeForm}
-              >
-                Close
-              </button>
-              <button
-                className="bg-green-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={() => createClass(className)}
-              >
-                Create className
-              </button>
+                <div className="flex items-center space-x-2 pt-2">
+                  <button
+                    disabled={loading || className.length === 0}
+                    onClick={createClass}
+                    className="bg-transparent hover:bg-blue-500 disabled:opacity-30 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                    type="button"
+                  >
+                    {loading ? <span>Creating..</span> : <span>Create</span>}
+                  </button>
+                  <button
+                    onClick={closeForm}
+                    className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+                    type="button"
+                  >
+                    Close
+                  </button>
+                </div>
+                <p className="pt-5 text-gray-400 text-xs italic"></p>
+              </form>
             </div>
           </div>
         </div>

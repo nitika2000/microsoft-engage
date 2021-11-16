@@ -2,47 +2,13 @@ import React from "react";
 import { useState } from "react";
 import CreateClassForm from "./CreateClassForm";
 import JoinClass from "./JoinClass";
-import db from "../../services/firebase-config";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
-import { getSlug, isTeacher } from "../../services/helper";
+import { isTeacher } from "../../services/helper";
 import { useAuth } from "../AuthContext";
-
-const classCodeLen = 6;
 
 function Header() {
   const [showJoinForm, setshowJoinForm] = useState(false);
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUserData } = useAuth();
-  const [error, seterror] = useState(null);
-
-  const createClass = async (className) => {
-    const classObj = {
-      className: className,
-      creatorName: currentUserData.uname,
-      creatorUid: currentUserData.uid,
-      classCode: getSlug(classCodeLen),
-      classId: "",
-      enrolledStudents: [],
-    };
-
-    const classRef = await addDoc(collection(db, "classrooms"), classObj);
-    await setDoc(doc(collection(db, "classrooms"), classRef.id), {
-      ...classObj,
-      classId: classRef.id,
-    });
-
-    currentUserData.enrolledClasses.push({
-      className: classObj.className,
-      classId: classRef.id,
-      creatorName: classObj.creatorName,
-    });
-
-    await setDoc(doc(collection(db, "users"), currentUserData.uid), {
-      ...currentUserData,
-      enrolledClasses: currentUserData.enrolledClasses,
-    });
-    setshowCreateForm(false);
-  };
 
   return (
     <div className="p-4">
@@ -70,10 +36,7 @@ function Header() {
       ) : null}
 
       {showCreateForm ? (
-        <CreateClassForm
-          createClass={createClass}
-          closeForm={() => setshowCreateForm(false)}
-        />
+        <CreateClassForm closeForm={() => setshowCreateForm(false)} />
       ) : null}
     </div>
   );
