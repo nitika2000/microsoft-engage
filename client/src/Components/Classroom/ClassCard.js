@@ -1,25 +1,13 @@
-import {
-  collection,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-  doc,
-  getDocs,
-  orderBy,
-} from "@firebase/firestore";
+import { collection, onSnapshot, query, orderBy } from "@firebase/firestore";
 import { Link } from "react-router-dom";
 import db from "../../services/firebase-config";
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-import { truncate } from "../../services/helper";
 
 function ClassCard({ classroom, isTeacher }) {
   const { currentUser } = useAuth();
   const [pending, setPending] = useState([]);
   const [pendingLoader, setPendingLoader] = useState(true);
-
-  console.log(currentUser);
 
   const checkSubmission = (submissionList) => {
     return (
@@ -45,14 +33,7 @@ function ClassCard({ classroom, isTeacher }) {
         querySnapshot.forEach((doc) => {
           const isSubmited = checkSubmission(doc.data().submissionList);
           if (!isSubmited) {
-            let title = "";
-            if (doc.data().title) {
-              title = "Web development in Javas";
-            }
-            pendingAssign.push({
-              ...doc.data(),
-              title: title,
-            });
+            pendingAssign.push(doc.data());
           }
         });
         setPending(pendingAssign);
@@ -64,10 +45,10 @@ function ClassCard({ classroom, isTeacher }) {
 
   return (
     <div className="w-full max-w-xs p-4">
-      <div className="c-card block bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden">
+      <div className="c-card block bg-white shadow-md rounded-lg overflow-hidden">
         <div className="relative pb-5 bg-blue-200 overflow-hidden"></div>
         <Link to={`${classroom.classId}`}>
-          <div className="p-4 bg-blue-100">
+          <div className="p-4 bg-blue-100 hover:bg-blue-200 hover:underline">
             <h2 className=" mb-4 text-xl font-bold h-7 overflow-visible">
               {classroom.className}
             </h2>
