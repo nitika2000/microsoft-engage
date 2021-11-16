@@ -1,7 +1,7 @@
 import { useAuth } from "./AuthContext";
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginForm() {
   const [data, setData] = useState({
@@ -24,7 +24,7 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setData({ ...data, error: null, loading: true });
-
+    console.log("email", email, "password", password);
     if (!email || !password) {
       setData({ ...data, error: "All fields are required" });
     } else {
@@ -42,50 +42,58 @@ function LoginForm() {
       }
     }
   };
-  console.log(currentUser);
 
   return (
-    <div>
-      <h3>Login form</h3>
-      <form onSubmit={handleSubmit}>
-        {error && (
-          <div
-            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
+    <div className="w-full max-w-xs mx-auto my-10">
+      {error ? <p className="text-red-500 text-xs italic">{error}</p> : null}
+      <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="username"
           >
-            <strong className="font-bold">{error}</strong>
-          </div>
-        )}
-        <label htmlFor="email">
-          <b>Email</b>
-        </label>
-        <input
-          type="text"
-          placeholder="Enter Email"
-          name="email"
-          required
-          onChange={handleChange}
-          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-        />
-        <label htmlFor="password">
-          <b>Password</b>
-        </label>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="password"
-          required
-          onChange={handleChange}
-          className="w-full px-4 py-2 text-sm border rounded-md focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
-        ></input>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="block w-full px-4 py-2 mt-4 text-sm font-medium leading-5 text-center text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-lg active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue"
-        >
-          Login
-        </button>
+            Username
+          </label>
+          <input
+            onChange={handleChange}
+            className="focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="username"
+            type="text"
+            name="email"
+            placeholder="Username"
+          />
+        </div>
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            name="password"
+            onChange={handleChange}
+            className="focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            id="password"
+            type="password"
+            placeholder="******************"
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            disabled={loading || email.length === 0 || password.length === 0}
+            onClick={handleSubmit}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+          >
+            {loading ? <span>Loging In</span> : <span>Log In</span>}
+          </button>
+        </div>
+        <Link to="/signup">
+          <p className="my-4 inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+            Need an Account?
+          </p>
+        </Link>
       </form>
     </div>
   );
