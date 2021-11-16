@@ -4,12 +4,14 @@ import { useState } from "react";
 import { getClassFromCode } from "../../services/helper";
 import { collection, doc, setDoc } from "@firebase/firestore";
 import db from "../../services/firebase-config";
+import { useNavigate } from "react-router";
 
 function JoinClass({ closeForm }) {
   const { currentUserData } = useAuth();
   const [classCode, setClassCode] = useState("");
   const [error, seterror] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const joinClass = async () => {
     setLoading(true);
@@ -44,6 +46,7 @@ function JoinClass({ closeForm }) {
         },
         { merge: true },
       );
+      navigate(`${classObj.classId}`);
       closeForm();
     } else {
       seterror("Class is already joined");

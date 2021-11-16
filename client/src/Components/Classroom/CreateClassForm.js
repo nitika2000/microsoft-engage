@@ -4,6 +4,7 @@ import db from "../../services/firebase-config";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { getSlug } from "../../services/helper";
 import { useAuth } from "../AuthContext";
+import { useNavigate } from "react-router";
 
 const classCodeLen = 6;
 
@@ -12,8 +13,10 @@ function CreateClassForm({ closeForm }) {
   const { currentUserData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
+  const navigate = useNavigate();
 
-  const createClass = async () => {
+  const createClass = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       const classObj = {
@@ -43,6 +46,7 @@ function CreateClassForm({ closeForm }) {
       });
       setLoading(false);
       closeForm();
+      navigate(`${classRef.id}`);
     } catch {
       setError("Error-404");
       setLoading(false);
@@ -61,7 +65,7 @@ function CreateClassForm({ closeForm }) {
               </h2>
             </div>
             <div className="w-full max-w-xs mx-auto my-2">
-              <form className="bg-white rounded px-8 pt-6 pb-8">
+              <form className="bg-white rounded px-8 pt-6 pb-8" onSubmit={(e) => createClass()}>
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm mb-3"
@@ -87,7 +91,7 @@ function CreateClassForm({ closeForm }) {
                 <div className="flex items-center space-x-2 pt-2">
                   <button
                     disabled={loading || className.length === 0}
-                    onClick={createClass}
+                    onClick={(e) => createClass}
                     className="bg-transparent hover:bg-blue-500 disabled:opacity-30 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                     type="button"
                   >
