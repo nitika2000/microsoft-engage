@@ -51,7 +51,7 @@ function LoginForm() {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="username"
           >
-            Username
+            Username<span className="text-red-500 italic ">*</span>
           </label>
           <input
             onChange={handleChange}
@@ -67,7 +67,7 @@ function LoginForm() {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="password"
           >
-            Password
+            Password<span className="text-red-500 italic ">*</span>
           </label>
           <input
             name="password"
@@ -82,7 +82,7 @@ function LoginForm() {
           <button
             disabled={loading || email.length === 0 || password.length === 0}
             onClick={handleSubmit}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className="bg-blue-500 disabled:opacity-30 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
           >
             {loading ? <span>Loging In</span> : <span>Log In</span>}
