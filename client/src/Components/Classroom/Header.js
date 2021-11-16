@@ -14,7 +14,7 @@ function Header() {
   const [showCreateForm, setshowCreateForm] = useState(false);
   const { currentUserData } = useAuth();
   const [error, seterror] = useState(null);
-  
+
   const joinClass = async (classCode) => {
     const classObj = await getClassFromCode(classCode);
     if (!classObj) {
@@ -36,6 +36,10 @@ function Header() {
         ...currentUserData,
         enrolledClasses: currentUserData.enrolledClasses,
       });
+
+      await setDoc(doc(collection(db, "classrooms", classObj.classId)), {
+        enrolledStudents : classObj.enrolledStudents.push(currentUserData.uid),
+      }, {merge: true})
       setshowJoinForm(false);
     } else {
       seterror("Class is already joined");
@@ -49,6 +53,7 @@ function Header() {
       creatorUid: currentUserData.uid,
       classCode: getSlug(classCodeLen),
       classId: "",
+      enrolledStudents: [],
     };
 
     const classRef = await addDoc(collection(db, "classrooms"), classObj);
