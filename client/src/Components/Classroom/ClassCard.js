@@ -40,6 +40,8 @@ function ClassCard({ classroom, isTeacher }) {
       });
       setPendingLoader(false);
       return unsub;
+    } else {
+      setPendingLoader(false);
     }
   }, []);
 
@@ -54,7 +56,13 @@ function ClassCard({ classroom, isTeacher }) {
             </h2>
           </div>
         </Link>
-        <div className="p-4 border-t border-b text-xs h-52 text-blue-700 overflow-y-auto flex flex-col">
+        <div
+          className={
+            isTeacher
+              ? `p-4 border-t border-b text-xs h-0 text-blue-700 overflow-y-auto flex flex-col`
+              : `p-4 border-t border-b text-xs h-52 text-blue-700 overflow-y-auto flex flex-col`
+          }
+        >
           {pendingLoader ? (
             <h1>Loading...</h1>
           ) : (
@@ -93,33 +101,6 @@ function ClassCard({ classroom, isTeacher }) {
         </div>
       </div>
     </div>
-
-    // <Link to={`${classroom.classId}`}>
-    //   <div className="w-72  rounded overflow shadow-lg ">
-    //     <div className="px-6 py-4 w-full bg-yellow-100 grid grid-cols-1 divide-y divide-yellow-500">
-    //       <div>
-    //         <div className="font-bold text-xl mb-2  text-center p-3">
-    //           {classroom.className}
-    //         </div>
-    //       </div>
-    //       <div className="py-4">
-    //         {pendingLoader ? (
-    //           <h1>Loading</h1>
-    //         ) : (
-    //           <div>
-    //             {pending.map((assign) => {
-    //               return <h1>{assign.deadline}</h1>;
-    //             })}
-    //           </div>
-    //         )}
-    //       </div>
-
-    //       <div className="py-2 ">
-    //         <p>{classroom.creatorName}</p>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </Link>
   );
 }
 
