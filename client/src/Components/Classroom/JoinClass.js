@@ -1,7 +1,55 @@
-import React, { useRef } from "react";
+import React from "react";
+import { useAuth } from "../AuthContext";
+import { useState } from "react";
+import { getClassFromCode } from "../../services/helper";
+import { collection, doc, setDoc } from "@firebase/firestore";
+import db from "../../services/firebase-config";
 
-function JoinClass({ closeForm, joinClass }) {
-  const inputRef = useRef(null);
+function JoinClass({ closeForm }) {
+  const { currentUserData } = useAuth();
+  const [classCode, setClassCode] = useState("");
+  const [error, seterror] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const joinClass = async () => {
+    setLoading(true);
+    const classObj = await getClassFromCode(classCode);
+    if (!classObj) {
+      seterror("Invalid class code");
+      setLoading(false);
+      return;
+    }
+
+    const isAlreadyJoined = currentUserData.enrolledClasses.find(
+      (enrolledClass) => enrolledClass.classId === classObj.classId,
+    );
+
+    if (!isAlreadyJoined) {
+      currentUserData.enrolledClasses.push({
+        className: classObj.className,
+        classId: classObj.classId,
+        creatorName: classObj.creatorName,
+      });
+      await setDoc(doc(collection(db, "users"), currentUserData.uid), {
+        ...currentUserData,
+        enrolledClasses: currentUserData.enrolledClasses,
+      });
+
+      let updatedEnrolledList = classObj.enrolledStudents;
+      updatedEnrolledList.push(currentUserData.uid);
+      await setDoc(
+        doc(collection(db, "classrooms"), classObj.classId),
+        {
+          enrolledStudents: updatedEnrolledList,
+        },
+        { merge: true },
+      );
+      closeForm();
+    } else {
+      seterror("Class is already joined");
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -9,45 +57,57 @@ function JoinClass({ closeForm, joinClass }) {
         <div className="relative w-auto my-6 mx-auto max-w-3xl">
           {/*content*/}
           <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-            {/*header*/}
-            <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-              <h3 className="text-3xl font-semibold">Class code</h3>
-              <button
-                className="p-1 ml-auto bg-transparent border-0 text-black opacity-3 float-right text-3xl leading-none font-bold outline-none focus:outline-none"
-                onClick={closeForm}
-              >
-                ×
-              </button>
-            </div>
-            {/*body*/}
-            <div className="relative p-6 flex-auto">
-              <p className="my-4 text-blueGray-500 text-lg leading-relaxed">
-                Ask your teacher for the class code, then enter it here.
-              </p>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="classCode"
-                type="text"
-                placeholder="Class code"
-                ref={inputRef}
-              ></input>
-            </div>
-            {/*footer*/}
-            <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-              <button
-                className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={closeForm}
-              >
-                Close
-              </button>
-              <button
-                className="bg-green-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={() => joinClass(inputRef.current.value)}
-              >
+            <div className="text-center p-4 bg-gray-600  rounded-t-lg">
+              <h2 className="center mx-auto text-xl font-bold h-7 overflow-visible text-white">
                 Join Class
-              </button>
+              </h2>
+            </div>
+            <div className="w-full max-w-xs mx-auto my-2">
+              <form className="bg-white rounded px-8 pt-6 pb-8">
+                <div className="mb-4">
+                  <label
+                    className="block text-gray-700 text-sm mb-3"
+                    htmlFor="code"
+                  >
+                    Ask your teacher for the class code, then enter it here.
+                    <span className="text-red-500 italic ">*</span>
+                  </label>
+                  <input
+                    className="focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="code"
+                    type="text"
+                    value={classCode}
+                    onChange={(e) => setClassCode(e.target.value)}
+                    name="code"
+                    placeholder="Class Code"
+                  />
+                  {error ? (
+                    <p className="text-red-500 text-xs italic">{error}</p>
+                  ) : null}
+                </div>
+
+                <div className="flex items-center space-x-2 pt-2">
+                  <button
+                    disabled={loading || classCode.length === 0}
+                    onClick={joinClass}
+                    className="bg-transparent hover:bg-blue-500 disabled:opacity-30 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                    type="button"
+                  >
+                    {loading ? <span>Joining..</span> : <span>Join</span>}
+                  </button>
+                  <button
+                    onClick={closeForm}
+                    className="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+                    type="button"
+                  >
+                    Close
+                  </button>
+                </div>
+                <p className="pt-5 text-gray-400 text-xs italic">
+                  Use a class code with 6 letters or numbers, and no spaces or
+                  symbols
+                </p>
+              </form>
             </div>
           </div>
         </div>
