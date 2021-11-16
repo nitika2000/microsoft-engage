@@ -37,7 +37,16 @@ function LoginForm() {
         });
         navigate("/");
       } catch (err) {
-        setData({ ...data, error: "Failed to login", loading: false });
+        let message = "Filed to login";
+        switch (err.code) {
+          case "auth/user-not-found":
+            message = "User not found with this email";
+            break;
+          default:
+            message = "Filed to login";
+        }
+        console.log(err.code);
+        setData({ ...data, error: message, loading: false });
       }
     }
   };
