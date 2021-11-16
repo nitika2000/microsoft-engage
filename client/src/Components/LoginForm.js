@@ -24,7 +24,6 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setData({ ...data, error: null, loading: true });
-    console.log("email", email, "password", password);
     if (!email || !password) {
       setData({ ...data, error: "All fields are required" });
     } else {
