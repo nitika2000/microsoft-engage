@@ -37,13 +37,13 @@ function LoginForm() {
         });
         navigate("/");
       } catch (err) {
-        let message = "Filed to login";
+        let message = "Failed to login";
         switch (err.code) {
           case "auth/user-not-found":
             message = "User not found with this email";
             break;
           default:
-            message = "Filed to login";
+            message = "Failed to login";
         }
         console.log(err.code);
         setData({ ...data, error: message, loading: false });
