@@ -43,12 +43,14 @@ function AssignmentView() {
 
         <div className="flex flex-col m-4">
           <div className="text-blue-700 font-bold text-2xl">
-            Machine Learning
+            {assignment.title}
           </div>
-          <div className="text-gray-600">Anoop Kumar</div>
-          <div className="text-gray-600 text-xs">10 Points</div>
+          <div className="text-gray-600">{assignment.creatorName}</div>
+          <div className="text-gray-600 text-xs">
+            {assignment.grades} Points
+          </div>
           <div className="text-red-600 text-xs">
-            Due : 10 December , 4:00 AM
+            Due : {assignment.deadline}
           </div>
           <div></div>
         </div>
@@ -65,34 +67,34 @@ function AssignmentView() {
       <div className="flex lg:flex-row flex-col p-4">
         <div className="flex flex-col">
           {/* <!-- Desription --> */}
-          <div className="p-4 text-sm">
-            In compliance with Tax Law in India, Upwork withholds 1% Tax at
-            Deduction Source (TDS) from your payments. The TDS can be as much as
-            5% if you haven't provided your govt. issued tax id yet. Please
-            click here to add your PAN or Aadhar Card Number asap. For more
-            details, read our FAQs.
-          </div>
+          <div className="p-4 text-sm">{assignment.description}</div>
 
           {/* <!--File--> */}
-          <div className="p-4 border-2 border-gray-200 rounded-md flex flex-row my-4 w-72 overflow-hidden">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                />
-              </svg>
-            </div>
-            <div className="px-4">File name</div>
-          </div>
+          {assignment.files.map((file) => {
+            return (
+              <a href={file.downloadUrl} download={file.downloadUrl}>
+                <div className="p-4 border-2 border-gray-200 rounded-md flex flex-row my-4 w-72 overflow-hidden">
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="px-4">{file.fileName}</div>
+                </div>
+              </a>
+            );
+          })}
         </div>
 
         <div className="lg:w-1/2 w-full m-auto">
