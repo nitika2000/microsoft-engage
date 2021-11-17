@@ -4,28 +4,28 @@ import { Link } from "react-router-dom";
 function AssignmentCard({ asssignment }) {
   return (
     <Link to={`${asssignment.assignId}`}>
-      <div className="w-9/12 p-4 m-auto ">
-        <div className="c-card block bg-white border-gray-500 border-double border-1 rounded-lg overflow-hidden">
-          <div className="p-4  ">
-            <h2 className=" mb-4 text-xl font-bold h-7 overflow-visible">
-              {asssignment.title}
-            </h2>
-          </div>
+      <div className="full border-2 border-gray-200 flex flex-row p-4 rounded-md my-2 m-auto hover:bg-blue-100">
+        <div className="my-auto mx-3 bg-blue-700 p-1 rounded-full">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="white"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+            />
+          </svg>
+        </div>
+        <div className="flex flex-col font-sans">
+          <div>Anoop Patel posted a new assignment: EndSem Lab Examination</div>
+          <div className="text-xs">Nov 9</div>
         </div>
       </div>
-      {/* <div className="bg-blue-200 border-r-4 m-2">
-        <div>
-          <p>{asssignment.description}</p>
-          <p>{asssignment.deadline}</p>
-          {asssignment.files
-            ? asssignment.files.map((file) => (
-                <div>
-                  <a href={file.downloadUrl}>{file.fileName}</a>
-                </div>
-              ))
-            : null}
-        </div>
-      </div> */}
     </Link>
   );
 }

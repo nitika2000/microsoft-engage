@@ -7,22 +7,57 @@ import ClassBanner from "./ClassBanner";
 import PostAssignmentForm from "./PostAssignmentForm";
 import ClassAssignmentsView from "./ClassAssignmentsView";
 import { useAuth } from "../AuthContext";
+import { collection, onSnapshot, orderBy, query } from "@firebase/firestore";
+import db from "../../services/firebase-config";
+import PendingAssignmentView from "./PendingAssignmentView";
 
 function ClassView() {
   const searchParams = useParams();
+  const classId = searchParams.classId;
   const [classDetails, setClassDetails] = useState();
   const [loading, setLoading] = useState(true);
-
   const { currentUserData } = useAuth();
+  const [pending, setPending] = useState([]);
+  const [pendingLoader, setPendingLoader] = useState(true);
 
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
       setClassDetails(data);
       setLoading(false);
+      if (!isTeacher(currentUserData.role)) {
+        setPendingAssignments();
+      }
     });
   }, []);
 
-  return loading ? (
+  const checkSubmission = (submissionList) => {
+    return (
+      submissionList &&
+      submissionList.length !== 0 &&
+      submissionList.includes(currentUserData.uid)
+    );
+  };
+
+  const setPendingAssignments = () => {
+    setPendingLoader(true);
+    const assignsRef = collection(db, "classPosts", classId, "assignments");
+    const q = query(assignsRef, orderBy("deadline", "asc"));
+
+    const unsub = onSnapshot(q, (querySnapshot) => {
+      const pendingAssign = [];
+      querySnapshot.forEach((doc) => {
+        const isSubmited = checkSubmission(doc.data().submissionList);
+        if (!isSubmited) {
+          pendingAssign.push(doc.data());
+        }
+      });
+      setPending(pendingAssign);
+    });
+    setPendingLoader(false);
+    return unsub;
+  };
+
+  return loading || pendingLoader ? (
     <Loading />
   ) : (
     <div>
@@ -30,8 +65,14 @@ function ClassView() {
       {isTeacher(currentUserData.role) ? (
         <PostAssignmentForm classDetails={classDetails} />
       ) : null}
-
-      <ClassAssignmentsView classId={classDetails.classId} />
+      <div className="flex lg:flex-row flex-col mx-auto w-9/12">
+        <div className="lg:w-1/4 w-full lg:p-2">
+          <PendingAssignmentView pending={pending} />
+        </div>
+        <div className="w-full">
+          <ClassAssignmentsView classId={classDetails.classId} />
+        </div>
+      </div>
     </div>
   );
 }

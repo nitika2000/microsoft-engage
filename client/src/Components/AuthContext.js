@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  if (loading) {
+  if (loading || restrictedLoading) {
     return <Loading />;
   }
 

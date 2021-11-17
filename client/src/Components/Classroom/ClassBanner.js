@@ -2,15 +2,14 @@ import React from "react";
 
 function ClassBanner({ classroom }) {
   return (
-    <div className="w-9/12 p-4 m-auto">
+    <div className="w-9/12 py-4 m-auto">
       <div className="c-card block bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="relative pb-5 bg-gray-200 overflow-hidden"></div>
-        <div className="p-4 bg-gray-100 ">
-          <h2 className=" mb-4 text-xl font-bold h-7 overflow-visible">
+        <div className="p-4 bg-blue-700 ">
+          <h2 className=" mb-4 text-3xl font-bold h-7 overflow-visible text-white">
             {classroom.className}
           </h2>
         </div>
-        <div className="p-4 flex items-center text-sm text-gray-600 bg-gray-100">
+        <div className="p-4 flex items-center text-sm text-white bg-blue-700">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"

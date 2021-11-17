@@ -19,7 +19,6 @@ function ClassAssignmentsView({ classId }) {
         assignments.push(doc.data());
       });
       setAssignList(assignments);
-      console.log("assignments are set", assignments);
       setLoading(false);
     });
     return () => {
@@ -32,6 +31,7 @@ function ClassAssignmentsView({ classId }) {
       <Loading />
     </div>
   ) : (
+
     <div>
       {assignList.map((assignment) => (
         <AssignmentCard asssignment={assignment} />
