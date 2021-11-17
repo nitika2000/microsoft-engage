@@ -17,14 +17,14 @@ function SubmissionForm({ classId, assignId }) {
 
   const docRef = doc(
     db,
-    "classPosts",
+    "classrooms",
     classId,
     "assignments",
     assignId,
     "submissions",
     currentUser.uid,
   );
-  const assignRef = doc(db, "classPosts", classId, "assignments", assignId);
+  const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
 
   const getSubmission = () => {
     setLoading(true);
@@ -75,7 +75,7 @@ function SubmissionForm({ classId, assignId }) {
 
     const solRef = await setDoc(docRef, solutionObj);
 
-    const path = `classPosts/${classId}/${assignId}/submissions/${currentUser.uid}`;
+    const path = `classrooms/${classId}/${assignId}/submissions/${currentUser.uid}`;
 
     uploadFiles(path, files).then(async (data) => {
       await setDoc(docRef, { files: data }, { merge: true }).then(() => {

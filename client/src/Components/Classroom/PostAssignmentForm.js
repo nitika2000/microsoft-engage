@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { addDoc, collection, setDoc } from "@firebase/firestore";
+import { addDoc, collection, setDoc, Timestamp } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import { uploadFiles } from "../../services/helper";
 import { useRef } from "react";
@@ -11,6 +11,7 @@ function PostAssignmentForm({ classDetails }) {
   const [deadline, setDeadline] = useState("");
   const [files, setFiles] = useState([]);
   const [submitLoader, setSubmitLoader] = useState(false);
+  const [grades, setGrades] = useState("");
 
   const inputFileRef = useRef();
 
@@ -23,6 +24,8 @@ function PostAssignmentForm({ classDetails }) {
     setFiles([]);
     setDesc("");
     setDeadline("");
+    setGrades("");
+    setTitle("");
     resetFiles();
   };
 
@@ -44,16 +47,18 @@ function PostAssignmentForm({ classDetails }) {
       deadline: deadline,
       files: [],
       submissionList: [],
+      grades: grades,
+      createdAt: Timestamp.fromDate(new Date()),
     };
 
     const assignRef = await addDoc(
-      collection(db, "classPosts", classDetails.classId, "assignments"),
+      collection(db, "classrooms", classDetails.classId, "assignments"),
       assignmentObj,
     );
 
     await setDoc(assignRef, { assignId: assignRef.id }, { merge: true });
 
-    const path = `classPosts/${classDetails.classId}/${assignRef.id}/`;
+    const path = `classrooms/${classDetails.classId}/${assignRef.id}/`;
 
     uploadFiles(path, files).then(async (data) => {
       console.log("data", data);
@@ -89,9 +94,20 @@ function PostAssignmentForm({ classDetails }) {
       </label>
       <br />
       <label>
+        Grades
+        <input
+          type="text"
+          value={grades}
+          placeholder="Grades"
+          onChange={(event) => {
+            setGrades(event.target.value);
+          }}
+        />
+      </label>
+      <label>
         Deadline
         <input
-          type="date"
+          type="datetime-local"
           value={deadline}
           placeholder="Deadline"
           onChange={(event) => {

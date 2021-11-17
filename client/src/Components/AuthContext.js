@@ -40,17 +40,17 @@ export function AuthProvider({ children }) {
         setcurrentUser(user);
         getCurrentUserData(user).then((data) => {
           setCurrentUserData(data);
-          setRestrictedLoading(false);
+          setLoading(false);
         });
       } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return unsubscribe;
   }, []);
 
-  if (loading || restrictedLoading) {
+  if (loading) {
     return <Loading />;
   }
 

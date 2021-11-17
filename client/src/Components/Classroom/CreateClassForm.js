@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import db from "../../services/firebase-config";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, Timestamp } from "firebase/firestore";
 import { getSlug } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 import { useNavigate } from "react-router";
@@ -20,18 +20,22 @@ function CreateClassForm({ closeForm }) {
     setLoading(true);
     try {
       const classObj = {
-        className: className,
+        className: className.toUpperCase(),
         creatorName: currentUserData.uname,
         creatorUid: currentUserData.uid,
-        classCode: getSlug(classCodeLen),
+        classCode: "",
         classId: "",
         enrolledStudents: [],
+        createdAt: Timestamp.fromDate(new Date()),
       };
-
       const classRef = await addDoc(collection(db, "classrooms"), classObj);
-      await setDoc(doc(collection(db, "classrooms"), classRef.id), {
-        ...classObj,
-        classId: classRef.id,
+
+      getSlug(classCodeLen).then((classCode) => {
+        setDoc(doc(collection(db, "classrooms"), classRef.id), {
+          ...classObj,
+          classId: classRef.id,
+          classCode: classCode,
+        });
       });
 
       currentUserData.enrolledClasses.push({
