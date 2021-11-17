@@ -6,9 +6,10 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "@firebase/auth";
-import { auth } from "../services/firebase-config";
+import db, { auth } from "../services/firebase-config";
 import Loading from "./Loading";
 import { getCurrentUserData } from "../services/helper";
+import { doc, setDoc } from "@firebase/firestore";
 export const AuthContext = React.createContext();
 
 export function useAuth() {
@@ -30,6 +31,13 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    setDoc(
+      doc(db, "users", currentUser.uid),
+      {
+        isOnline: false,
+      },
+      { merge: true },
+    );
     signOut(auth);
     setcurrentUser(null);
   }
