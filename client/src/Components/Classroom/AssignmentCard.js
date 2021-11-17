@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { localTimeFormat } from "../../services/helper";
 
 function AssignmentCard({ asssignment }) {
   return (
@@ -22,8 +23,14 @@ function AssignmentCard({ asssignment }) {
           </svg>
         </div>
         <div className="flex flex-col font-sans">
-          <div>Anoop Patel posted a new assignment: EndSem Lab Examination</div>
-          <div className="text-xs">Nov 9</div>
+          <div>
+            {asssignment.creatorName} posted a new assignment:
+            {asssignment.title}
+          </div>
+          <div className="text-xs">Due : {asssignment.deadline}</div>
+          <div className="text-xs">
+            Created at {localTimeFormat(asssignment.createdAt)}
+          </div>
         </div>
       </div>
     </Link>

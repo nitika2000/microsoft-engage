@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function PendingAssignmentView({ pending }) {
   return (
@@ -23,10 +24,16 @@ function PendingAssignmentView({ pending }) {
         <div className="p-1 text-xs text-red-600">Pending Assignments</div>
       </div>
       <div className="flex flex-col h-52 font-sans overflow-y-auto text-sm">
-        <div className="flex flex-col py-3 hover:underline">
-          <div>EndSem Lab Examination</div>
-          <div className="text-xs">Nov 9</div>
-        </div>
+        {pending.map((assign) => {
+          return (
+            <Link to={`${assign.assignId}`}>
+              <div className="flex flex-col py-3 hover:underline">
+                <div>{assign.title}</div>
+                <div className="text-xs">{assign.deadline}</div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

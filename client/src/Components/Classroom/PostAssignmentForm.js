@@ -49,6 +49,7 @@ function PostAssignmentForm({ classDetails }) {
       submissionList: [],
       grades: grades,
       createdAt: Timestamp.fromDate(new Date()),
+      creatorName: classDetails.creatorName
     };
 
     const assignRef = await addDoc(
