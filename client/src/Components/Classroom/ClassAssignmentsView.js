@@ -10,7 +10,7 @@ function ClassAssignmentsView({ classId }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const assignRef = collection(db, "classPosts", classId, "assignments");
+    const assignRef = collection(db, "classrooms", classId, "assignments");
     const q = query(assignRef, orderBy("deadline", "asc"));
 
     const unsub = onSnapshot(q, (querySnapshot) => {
@@ -31,7 +31,6 @@ function ClassAssignmentsView({ classId }) {
       <Loading />
     </div>
   ) : (
-
     <div>
       {assignList.map((assignment) => (
         <AssignmentCard asssignment={assignment} />
