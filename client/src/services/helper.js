@@ -1,17 +1,42 @@
 /* eslint-disable default-case */
-import { doc, getDoc, getDocs, collection, query, where, limit } from "@firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  limit,
+} from "@firebase/firestore";
 import db from "./firebase-config";
 
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
-export const getSlug = (length) => {
+export const getSlug = async (length) => {
   var result = "";
   var characters = "abcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  var isFound = false;
+  while (!isFound) {
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    // eslint-disable-next-line no-loop-func
+    getClassFromCode(result).then((obj) => {
+      if (obj) {
+        result = "";
+      } else {
+        isFound = true;
+      }
+    });
+    console.log("class code", result);
+    return result;
   }
-  return result;
 };
 
 export const getCurrentUserData = async (currentUser) => {
@@ -29,7 +54,11 @@ export const getClassFromId = async (classId) => {
 };
 
 export const getClassFromCode = async (classCode) => {
-  const q = query(collection(db, "classrooms"), where("classCode", "==", classCode), limit(1));
+  const q = query(
+    collection(db, "classrooms"),
+    where("classCode", "==", classCode),
+    limit(1),
+  );
 
   const querySnapshot = await getDocs(q);
   var classObj = null;
@@ -56,7 +85,11 @@ export function truncate(str, n, useWordBoundary) {
     return str;
   }
   const subString = str.substr(0, n - 1);
-  return (useWordBoundary ? subString.substr(0, subString.lastIndexOf(" ")) : subString) + "...";
+  return (
+    (useWordBoundary
+      ? subString.substr(0, subString.lastIndexOf(" "))
+      : subString) + "..."
+  );
 }
 
 export const uploadFiles = (path, files) => {
@@ -73,7 +106,8 @@ export const uploadFiles = (path, files) => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case "paused":

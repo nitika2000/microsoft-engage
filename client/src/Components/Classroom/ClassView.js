@@ -18,14 +18,14 @@ function ClassView() {
   const [loading, setLoading] = useState(true);
   const { currentUserData } = useAuth();
   const [pending, setPending] = useState([]);
-  const [pendingLoader, setPendingLoader] = useState(true);
 
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
       setClassDetails(data);
-      setLoading(false);
       if (!isTeacher(currentUserData.role)) {
         setPendingAssignments();
+      } else {
+        setLoading(false);
       }
     });
   }, []);
@@ -39,7 +39,7 @@ function ClassView() {
   };
 
   const setPendingAssignments = () => {
-    setPendingLoader(true);
+    setLoading(true);
     const assignsRef = collection(db, "classPosts", classId, "assignments");
     const q = query(assignsRef, orderBy("deadline", "asc"));
 
@@ -53,11 +53,11 @@ function ClassView() {
       });
       setPending(pendingAssign);
     });
-    setPendingLoader(false);
+    setLoading(false);
     return unsub;
   };
 
-  return loading || pendingLoader ? (
+  return loading ? (
     <Loading />
   ) : (
     <div>
