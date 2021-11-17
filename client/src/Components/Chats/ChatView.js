@@ -1,5 +1,5 @@
 import { addDoc, collection, Timestamp, doc, setDoc } from "@firebase/firestore";
-import React from "react";
+import React, { useEffect } from "react";
 import db from "../../services/firebase-config";
 import { useAuth } from "../AuthContext";
 import MainView from "./MainView";
@@ -11,11 +11,18 @@ import Avatar from "./Avatar";
 function ChatView({ selectedUser, onBackClick }) {
   const [text, setText] = useState("");
   const { currentUser } = useAuth();
+  const [taggedMsg, setTaggedMsg] = useState(null);
+
+  useEffect(() => {
+    setTaggedMsg(null);
+  }, [selectedUser]);
 
   const handleSubmit = async (filesUploaded) => {
     const inputText = text;
     setText("");
+    const tempTaggedMsg = taggedMsg;
     const msgId = getMessageId(currentUser, selectedUser);
+    setTaggedMsg(null);
     await addDoc(collection(db, "messages", msgId, "chats"), {
       text: inputText,
       from: currentUser.uid,
@@ -23,6 +30,7 @@ function ChatView({ selectedUser, onBackClick }) {
       createdAt: Timestamp.fromDate(new Date()),
       attachments: filesUploaded,
       unread: true,
+      taggedMsg: tempTaggedMsg,
     });
 
     await setDoc(doc(db, "lastMsgs", msgId), {
@@ -32,6 +40,11 @@ function ChatView({ selectedUser, onBackClick }) {
       createdAt: Timestamp.fromDate(new Date()),
       unread: true,
     });
+  };
+
+  const handleMsgTag = (msg) => {
+    console.log("tagged", msg);
+    setTaggedMsg(msg);
   };
 
   return (
@@ -48,7 +61,7 @@ function ChatView({ selectedUser, onBackClick }) {
               <p className="text-gray-500 text-sm">Online</p>
             </div>
           </div>
-          <MainView selectedUser={selectedUser} />
+          <MainView selectedUser={selectedUser} taggedMsg={taggedMsg} onMsgTag={handleMsgTag} />
           <MessageForm text={text} setText={setText} handleSubmit={handleSubmit} />
         </>
       ) : (

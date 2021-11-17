@@ -37,7 +37,7 @@ function UserCard({ onSelect, user, isSelected }) {
       <div>
         <div>{user.uname}</div>
         <div className="text-sm flex items-center gap-2 text-gray-700">
-          <b>{lastMsg}</b>
+          {lastMsgDoc?.from === currentUser.uid ? <p>{lastMsg}</p> : <b>{lastMsg}</b>}
           {lastMsgDoc?.to === currentUser.uid || !lastMsg ? null : lastMsgDoc?.unread ? (
             <span class="material-icons bottom-0 right-1 text-base ">done</span>
           ) : (

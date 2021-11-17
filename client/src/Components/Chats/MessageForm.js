@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { uploadFiles } from "../../services/helper";
+import Picker from "emoji-picker-react";
 
 const MessageForm = ({ handleSubmit, text, setText }) => {
   const [selectedFiles, setSelectedFiles] = useState(null);
   const [filesUploading, setFilesUploading] = useState(false);
   const inputFileRef = React.useRef();
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+  const onEmojiClick = (event, emojiObject) => {
+    // setChosenEmoji(emojiObject);
+    setText(text + emojiObject.emoji);
+  };
 
   const onFileChange = (e) => {
     const files = [];
@@ -15,8 +22,16 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
     setSelectedFiles(files);
   };
 
+  useEffect(() => {
+    const sub = document.querySelector("body").addEventListener("click", (e) => {
+      // console.log(e, "dd");
+    });
+    return sub;
+  }, []);
+
   const handleSend = (e) => {
     e.preventDefault();
+    setEmojiPickerOpen(false);
     if (!text && !selectedFiles) {
       return;
     }
@@ -57,6 +72,13 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
+      <div className={emojiPickerOpen ? "absolute bottom-20 left-0" : "hidden"}>
+        <Picker onEmojiClick={onEmojiClick} />
+      </div>
+      <button type="button" onClick={() => setEmojiPickerOpen(!emojiPickerOpen)} className="btn px-4 py-2 bg-green-400 flex items-center justify-center rounded-md hover:opacity-80 active:scale-95">
+        <span className="material-icons">tag_faces</span>
+      </button>
+
       <button className="btn px-4 py-2 bg-green-400 flex items-center justify-center rounded-md hover:opacity-80 active:scale-95" type="submit">
         {filesUploading ? <span className="inline-block w-4 h-4 border-2 border-gray-200 rounded-full border-t-blue-400 animate-spin"></span> : <span class="material-icons">send</span>}
       </button>
