@@ -64,7 +64,7 @@ function AssignmentView() {
       </div>
       <div className="bg-blue-700 h-1"></div>
 
-      <div className="flex lg:flex-row flex-col p-4">
+      <div className="flex lg:flex-row justify-between flex-col p-4 ">
         <div className="flex flex-col">
           {/* <!-- Desription --> */}
           <div className="p-4 text-sm">{assignment.description}</div>
@@ -97,7 +97,7 @@ function AssignmentView() {
           })}
         </div>
 
-        <div className="lg:w-1/2 w-full m-auto">
+        <div className="lg:w-64 w-3/4">
           <SubmissionForm classId={classId} assignId={assignId} />
         </div>
       </div>
