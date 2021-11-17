@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router";
 import db from "../services/firebase-config";
-import { doc, setDoc } from "@firebase/firestore";
+import { doc, setDoc, Timestamp } from "@firebase/firestore";
 import { Link } from "react-router-dom";
 import { authErrors } from "../services/AuthErrors";
 
@@ -45,6 +45,8 @@ function SignupForm() {
           email: email,
           role: role,
           enrolledClasses: [],
+          createdAt: Timestamp.fromDate(new Date()),
+          isOnline: true,
         });
         setData({
           uname: "",

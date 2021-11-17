@@ -2,6 +2,8 @@ import { useAuth } from "./AuthContext";
 import React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { doc, setDoc } from "@firebase/firestore";
+import db from "../services/firebase-config";
 
 function LoginForm() {
   const [data, setData] = useState({
@@ -28,7 +30,14 @@ function LoginForm() {
       setData({ ...data, error: "All fields are required" });
     } else {
       try {
-        await login(email, password);
+        const result = await login(email, password);
+        await setDoc(
+          doc(db, "users", result.user.uid),
+          {
+            isOnline: true,
+          },
+          { merge: true },
+        );
         setData({
           email: "",
           password: "",
