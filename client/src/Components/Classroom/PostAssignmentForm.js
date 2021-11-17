@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { addDoc, collection, setDoc } from "@firebase/firestore";
+import { addDoc, collection, setDoc, Timestamp } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import { uploadFiles } from "../../services/helper";
 import { useRef } from "react";
@@ -48,6 +48,7 @@ function PostAssignmentForm({ classDetails }) {
       files: [],
       submissionList: [],
       grades: grades,
+      createdAt: Timestamp.fromDate(new Date()),
     };
 
     const assignRef = await addDoc(
