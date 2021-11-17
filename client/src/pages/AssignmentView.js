@@ -12,7 +12,7 @@ function AssignmentView() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const assignRef = doc(db, "classPosts", classId, "assignments", assignId);
+    const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
     const docSnap = getDoc(assignRef).then((assign) => {
       setAssignment(assign.data());
       setLoading(false);

@@ -22,7 +22,7 @@ function ClassCard({ classroom, isTeacher }) {
       setPendingLoader(true);
       const assignsRef = collection(
         db,
-        "classPosts",
+        "classrooms",
         classroom.classId,
         "assignments",
       );

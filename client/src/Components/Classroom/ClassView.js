@@ -40,7 +40,7 @@ function ClassView() {
 
   const setPendingAssignments = () => {
     setLoading(true);
-    const assignsRef = collection(db, "classPosts", classId, "assignments");
+    const assignsRef = collection(db, "classrooms", classId, "assignments");
     const q = query(assignsRef, orderBy("deadline", "asc"));
 
     const unsub = onSnapshot(q, (querySnapshot) => {
