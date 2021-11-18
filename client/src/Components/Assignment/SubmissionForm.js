@@ -54,6 +54,7 @@ function SubmissionForm({ classId, assignId, setIsSubmit }) {
       turnedInLate: false,
       files: [],
       grades: "",
+      feedback: "",
     };
 
     const solRef = await setDoc(docRef, solutionObj);
