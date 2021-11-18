@@ -15,15 +15,7 @@ function SubmissionForm({ classId, assignId }) {
   const [submission, setSubmission] = useState();
   const [isSubmited, setIsSubmitted] = useState(false);
 
-  const docRef = doc(
-    db,
-    "classrooms",
-    classId,
-    "assignments",
-    assignId,
-    "submissions",
-    currentUser.uid,
-  );
+  const docRef = doc(db, "submissions", assignId + currentUser.uid);
   const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
 
   const getSubmission = () => {
@@ -76,13 +68,16 @@ function SubmissionForm({ classId, assignId }) {
     const solutionObj = {
       comments: comments,
       submittedBy: currentUser.uid,
+      classId: classId,
+      assignId: assignId,
       submittedAt: Timestamp.fromDate(new Date()),
+      turnedInLate: false,
       files: [],
     };
 
     const solRef = await setDoc(docRef, solutionObj);
 
-    const path = `classrooms/${classId}/${assignId}/submissions/${currentUser.uid}`;
+    const path = `submissions/${assignId + currentUser.uid}`;
 
     uploadFiles(path, files).then(async (data) => {
       await setDoc(docRef, { files: data }, { merge: true }).then(() => {
@@ -90,13 +85,13 @@ function SubmissionForm({ classId, assignId }) {
       });
     });
 
-    getDoc(assignRef).then((data) => {
-      let updatedList = data.submissionList.push(currentUser.uid);
+    getDoc(assignRef).then((doc) => {
+      let updatedList = doc.data().submissionList;
+      updatedList.push(currentUser.uid);
       setDoc(assignRef, { submissionList: updatedList }, { merge: true });
     });
+    setLoading(false);
   };
-
-  console.log(files);
 
   return (
     <div>
