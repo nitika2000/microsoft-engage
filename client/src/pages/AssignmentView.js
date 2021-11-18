@@ -15,6 +15,7 @@ import { useAuth } from "../Components/AuthContext";
 import SubmissionView from "../Components/Assignment/SubmissionView";
 import { isTeacher } from "../services/helper";
 import Loading from "../Components/Loading";
+import GradingCard from "../Components/Assignment/GradingCard";
 
 function AssignmentView() {
   const searchParams = useParams();
@@ -27,7 +28,7 @@ function AssignmentView() {
   const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmit, setIsSubmit] = useState(false);
-  const [submissionList, setSubmissionList] = useState([]);
+  const [submissionList, setSubmissionList] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -157,19 +158,25 @@ function AssignmentView() {
             );
           })}
         </div>
-
-        <div className="lg:w-64 w-3/4">
-          {submission && submission !== nullSubmission ? (
-            <SubmissionView submission={submission} />
-          ) : (
-            <SubmissionForm
-              classId={classId}
-              assignId={assignId}
-              setIsSubmit={() => setIsSubmit(true)}
-            />
-          )}
-        </div>
+        {!isTeacher(currentUserData.role) ? (
+          <div className="lg:w-64 w-3/4">
+            {submission && submission !== nullSubmission ? (
+              <SubmissionView submission={submission} />
+            ) : (
+              <SubmissionForm
+                classId={classId}
+                assignId={assignId}
+                setIsSubmit={() => setIsSubmit(true)}
+              />
+            )}
+          </div>
+        ) : null}
       </div>
+      {isTeacher(currentUserData.role) && submissionList
+        ? submissionList.map((submission) => (
+            <GradingCard submission={submission} />
+          ))
+        : null}
     </div>
   ) : (
     <h1>Url is incorrent : 404</h1>
