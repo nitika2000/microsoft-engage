@@ -5,33 +5,15 @@ import db from "../../services/firebase-config";
 import { uploadFiles } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 
-function SubmissionForm({ classId, assignId }) {
+function SubmissionForm({ classId, assignId, setIsSubmit }) {
   const { currentUser } = useAuth();
   const [comments, setComments] = useState("");
   const [files, setFiles] = useState([]);
   const inputFileRef = useRef();
-  const [loading, setLoading] = useState(true);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const [submission, setSubmission] = useState();
-  const [isSubmited, setIsSubmitted] = useState(false);
 
   const docRef = doc(db, "submissions", assignId + currentUser.uid);
   const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
-
-  const getSubmission = () => {
-    setLoading(true);
-    getDoc(docRef).then((doc) => {
-      if (doc.data()) {
-        setSubmission(doc.data());
-        setIsSubmitted(true);
-      }
-    });
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getSubmission();
-  }, []);
 
   const resetFiles = () => {
     inputFileRef.current.value = "";
@@ -39,12 +21,10 @@ function SubmissionForm({ classId, assignId }) {
 
   const postSubmit = () => {
     setSubmitLoader(false);
-
     setFiles([]);
     setComments("");
-    setIsSubmitted(true);
+    setIsSubmit();
     resetFiles();
-    getSubmission();
   };
 
   const onFileChange = (e) => {
@@ -73,6 +53,7 @@ function SubmissionForm({ classId, assignId }) {
       submittedAt: Timestamp.fromDate(new Date()),
       turnedInLate: false,
       files: [],
+      grades: "",
     };
 
     const solRef = await setDoc(docRef, solutionObj);
@@ -90,7 +71,6 @@ function SubmissionForm({ classId, assignId }) {
       updatedList.push(currentUser.uid);
       setDoc(assignRef, { submissionList: updatedList }, { merge: true });
     });
-    setLoading(false);
   };
 
   return (
