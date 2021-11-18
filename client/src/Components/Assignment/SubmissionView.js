@@ -56,6 +56,13 @@ function SubmissionView({ submission }) {
             ) : (
               <span className="text-xs text-gray-600">Not graded yet </span>
             )}
+            {submission.feedback && submission.feedback.length > 0 ? (
+              <div>
+                <span className="font-bold text-gray-600">
+                  Feedback by teacher : {submission.feedback}
+                </span>
+              </div>
+            ) : null}
           </p>
         </div>
       </div>
