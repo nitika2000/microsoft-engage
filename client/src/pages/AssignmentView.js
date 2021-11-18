@@ -1,42 +1,88 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { doc, getDoc } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "@firebase/firestore";
 import db from "../services/firebase-config";
 import SubmissionForm from "../Components/Assignment/SubmissionForm";
 import { useAuth } from "../Components/AuthContext";
 import SubmissionView from "../Components/Assignment/SubmissionView";
+import { isTeacher } from "../services/helper";
+import Loading from "../Components/Loading";
+import GradingCard from "../Components/Assignment/GradingCard";
 
 function AssignmentView() {
   const searchParams = useParams();
-  const { currentUser } = useAuth();
+  const { currentUser, currentUserData } = useAuth();
   const classId = searchParams.classId;
+
   const assignId = searchParams.assignId;
+  const nullSubmission = {};
   const [assignment, setAssignment] = useState(null);
-  const [submission, setSubmission] = useState();
+  const [submission, setSubmission] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [submissionList, setSubmissionList] = useState(null);
 
   useEffect(() => {
     setLoading(true);
     const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
     const docSnap = getDoc(assignRef).then((assign) => {
       setAssignment(assign.data());
-      setLoading(false);
     });
+
+    if (isTeacher(currentUserData.role)) {
+      const submissionsRef = collection(db, "submissions");
+      const q = query(submissionsRef, where("assignId", "==", assignId));
+
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        let submissions = [];
+        querySnapshot.forEach((doc) => {
+          console.log("submission", doc.data());
+          submissions.push(doc.data());
+        });
+        setSubmissionList(submissions);
+      });
+      return () => {
+        unsub();
+      };
+    }
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const submissionRef = doc(db, "submissions", assignId + currentUser.uid);
     const subSnap = getDoc(submissionRef).then((sub) => {
       if (sub.data()) {
-        console.log(sub.data());
         setSubmission(sub.data());
+      } else {
+        setSubmission(nullSubmission);
       }
     });
   }, [isSubmit]);
 
+  useEffect(() => {
+    if (isTeacher(currentUserData.role)) {
+      if (assignment && submissionList) {
+        setLoading(false);
+      }
+    } else {
+      if (assignment && submission) {
+        setLoading(false);
+      }
+    }
+  }, [assignment, submissionList, submission]);
+
+  console.log(submissionList);
+
   return loading ? (
-    <h1>Loading</h1>
+    <Loading />
   ) : assignment ? (
     <div className="p-4">
       <div className="flex flex-row">
@@ -112,19 +158,25 @@ function AssignmentView() {
             );
           })}
         </div>
-
-        <div className="lg:w-64 w-3/4">
-          {submission ? (
-            <SubmissionView submission={submission} />
-          ) : (
-            <SubmissionForm
-              classId={classId}
-              assignId={assignId}
-              setIsSubmit={() => setIsSubmit(true)}
-            />
-          )}
-        </div>
+        {!isTeacher(currentUserData.role) ? (
+          <div className="lg:w-64 w-3/4">
+            {submission && submission !== nullSubmission ? (
+              <SubmissionView submission={submission} />
+            ) : (
+              <SubmissionForm
+                classId={classId}
+                assignId={assignId}
+                setIsSubmit={() => setIsSubmit(true)}
+              />
+            )}
+          </div>
+        ) : null}
       </div>
+      {isTeacher(currentUserData.role) && submissionList
+        ? submissionList.map((submission) => (
+            <GradingCard submission={submission} />
+          ))
+        : null}
     </div>
   ) : (
     <h1>Url is incorrent : 404</h1>

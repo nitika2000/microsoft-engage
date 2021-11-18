@@ -6,7 +6,7 @@ import { uploadFiles } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 
 function SubmissionForm({ classId, assignId, setIsSubmit }) {
-  const { currentUser } = useAuth();
+  const { currentUser, currentUserData } = useAuth();
   const [comments, setComments] = useState("");
   const [files, setFiles] = useState([]);
   const inputFileRef = useRef();
@@ -54,6 +54,8 @@ function SubmissionForm({ classId, assignId, setIsSubmit }) {
       turnedInLate: false,
       files: [],
       grades: "",
+      feedback: "",
+      studentName: currentUserData.uname,
     };
 
     const solRef = await setDoc(docRef, solutionObj);
