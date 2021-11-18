@@ -11,6 +11,21 @@ module.exports = {
         sky: colors.sky,
         blueGray: colors.blueGray,
       },
+      keyframes: {
+        fadein: {
+          "0%": { transform: "scale(0.80); opacity: 0;" },
+          "100%": { transform: "scale(1); opacity: 1;" },
+        },
+        fadeout: {
+          "100%": {
+            transform: "scale(0.50); opacity: 0; visibility: hidden;",
+          },
+        },
+      },
+      animation: {
+        fadein: "fadein 200ms ease-in-out",
+        fadeout: "fadeout 200ms ease-in-out forwards",
+      },
     },
   },
   variants: {

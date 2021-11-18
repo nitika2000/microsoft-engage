@@ -9,6 +9,7 @@ import Linkify from "react-linkify";
 import Attachments from "./Attachments";
 import ImageViewer from "react-simple-image-viewer";
 import TaggedMsg from "./TaggedMsg";
+import { Transition } from "@headlessui/react";
 
 function MainView({ selectedUser, onMsgTag, taggedMsg }) {
   const { currentUser } = useAuth();
@@ -18,6 +19,7 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
   const [opacity, setOpacity] = useState(0);
   const [highlightMsg, setHighlightMsg] = useState("");
   const [scrollToBottomVisibility, setScrollToBottomVisibility] = useState(false);
+  const [taggedMsgState, setTaggedMsgState] = useState("unset");
 
   const msgRef = React.createRef();
 
@@ -29,6 +31,12 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
 
   const [imageViewerOpen, setImageViewerOpen] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (taggedMsg === null) {
+      setTaggedMsgState("unset");
+    }
+  }, [taggedMsg]);
 
   useEffect(() => {
     if (msgRef.current) {
@@ -119,10 +127,10 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
       for (let i = 1; i < msgs.length; i++) {
         const prevDate = moment.utc(msgs[i - 1].createdAt.seconds * 1000).local();
         const currentDate = moment.utc(msgs[i].createdAt.seconds * 1000).local();
-        msgsWithDate.push(msgs[i]);
         if (!prevDate.isSame(currentDate, "day")) {
           msgsWithDate.push({ date: formatDate(currentDate) });
         }
+        msgsWithDate.push(msgs[i]);
       }
       setLoading(false);
       setMsgs(msgsWithDate);
@@ -139,22 +147,15 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
   };
 
   const scrollTo = (msgId) => {
-    // console.log(chatsDivRef.current.children);
     for (const c of chatsDivRef.current.children) {
       if (c.id === msgId) {
-        // console.log(c.offsetTop);
-        // console.log(chatsDivRef.current.offsetTop);
-        console.log("set", msgId);
         msgRef.current.scrollTop = c.offsetTop - 50;
         setHighlightMsg(msgId);
         setTimeout(() => {
           setHighlightMsg("");
         }, 2000);
-        // msgRefc
       }
     }
-    // const elem = chatsDivRef.current.children.find((elem) => elem.id === msgId);
-    // console.log(elem);
   };
 
   const onScroll = (e) => {
@@ -169,10 +170,10 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
     const chatDateCapsuleY = chatDateRef.current?.getBoundingClientRect().y;
     for (let i = chatsDiv.children.length - 1; i >= 0; i--) {
       const c = chatsDiv.children[i];
-      if (c.className.includes("date-capsule")) {
-        const { y: dateCapsuleY } = c.getBoundingClientRect();
+      if (c.className.includes("date-capsule-parent")) {
+        const { y: dateCapsuleY } = c.firstChild.getBoundingClientRect();
         if (dateCapsuleY <= chatDateCapsuleY) {
-          cDate = c.innerHTML;
+          cDate = c.firstChild.innerHTML;
           break;
         }
       }
@@ -182,9 +183,8 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
     }
     const msgRefElem = msgRef.current;
 
-    // console.log(msgRefElem.height);
-    // console.log(msgRefElem.scrollTo - msgRefElem - msgRefElem);
-    if (msgRefElem.scrollHeight - msgRefElem.scrollTo - msgRefElem.outerHeight < 1) {
+    const showButton = !(msgRefElem.scrollHeight - (msgRefElem.scrollTop + msgRefElem.offsetHeight) < 100);
+    if (showButton) {
       setScrollToBottomVisibility(true);
     } else {
       setScrollToBottomVisibility(false);
@@ -194,6 +194,18 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
   if (loading) {
     return <div className="mx-auto w-14 h-14 border-4 border-t-blue-500 rounded-full border-gray-700 animate-spin"></div>;
   }
+
+  const isLastMsgFromAnotherUser = (currentIndex) => {
+    const lastMsg = currentIndex > 0 ? msgs[currentIndex - 1] : null;
+    const currentMsg = msgs[currentIndex];
+    if (lastMsg.date || currentMsg.date) {
+      return false;
+    } else if (lastMsg.from !== currentMsg.from) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   return (
     <div className="overflow-hidden flex-grow relative">
@@ -209,19 +221,21 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
         <button
           onClick={scrollToBottom}
           className={
-            "bottom-0 absolute right-0 h-10 w-10 items-center justify-center border-2 border-blue-500 bg-blue-200 shadow-lg active:scale-95 z-50 rounded-full " +
-            (scrollToBottomVisibility || true ? "flex" : "hidden")
+            "bottom-0 absolute flex right-0 h-10 w-10 transition-transform bg-opacity-60 items-center justify-center border-2 border-blue-500 bg-blue-200 shadow-lg active:scale-95 z-50 rounded-full " +
+            (scrollToBottomVisibility ? "scale-100" : "scale-0")
           }
         >
           <span class="material-icons">expand_more</span>
         </button>
-        <div ref={chatsDivRef} className="py-4 px-1 md:px-8 flex flex-col gap-2">
+        <div ref={chatsDivRef} className="py-4 px-1 md:px-8 flex flex-col">
           {msgs.map((msg, index) => {
             if (msg.date) {
               return (
-                <h1 key={index} className="date-capsule text-xs mb-4 bg-blue-200 px-4 rounded-full py-1 mx-auto w-[max-content]">
-                  {msg.date}
-                </h1>
+                <div className="date-capsule-parent relative after:absolute after:w-full after:h-[2px] after:bg-gray-300 flex items-center after:z-[0]">
+                  <h1 key={index} className="date-capsule text-xs my-4  bg-blue-200 px-4 rounded-full py-1 mx-auto z-10 w-[max-content]">
+                    {msg.date}
+                  </h1>
+                </div>
               );
             }
 
@@ -232,7 +246,7 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
                 id={msg.id}
                 key={msg.id}
                 className={`shadow-sm flex gap-2 items-center justify-between relative text-gray-800 text-sm break-words font-light  max-w-[80%] pl-4 pr-4 py-2 w-[fit-content] rounded-md ${className} ${
-                  highlightMsg === msg.id ? "bg-blue-300 text-white animate-pulse" : ""
+                  highlightMsg === msg.id ? "bg-blue-300 text-white animate-pulse" : " " + (isLastMsgFromAnotherUser(index) ? " mt-5" : " mt-1")
                 }`}
               >
                 <div className="min-w-0">
@@ -248,8 +262,8 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
                     {msg.text}
                   </Linkify>
                 </div>
-                <div className="flex gap-1 self-end whitespace-nowrap items-center">
-                  <span className="relative text-[0.65rem] bottom-[-2px] ml-auto text-gray-700">{msg.timeString}</span>
+                <div className="flex  relative -bottom-2 -right-2 gap-1 self-end whitespace-nowrap items-center">
+                  <span className="text-[0.65rem] ml-auto text-gray-700">{msg.timeString}</span>
                   {msg.from === currentUser.uid ? (
                     msg.unread ? (
                       <span class="material-icons bottom-0 right-1 text-base ">done</span>
@@ -260,6 +274,7 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
                   <button
                     onClick={() => {
                       onMsgTag({ ...msg, uname: msg.from === currentUser.uid ? currentUser.uname || "you" : selectedUser.uname });
+                      setTaggedMsgState("open");
                     }}
                   >
                     <span class="text-gray-600 text-sm material-icons">reply</span>
@@ -269,20 +284,31 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
             );
           })}
         </div>
-        {taggedMsg ? (
-          <div className="absolute text-gray-800 bottom-0 py-2 px-4 w-full bg-opacity-70 bg-blue-300 border-l-4 border-l-blue-600">
-            <h1 className="text">{taggedMsg.uname}</h1>
-            <p className="text-sm">{taggedMsg.text}</p>
+        <Transition
+          show={taggedMsg && taggedMsgState !== "closed" ? true : false}
+          enter="transition-all duration-300"
+          enterFrom="opacity-0 scale-0"
+          enterTo="opacity-100 scale-100"
+          leave="transition-all duration-300"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-0"
+          afterLeave={() => {
+            onMsgTag(null);
+          }}
+        >
+          <div className={"absolute rounded-md text-gray-800 bottom-0 py-2 px-4 w-11/12 bg-opacity-70 bg-blue-300 border-l-4 border-l-blue-600 transition-transform "}>
+            <h1 className="text">{taggedMsg?.uname}</h1>
+            <p className="text-sm">{taggedMsg?.text}</p>
             <button
               className="absolute right-2 top-2"
               onClick={() => {
-                onMsgTag(null);
+                setTaggedMsgState("closed");
               }}
             >
               <span class="material-icons">close</span>
             </button>
           </div>
-        ) : null}
+        </Transition>
       </div>
       {imageViewerOpen ? <ImageViewer closeOnClickOutside={true} src={images} currentIndex={imageIndex} disableScroll={true} onClose={() => setImageViewerOpen(false)} /> : null}
     </div>

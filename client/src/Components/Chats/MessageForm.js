@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { uploadFiles } from "../../services/helper";
 import Picker from "emoji-picker-react";
 
-const MessageForm = ({ handleSubmit, text, setText }) => {
+const MessageForm = ({ handleSubmit, text, setText, setFocus }) => {
   const [selectedFiles, setSelectedFiles] = useState(null);
   const [filesUploading, setFilesUploading] = useState(false);
   const inputFileRef = React.useRef();
@@ -66,7 +66,7 @@ const MessageForm = ({ handleSubmit, text, setText }) => {
         <input className="hidden" type="file" multiple ref={inputFileRef} onChange={onFileChange} />
       </button>
       <input
-        className="px-4 min-w-0 py-2 bg-gray-200 outline-none ring-0 rounded-md focus:ring-2 focus:ring-indigo-600 border-gray-300 flex-grow"
+        className="px-4 min-w-0 py-2 bg-gray-200 outline-none ring-0 rounded-md focus:ring-2 focus:ring-blue-400 border-gray-300 flex-grow"
         type="text"
         placeholder="Enter message"
         value={text}

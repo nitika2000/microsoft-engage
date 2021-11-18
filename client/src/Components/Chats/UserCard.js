@@ -4,8 +4,9 @@ import db from "../../services/firebase-config";
 import { getMessageId, truncate } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 import Avatar from "./Avatar";
+import Highlighter from "react-highlight-words";
 
-function UserCard({ onSelect, user, isSelected }) {
+function UserCard({ onSelect, user, isSelected, searchedName }) {
   const { currentUser } = useAuth();
   const [lastMsg, setLastMsg] = useState("");
   const [unread, setUnread] = useState(false);
@@ -30,14 +31,20 @@ function UserCard({ onSelect, user, isSelected }) {
 
   return (
     <div
-      className={(isSelected ? "bg-blue-400" : "bg-white") + " flex gap-2 items-center shadow-sm py-4 rounded-md transition-all hover:scale-105 hover:shadow-md px-2 cursor-pointer active:scale-95"}
+      className={
+        (isSelected ? "bg-blue-400" : "bg-white") +
+        " gap-2 items-center shadow-sm py-4 rounded-md transition-all hover:scale-105 hover:shadow-md px-2 cursor-pointer active:scale-95 " +
+        (user.uname.toLowerCase().includes(searchedName) ? "flex" : "hidden")
+      }
       onClick={() => onSelect(user)}
     >
       <Avatar name={user.uname} w="w-12" h="h-12" />
       <div>
-        <div>{user.uname}</div>
+        <div>
+          <Highlighter searchWords={[searchedName]} textToHighlight={user.uname} autoEscape={true} />
+        </div>
         <div className="text-sm flex items-center gap-2 text-gray-700">
-          {lastMsgDoc?.from === currentUser.uid ? <p>{lastMsg}</p> : <b>{lastMsg}</b>}
+          {lastMsgDoc?.from === currentUser.uid ? <p>{lastMsg}</p> : <p className={unread ? "font-bold" : ""}>{lastMsg}</p>}
           {lastMsgDoc?.to === currentUser.uid || !lastMsg ? null : lastMsgDoc?.unread ? (
             <span class="material-icons bottom-0 right-1 text-base ">done</span>
           ) : (
