@@ -56,12 +56,19 @@ function SubmissionForm({ classId, assignId }) {
   };
 
   const onFileChange = (e) => {
-    const files = [];
+    const prevFileState = files;
+    const newSelectedFiles = [];
     for (let i = 0; i < e.target.files.length; i++) {
       const newFile = e.target.files[i];
-      files.push(newFile);
+      newSelectedFiles.push(newFile);
     }
-    setFiles(files);
+    const updatedList = prevFileState.concat(newSelectedFiles);
+    setFiles(updatedList);
+  };
+
+  const onFileCancel = (file) => {
+    var filteredFiles = files.filter((item) => item.name !== file.name);
+    setFiles(filteredFiles);
   };
 
   const handleSubmit = async (e) => {
@@ -124,7 +131,31 @@ function SubmissionForm({ classId, assignId }) {
           {files.length !== 0 ? (
             <div>
               {files.map((file) => (
-                <p className="text-gray-700 text-xs italic">{file.name}</p>
+                <div className="flex flex-row">
+                  <p className="text-gray-700 text-xs italic">{file.name}</p>
+                  <button
+                    onClick={() => onFileCancel(file)}
+                    type="button"
+                    class="inline-flex items-center justify-center hover:bg-red-700 focus:ring-indigo-500"
+                  >
+                    <span class="sr-only">Close menu</span>
+                    <svg
+                      class="h-3 w-3"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
           ) : null}
