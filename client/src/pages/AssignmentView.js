@@ -103,7 +103,7 @@ function AssignmentView() {
           </svg>
         </div>
 
-        <div className="flex flex-col m-4">
+        <div className="flex flex-col m-4 lg:max-w-1/2">
           <div className="text-blue-700 font-bold text-2xl">
             {assignment.title}
           </div>
@@ -159,8 +159,9 @@ function AssignmentView() {
           })}
         </div>
         {!isTeacher(currentUserData.role) ? (
-          <div className="lg:w-64 w-3/4">
-            {submission && submission !== nullSubmission ? (
+          <div className="lg:w-[240px] w-full">
+            {submission &&
+            JSON.stringify(submission) !== JSON.stringify(nullSubmission) ? (
               <SubmissionView submission={submission} />
             ) : (
               <SubmissionForm
