@@ -7,7 +7,14 @@ import ClassBanner from "./ClassBanner";
 import PostAssignmentForm from "./PostAssignmentForm";
 import ClassAssignmentsView from "./ClassAssignmentsView";
 import { useAuth } from "../AuthContext";
-import { collection, onSnapshot, orderBy, query } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import PendingAssignmentView from "./PendingAssignmentView";
 
@@ -18,6 +25,7 @@ function ClassView() {
   const [loading, setLoading] = useState(true);
   const { currentUserData } = useAuth();
   const [pending, setPending] = useState([]);
+  const [studentList, setStudentList] = useState([]);
 
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
@@ -25,10 +33,24 @@ function ClassView() {
       if (!isTeacher(currentUserData.role)) {
         setPendingAssignments();
       } else {
-        setLoading(false);
+        getEnrolledStudents(data).then(() => setLoading(false));
       }
     });
   }, []);
+
+  const getEnrolledStudents = async (data) => {
+    const enrolled = data.enrolledStudents;
+    var enrolledStudents = [];
+    enrolled.forEach((studentId) => {
+      getDoc(doc(db, "users", studentId)).then((student) => {
+        enrolledStudents.push({
+          name: student.data().uname,
+          email: student.data().email,
+        });
+      });
+    });
+    setStudentList(enrolledStudents);
+  };
 
   const checkSubmission = (submissionList) => {
     return (
