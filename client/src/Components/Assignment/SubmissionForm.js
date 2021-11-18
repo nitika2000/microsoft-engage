@@ -5,41 +5,15 @@ import db from "../../services/firebase-config";
 import { uploadFiles } from "../../services/helper";
 import { useAuth } from "../AuthContext";
 
-function SubmissionForm({ classId, assignId }) {
+function SubmissionForm({ classId, assignId, setIsSubmit }) {
   const { currentUser } = useAuth();
   const [comments, setComments] = useState("");
   const [files, setFiles] = useState([]);
   const inputFileRef = useRef();
-  const [loading, setLoading] = useState(true);
   const [submitLoader, setSubmitLoader] = useState(false);
-  const [submission, setSubmission] = useState();
-  const [isSubmited, setIsSubmitted] = useState(false);
 
-  const docRef = doc(
-    db,
-    "classrooms",
-    classId,
-    "assignments",
-    assignId,
-    "submissions",
-    currentUser.uid,
-  );
+  const docRef = doc(db, "submissions", assignId + currentUser.uid);
   const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
-
-  const getSubmission = () => {
-    setLoading(true);
-    getDoc(docRef).then((doc) => {
-      if (doc.data()) {
-        setSubmission(doc.data());
-        setIsSubmitted(true);
-      }
-    });
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getSubmission();
-  }, []);
 
   const resetFiles = () => {
     inputFileRef.current.value = "";
@@ -47,21 +21,26 @@ function SubmissionForm({ classId, assignId }) {
 
   const postSubmit = () => {
     setSubmitLoader(false);
-
     setFiles([]);
     setComments("");
-    setIsSubmitted(true);
+    setIsSubmit();
     resetFiles();
-    getSubmission();
   };
 
   const onFileChange = (e) => {
-    const files = [];
+    const prevFileState = files;
+    const newSelectedFiles = [];
     for (let i = 0; i < e.target.files.length; i++) {
       const newFile = e.target.files[i];
-      files.push(newFile);
+      newSelectedFiles.push(newFile);
     }
-    setFiles(files);
+    const updatedList = prevFileState.concat(newSelectedFiles);
+    setFiles(updatedList);
+  };
+
+  const onFileCancel = (file) => {
+    var filteredFiles = files.filter((item) => item.name !== file.name);
+    setFiles(filteredFiles);
   };
 
   const handleSubmit = async (e) => {
@@ -69,13 +48,17 @@ function SubmissionForm({ classId, assignId }) {
     const solutionObj = {
       comments: comments,
       submittedBy: currentUser.uid,
+      classId: classId,
+      assignId: assignId,
       submittedAt: Timestamp.fromDate(new Date()),
+      turnedInLate: false,
       files: [],
+      grades: "",
     };
 
     const solRef = await setDoc(docRef, solutionObj);
 
-    const path = `classrooms/${classId}/${assignId}/submissions/${currentUser.uid}`;
+    const path = `submissions/${assignId + currentUser.uid}`;
 
     uploadFiles(path, files).then(async (data) => {
       await setDoc(docRef, { files: data }, { merge: true }).then(() => {
@@ -83,13 +66,12 @@ function SubmissionForm({ classId, assignId }) {
       });
     });
 
-    getDoc(assignRef).then((data) => {
-      let updatedList = data.submissionList.push(currentUser.uid);
+    getDoc(assignRef).then((doc) => {
+      let updatedList = doc.data().submissionList;
+      updatedList.push(currentUser.uid);
       setDoc(assignRef, { submissionList: updatedList }, { merge: true });
     });
   };
-
-  console.log(files);
 
   return (
     <div>
@@ -124,7 +106,31 @@ function SubmissionForm({ classId, assignId }) {
           {files.length !== 0 ? (
             <div>
               {files.map((file) => (
-                <p className="text-gray-700 text-xs italic">{file.name}</p>
+                <div className="flex flex-row">
+                  <p className="text-gray-700 text-xs italic">{file.name}</p>
+                  <button
+                    onClick={() => onFileCancel(file)}
+                    type="button"
+                    class="inline-flex items-center justify-center hover:bg-red-700 focus:ring-indigo-500"
+                  >
+                    <span class="sr-only">Close menu</span>
+                    <svg
+                      class="h-3 w-3"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
           ) : null}

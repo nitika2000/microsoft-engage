@@ -3,21 +3,37 @@ import { useParams } from "react-router";
 import { doc, getDoc } from "@firebase/firestore";
 import db from "../services/firebase-config";
 import SubmissionForm from "../Components/Assignment/SubmissionForm";
+import { useAuth } from "../Components/AuthContext";
+import SubmissionView from "../Components/Assignment/SubmissionView";
 
 function AssignmentView() {
   const searchParams = useParams();
+  const { currentUser } = useAuth();
   const classId = searchParams.classId;
   const assignId = searchParams.assignId;
   const [assignment, setAssignment] = useState(null);
+  const [submission, setSubmission] = useState();
   const [loading, setLoading] = useState(true);
+  const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
     const docSnap = getDoc(assignRef).then((assign) => {
       setAssignment(assign.data());
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    const submissionRef = doc(db, "submissions", assignId + currentUser.uid);
+    const subSnap = getDoc(submissionRef).then((sub) => {
+      if (sub.data()) {
+        console.log(sub.data());
+        setSubmission(sub.data());
+      }
+    });
+  }, [isSubmit]);
 
   return loading ? (
     <h1>Loading</h1>
@@ -98,7 +114,15 @@ function AssignmentView() {
         </div>
 
         <div className="lg:w-64 w-3/4">
-          <SubmissionForm classId={classId} assignId={assignId} />
+          {submission ? (
+            <SubmissionView submission={submission} />
+          ) : (
+            <SubmissionForm
+              classId={classId}
+              assignId={assignId}
+              setIsSubmit={() => setIsSubmit(true)}
+            />
+          )}
         </div>
       </div>
     </div>
