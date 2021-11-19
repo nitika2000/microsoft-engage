@@ -82,7 +82,10 @@ function ClassView() {
     <Loading />
   ) : (
     <div>
-      <ClassBanner classroom={classDetails} />
+      <ClassBanner
+        classroom={classDetails}
+        isTeacher={isTeacher(currentUserData.role)}
+      />
       <div className="flex lg:flex-row flex-col mx-auto w-9/12">
         {isTeacher(currentUserData.role) ? (
           <div className="lg:w-1/2 w-full lg:p-2">

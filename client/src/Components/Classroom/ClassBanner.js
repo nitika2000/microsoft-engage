@@ -1,6 +1,6 @@
 import React from "react";
 
-function ClassBanner({ classroom }) {
+function ClassBanner({ classroom, isTeacher }) {
   return (
     <div className="w-9/12 py-4 m-auto">
       <div className="c-card block bg-white shadow-md rounded-lg overflow-hidden">
@@ -9,6 +9,18 @@ function ClassBanner({ classroom }) {
             {classroom.className}
           </h2>
         </div>
+        {isTeacher ? (
+          <div className="p-2 flex flex-row justify-between text-gray-600">
+            <div className="">
+              <span className="font-bold">Class Code: </span>
+              <span>{classroom.classCode}</span>
+            </div>
+            <div>
+              <span className="font-bold">Enrolled Students: </span>
+              <span>{classroom.enrolledStudents.length}</span>
+            </div>
+          </div>
+        ) : null}
         <div className="p-4 flex items-center text-sm text-white bg-blue-700">
           <svg
             xmlns="http://www.w3.org/2000/svg"
