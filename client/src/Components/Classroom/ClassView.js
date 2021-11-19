@@ -17,6 +17,7 @@ import {
 } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import PendingAssignmentView from "./PendingAssignmentView";
+import StudentList from "./StudentList";
 
 function ClassView() {
   const searchParams = useParams();
@@ -26,6 +27,8 @@ function ClassView() {
   const { currentUserData } = useAuth();
   const [pending, setPending] = useState([]);
   const [studentList, setStudentList] = useState([]);
+  const [studentTab, setStudentTab] = useState(false);
+
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
       setClassDetails(data);
@@ -78,6 +81,8 @@ function ClassView() {
     return unsub;
   };
 
+  const activeState = " text-white bg-gray-500";
+
   return loading ? (
     <Loading />
   ) : (
@@ -86,20 +91,47 @@ function ClassView() {
         classroom={classDetails}
         isTeacher={isTeacher(currentUserData.role)}
       />
-      <div className="flex lg:flex-row flex-col mx-auto w-9/12">
-        {isTeacher(currentUserData.role) ? (
-          <div className="lg:w-1/2 w-full lg:p-2">
-            <PostAssignmentForm classDetails={classDetails} />
+      {isTeacher(currentUserData.role) ? (
+        <div className="my-1 p-1 border-b-2 w-9/12 m-auto flex flex-row justify-center">
+          <div
+            onClick={() => setStudentTab(false)}
+            className={`p-2 cursor-pointer rounded-sm hover:bg-gray-500 hover:text-white${
+              studentTab ? "" : activeState
+            }`}
+          >
+            Class View
           </div>
-        ) : (
-          <div className="lg:w-1/4 w-full lg:p-2">
-            <PendingAssignmentView pending={pending} />
+          <div
+            onClick={() => setStudentTab(true)}
+            className={`p-2 cursor-pointer rounded-sm hover:bg-gray-500 hover:text-white${
+              !studentTab ? "" : activeState
+            }`}
+          >
+            Enrolled Student
           </div>
-        )}
-        <div className="w-full">
-          <ClassAssignmentsView classId={classDetails.classId} />
         </div>
-      </div>
+      ) : null}
+
+      {studentTab ? (
+        <div className="w-full">
+          <StudentList studentList={studentList} />
+        </div>
+      ) : (
+        <div className="flex lg:flex-row flex-col mx-auto w-9/12">
+          {isTeacher(currentUserData.role) ? (
+            <div className="lg:w-1/2 w-full lg:p-2">
+              <PostAssignmentForm classDetails={classDetails} />
+            </div>
+          ) : (
+            <div className="lg:w-1/4 w-full lg:p-2">
+              <PendingAssignmentView pending={pending} />
+            </div>
+          )}
+          <div className="w-full">
+            <ClassAssignmentsView classId={classDetails.classId} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
