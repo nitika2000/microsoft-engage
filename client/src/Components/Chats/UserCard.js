@@ -6,14 +6,14 @@ import { useAuth } from "../AuthContext";
 import Avatar from "./Avatar";
 import Highlighter from "react-highlight-words";
 
-function UserCard({ onSelect, user, isSelected, searchedName }) {
+function UserCard({ onSelect, user, isSelected, searchedName, isClassroom }) {
   const { currentUser } = useAuth();
   const [lastMsg, setLastMsg] = useState("");
   const [unread, setUnread] = useState(false);
   const [lastMsgDoc, setLastMsgDoc] = useState(null);
 
   useEffect(() => {
-    const msgId = getMessageId(currentUser, user);
+    const msgId = isClassroom ? user.uid : getMessageId(currentUser, user);
     const unsub = onSnapshot(doc(db, "lastMsgs", msgId), (doc) => {
       if (doc.data()) {
         const lastMsg = doc.data().text;
@@ -41,11 +41,22 @@ function UserCard({ onSelect, user, isSelected, searchedName }) {
       <Avatar name={user.uname} w="w-12" h="h-12" />
       <div>
         <div>
-          <Highlighter searchWords={[searchedName]} textToHighlight={user.uname} autoEscape={true} />
+          <Highlighter
+            searchWords={[searchedName]}
+            textToHighlight={user.uname}
+            autoEscape={true}
+          />
         </div>
         <div className="text-sm flex items-center gap-2 text-gray-700">
-          {lastMsgDoc?.from === currentUser.uid ? <p>{lastMsg}</p> : <p className={unread ? "font-bold" : ""}>{lastMsg}</p>}
-          {lastMsgDoc?.to === currentUser.uid || !lastMsg ? null : lastMsgDoc?.unread ? (
+          {lastMsgDoc?.from === currentUser.uid ? (
+            <p>{lastMsg}</p>
+          ) : isClassroom ? (
+            <p>{lastMsg}</p>
+          ) : (
+            <p className={unread ? "font-bold" : ""}>{lastMsg}</p>
+          )}
+          {lastMsgDoc?.to === currentUser.uid ||
+          !lastMsg ? null : lastMsgDoc?.unread ? (
             <span class="material-icons bottom-0 right-1 text-base ">done</span>
           ) : (
             <span class="text-base material-icons text-blue-600">done_all</span>

@@ -1,6 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import { addDoc, collection, setDoc, Timestamp } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  setDoc,
+  Timestamp,
+} from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import { uploadFiles } from "../../services/helper";
 import { useRef } from "react";
@@ -97,6 +103,32 @@ function PostAssignmentForm({ classDetails }) {
       await setDoc(assignRef, { files: data }, { merge: true }).then(() => {
         postSubmit();
       });
+    });
+
+    const msgId = classDetails.classId;
+    const msg = {
+      title: title,
+      deadline: deadline,
+      assignId: assignRef.id,
+    };
+    await addDoc(collection(db, "messages", msgId, "chats"), {
+      classObj: msg,
+      text: "New assignment: " + title,
+      from: classDetails.classId,
+      to: classDetails.classId,
+      createdAt: Timestamp.fromDate(new Date()),
+      attachments: [],
+      unread: true,
+      taggedMsg: null,
+      senderName: classDetails.className,
+    });
+
+    await setDoc(doc(db, "lastMsgs", msgId), {
+      text: "New assignment Posted",
+      from: classDetails.classId,
+      to: classDetails.classId,
+      createdAt: Timestamp.fromDate(new Date()),
+      unread: true,
     });
   };
 

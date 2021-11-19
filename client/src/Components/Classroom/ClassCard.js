@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import db from "../../services/firebase-config";
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
+import { localTimeFormat } from "../../services/helper";
 
 function ClassCard({ classroom, isTeacher }) {
   const { currentUser } = useAuth();
@@ -98,7 +99,7 @@ function ClassCard({ classroom, isTeacher }) {
                     <Link to={`${classroom.classId}/${assign.assignId}`}>
                       <div class="flex flex-col p-2 hover:underline">
                         <div>{assign.title}</div>
-                        <div>Deadline : {assign.deadline}</div>
+                        <div>Deadline : {localTimeFormat(assign.deadline)}</div>
                       </div>
                     </Link>
                   );

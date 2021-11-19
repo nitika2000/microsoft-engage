@@ -1,4 +1,10 @@
-import { addDoc, collection, Timestamp, doc, setDoc } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  Timestamp,
+  doc,
+  setDoc,
+} from "@firebase/firestore";
 import React, { useEffect } from "react";
 import db from "../../services/firebase-config";
 import { useAuth } from "../AuthContext";
@@ -8,9 +14,9 @@ import { useState } from "react";
 import { getMessageId } from "../../services/helper";
 import Avatar from "./Avatar";
 
-function ChatView({ selectedUser, onBackClick }) {
+function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [text, setText] = useState("");
-  const { currentUser } = useAuth();
+  const { currentUser, currentUserData } = useAuth();
   const [taggedMsg, setTaggedMsg] = useState(null);
 
   useEffect(() => {
@@ -21,7 +27,9 @@ function ChatView({ selectedUser, onBackClick }) {
     const inputText = text;
     setText("");
     const tempTaggedMsg = taggedMsg;
-    const msgId = getMessageId(currentUser, selectedUser);
+    const msgId = isClassroom
+      ? selectedUser.uid
+      : getMessageId(currentUser, selectedUser);
     setTaggedMsg(null);
     await addDoc(collection(db, "messages", msgId, "chats"), {
       text: inputText,
@@ -31,6 +39,7 @@ function ChatView({ selectedUser, onBackClick }) {
       attachments: filesUploaded,
       unread: true,
       taggedMsg: tempTaggedMsg,
+      senderName: currentUserData.uname,
     });
 
     await setDoc(doc(db, "lastMsgs", msgId), {
@@ -61,11 +70,21 @@ function ChatView({ selectedUser, onBackClick }) {
               <p className="text-gray-500 text-sm">Online</p>
             </div>
           </div>
-          <MainView selectedUser={selectedUser} taggedMsg={taggedMsg} onMsgTag={handleMsgTag} />
-          <MessageForm text={text} setText={setText} handleSubmit={handleSubmit} />
+          <MainView
+            selectedUser={selectedUser}
+            taggedMsg={taggedMsg}
+            onMsgTag={handleMsgTag}
+            isClassroom={isClassroom}
+          />
+          <MessageForm
+            text={text}
+            setText={setText}
+            handleSubmit={handleSubmit}
+            isClassroom={isClassroom}
+          />
         </>
       ) : (
-        <div>Select user to start chat</div>
+        <div>Select User/Classroom to start chat</div>
       )}
     </div>
   );

@@ -18,8 +18,9 @@ import Attachments from "./Attachments";
 import ImageViewer from "react-simple-image-viewer";
 import TaggedMsg from "./TaggedMsg";
 import { Transition } from "@headlessui/react";
+import { Link } from "react-router-dom";
 
-function MainView({ selectedUser, onMsgTag, taggedMsg }) {
+function MainView({ selectedUser, onMsgTag, taggedMsg, isClassroom }) {
   const { currentUser } = useAuth();
   const [msgs, setMsgs] = useState([]);
   const [chatDate, setChatDate] = useState("");
@@ -123,7 +124,9 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
     setLoading(true);
     setScrollToBottomVisibility(false);
 
-    const msgId = getMessageId(currentUser, selectedUser);
+    const msgId = isClassroom
+      ? selectedUser.uid
+      : getMessageId(currentUser, selectedUser);
     const msgsRef = collection(db, "messages", msgId, "chats");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
@@ -172,7 +175,7 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
       }
       setLoading(false);
       setMsgs(msgsWithDate);
-      updateLastMsg(msgId);
+      if (!isClassroom) updateLastMsg(msgId);
     });
 
     return () => unsub();
@@ -331,7 +334,33 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
                       </a>
                     )}
                   >
-                    {msg.text}
+                    {isClassroom && msg.from !== currentUser.uid ? (
+                      <div className="text-sm font-bold text-blue-600">
+                        {msg.senderName}
+                      </div>
+                    ) : null}
+                    {isClassroom && msg.from === selectedUser.uid ? (
+                      <>
+                        <div>
+                          {selectedUser.creatorName} has posted a new assignment
+                          :{" "}
+                          <span className="font-bold">
+                            {msg.classObj.title}
+                          </span>
+                          .
+                        </div>
+                        <div>Deadline: {msg.classObj.deadline}</div>
+                        <Link
+                          to={`classroom/${selectedUser.uid}/${msg.classObj.assignId}`}
+                        >
+                          <div className="hover:text-blue-600 underline">
+                            Click here to submit
+                          </div>
+                        </Link>
+                      </>
+                    ) : (
+                      <span>{msg.text}</span>
+                    )}
                   </Linkify>
                 </div>
                 <div className="flex  relative -bottom-2 -right-2 gap-1 self-end whitespace-nowrap items-center">
