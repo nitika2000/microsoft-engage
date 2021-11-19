@@ -1,4 +1,11 @@
-import { collection, onSnapshot, query, orderBy } from "@firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  getDoc,
+  doc,
+} from "@firebase/firestore";
 import { Link } from "react-router-dom";
 import db from "../../services/firebase-config";
 import { useEffect, useState } from "react";
@@ -8,6 +15,7 @@ function ClassCard({ classroom, isTeacher }) {
   const { currentUser } = useAuth();
   const [pending, setPending] = useState([]);
   const [pendingLoader, setPendingLoader] = useState(true);
+  const [classroomDetails, setClassroomDetails] = useState();
 
   const checkSubmission = (submissionList) => {
     return (
@@ -18,8 +26,8 @@ function ClassCard({ classroom, isTeacher }) {
   };
 
   useEffect(() => {
+    setPendingLoader(true);
     if (!isTeacher) {
-      setPendingLoader(true);
       const assignsRef = collection(
         db,
         "classrooms",
@@ -41,7 +49,12 @@ function ClassCard({ classroom, isTeacher }) {
       setPendingLoader(false);
       return unsub;
     } else {
-      setPendingLoader(false);
+      getDoc(doc(db, "classrooms", classroom.classId)).then(
+        (classroomDetails) => {
+          setClassroomDetails(classroomDetails.data());
+          setPendingLoader(false);
+        },
+      );
     }
   }, []);
 
@@ -56,27 +69,41 @@ function ClassCard({ classroom, isTeacher }) {
             </h2>
           </div>
         </Link>
+
         <div
           className={
             isTeacher
-              ? `p-4 border-t border-b text-xs h-0 text-blue-700 overflow-y-auto flex flex-col`
-              : `p-4 border-t border-b text-xs h-52 text-blue-700 overflow-y-auto flex flex-col`
+              ? `p-4 border-t border-b text-xs h-20 text-gray-700 overflow-y-auto flex flex-col`
+              : `p-4 border-t border-b text-xs h-52 text-gray-700 overflow-y-auto flex flex-col`
           }
         >
           {pendingLoader ? (
-            <h1>Loading...</h1>
+            <h1 className="text-gray-200">Loading...</h1>
           ) : (
             <div>
-              {pending.map((assign) => {
-                return (
-                  <Link to={`${classroom.classId}/${assign.assignId}`}>
-                    <div class="flex flex-col p-2 hover:underline">
-                      <div>{assign.title}</div>
-                      <div>Deadline : {assign.deadline}</div>
-                    </div>
-                  </Link>
-                );
-              })}
+              {isTeacher ? (
+                <div>
+                  <div className="pb-2">
+                    <span className="font-bold">Class Code: </span>
+                    <span>{classroomDetails.classCode}</span>
+                  </div>
+                  <div>
+                    <span className="font-bold">Enrolled Students: </span>
+                    <span>{classroomDetails.enrolledStudents.length}</span>
+                  </div>
+                </div>
+              ) : (
+                pending.map((assign) => {
+                  return (
+                    <Link to={`${classroom.classId}/${assign.assignId}`}>
+                      <div class="flex flex-col p-2 hover:underline">
+                        <div>{assign.title}</div>
+                        <div>Deadline : {assign.deadline}</div>
+                      </div>
+                    </Link>
+                  );
+                })
+              )}
             </div>
           )}
         </div>
