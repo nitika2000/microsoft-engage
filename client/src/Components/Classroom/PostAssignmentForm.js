@@ -101,7 +101,7 @@ function PostAssignmentForm({ classDetails }) {
   };
 
   return (
-    <div className="border-gray-300 border-2 p-4 w-9/12 m-auto rounded">
+    <div className="border-gray-300 border-2 p-4 m-auto rounded">
       <div className="font-bold text-center text-xl text-blue-700">
         Post Assignment
       </div>
@@ -129,7 +129,7 @@ function PostAssignmentForm({ classDetails }) {
       </label>
 
       <div className="flex flex-row justify-between">
-        <div>
+        <div className="pr-2">
           <label className="p-0 font-sans">
             Grades
             <input
@@ -151,13 +151,13 @@ function PostAssignmentForm({ classDetails }) {
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
                 type="datetime-local"
-                className="text-sm block w-full px-3 py-3 placeholder-blueGray-300 bg-gray-200 text-blueGray-600 relative rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+                className="text-sm block w-3full px-3 py-3 placeholder-blueGray-300 bg-gray-200 text-blueGray-600 relative rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
               />
             </label>
           </div>
         </div>
       </div>
-      <label className="lg:w-1/4 w-64 mt-5 flex flex-row items-center px-2 py-3 rounded-md shadow-md tracking-wide uppercase border border-blue-500 cursor-pointer bg-blue-400 text-white">
+      <label className="lg:w-1/2  w-1/2 mt-5 flex flex-row items-center px-2 py-3 rounded-md shadow-md tracking-wide uppercase border border-blue-500 cursor-pointer bg-blue-400 text-white">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"

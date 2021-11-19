@@ -26,7 +26,6 @@ function ClassView() {
   const { currentUserData } = useAuth();
   const [pending, setPending] = useState([]);
   const [studentList, setStudentList] = useState([]);
-
   useEffect(() => {
     getClassFromId(searchParams.classId).then((data) => {
       setClassDetails(data);
@@ -84,13 +83,16 @@ function ClassView() {
   ) : (
     <div>
       <ClassBanner classroom={classDetails} />
-      {isTeacher(currentUserData.role) ? (
-        <PostAssignmentForm classDetails={classDetails} />
-      ) : null}
       <div className="flex lg:flex-row flex-col mx-auto w-9/12">
-        <div className="lg:w-1/4 w-full lg:p-2">
-          <PendingAssignmentView pending={pending} />
-        </div>
+        {isTeacher(currentUserData.role) ? (
+          <div className="lg:w-1/2 w-full lg:p-2">
+            <PostAssignmentForm classDetails={classDetails} />
+          </div>
+        ) : (
+          <div className="lg:w-1/4 w-full lg:p-2">
+            <PendingAssignmentView pending={pending} />
+          </div>
+        )}
         <div className="w-full">
           <ClassAssignmentsView classId={classDetails.classId} />
         </div>
