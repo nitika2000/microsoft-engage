@@ -12,7 +12,7 @@ function PostAssignmentForm({ classDetails }) {
   const [files, setFiles] = useState([]);
   const [submitLoader, setSubmitLoader] = useState(false);
   const [grades, setGrades] = useState("");
-
+  const [error, setError] = useState("");
   const inputFileRef = useRef();
 
   const resetFiles = () => {
@@ -45,13 +45,38 @@ function PostAssignmentForm({ classDetails }) {
     setFiles(filteredFiles);
   };
 
+  const validateDate = () => {
+    if (grades.length > 0 && isNaN(grades)) {
+      setError("Grades should be a number");
+      return false;
+    } else if (deadline.length === 0) {
+      setError("Deadline can't be empty");
+      return false;
+    } else if (deadline.length !== 0) {
+      const deadlineDate = new Date(deadline);
+      const today = new Date();
+      if (today.getTime() >= deadlineDate.getTime()) {
+        setError("Date invalid");
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     setSubmitLoader(true);
+    setError("");
+    const isValidate = validateDate();
+    if (!isValidate) {
+      setSubmitLoader(false);
+      return;
+    }
+
     const assignmentObj = {
       classId: classDetails.classId,
       title: title,
       description: desc,
-      deadline: deadline,
+      deadline: deadline.length > 0 ? new Date(deadline) : deadline,
       files: [],
       submissionList: [],
       grades: grades,
@@ -69,7 +94,6 @@ function PostAssignmentForm({ classDetails }) {
     const path = `classrooms/${classDetails.classId}/${assignRef.id}/`;
 
     uploadFiles(path, files).then(async (data) => {
-      console.log("data", data);
       await setDoc(assignRef, { files: data }, { merge: true }).then(() => {
         postSubmit();
       });
@@ -77,58 +101,82 @@ function PostAssignmentForm({ classDetails }) {
   };
 
   return (
-    <div>
-      <label>
-        Title
+    <div className="border-gray-300 border-2 p-4 m-auto rounded">
+      <div className="font-bold text-center text-xl text-blue-700">
+        Post Assignment
+      </div>
+      <label className="p-0 font-sans">
+        Title <span className="text-red-500 italic ">*</span>
         <input
-          type="text"
-          value={title}
+          className="text-sm block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
           placeholder="Title"
+          value={title}
           onChange={(event) => {
             setTitle(event.target.value);
           }}
-        />
+        ></input>
       </label>
-      <label>
+
+      <label className="p-0 font-sans">
         Description
-        <input
-          type="text"
+        <textarea
+          className="text-sm form-textarea block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+          rows="2"
+          placeholder="Description..."
           value={desc}
-          placeholder="Description"
-          onChange={(event) => {
-            setDesc(event.target.value);
-          }}
-        />
+          onChange={(e) => setDesc(e.target.value)}
+        ></textarea>
       </label>
-      <br />
-      <label>
-        Grades
+
+      <div className="flex flex-row justify-between">
+        <div className="pr-2">
+          <label className="p-0 font-sans">
+            Grades
+            <input
+              type="text"
+              className="text-sm block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+              placeholder="Grades"
+              value={grades}
+              onChange={(event) => {
+                setGrades(event.target.value);
+              }}
+            ></input>
+          </label>
+        </div>
+        <div>
+          <div>
+            <label className="p-0 font-sans">
+              Deadline <span className="text-red-500 italic ">*</span>
+              <input
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                type="datetime-local"
+                className="text-sm bg-white block w-3full px-3 py-3 text-blueGray-600 relative rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+      <label className="lg:w-1/2  w-1/2 mt-5 flex flex-row items-center px-2 py-3 rounded-md shadow-md tracking-wide uppercase border border-blue-500 cursor-pointer bg-blue-400 text-white">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+          />
+        </svg>
+        <span className="mx-2 text-sm leading-normal">Select files</span>
         <input
-          type="text"
-          value={grades}
-          placeholder="Grades"
-          onChange={(event) => {
-            setGrades(event.target.value);
-          }}
-        />
-      </label>
-      <label>
-        Deadline
-        <input
-          type="datetime-local"
-          value={deadline}
-          placeholder="Deadline"
-          onChange={(event) => {
-            setDeadline(event.target.value);
-          }}
-        />
-      </label>
-      <br />
-      <label>
-        Select Files
-        <input
-          type="file"
           multiple
+          type="file"
+          className="hidden"
           ref={inputFileRef}
           onChange={onFileChange}
         />
@@ -141,11 +189,11 @@ function PostAssignmentForm({ classDetails }) {
               <button
                 onClick={() => onFileCancel(file)}
                 type="button"
-                class="inline-flex items-center justify-center hover:bg-red-700 focus:ring-indigo-500"
+                className="inline-flex items-center justify-center hover:bg-red-700 focus:ring-indigo-500"
               >
-                <span class="sr-only">Close menu</span>
+                <span className="sr-only">Close menu</span>
                 <svg
-                  class="h-3 w-3"
+                  className="h-3 w-3"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -164,9 +212,14 @@ function PostAssignmentForm({ classDetails }) {
           ))}
         </div>
       ) : null}
-      <br />
-      <button onClick={handleSubmit}>
-        {submitLoader ? <>Submitting</> : <>Submit</>}
+      {error ? <p className="text-red-500 text-xs italic">{error}</p> : null}
+      <button
+        onClick={handleSubmit}
+        disabled={title.length === 0 || submitLoader}
+        className="mt-5 w-full bg-green-600 disabled:opacity-30 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="button"
+      >
+        {submitLoader ? <>Posting...</> : <>Post</>}
       </button>
     </div>
   );

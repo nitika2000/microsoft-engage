@@ -13,7 +13,7 @@ import db from "../services/firebase-config";
 import SubmissionForm from "../Components/Assignment/SubmissionForm";
 import { useAuth } from "../Components/AuthContext";
 import SubmissionView from "../Components/Assignment/SubmissionView";
-import { isTeacher } from "../services/helper";
+import { isTeacher, localTimeFormat } from "../services/helper";
 import Loading from "../Components/Loading";
 import GradingCard from "../Components/Assignment/GradingCard";
 
@@ -112,7 +112,7 @@ function AssignmentView() {
             {assignment.grades} Points
           </div>
           <div className="text-red-600 text-xs">
-            Due : {assignment.deadline}
+            Due : {localTimeFormat(assignment.deadline)}
           </div>
           <div></div>
         </div>
