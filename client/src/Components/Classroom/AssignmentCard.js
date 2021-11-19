@@ -27,7 +27,9 @@ function AssignmentCard({ asssignment }) {
             {asssignment.creatorName} posted a new assignment:
             {asssignment.title}
           </div>
-          <div className="text-xs">Due : {asssignment.deadline}</div>
+          <div className="text-xs">
+            Due : {localTimeFormat(asssignment.deadline)}
+          </div>
           <div className="text-xs">
             Created at {localTimeFormat(asssignment.createdAt)}
           </div>
