@@ -46,7 +46,7 @@ function PostAssignmentForm({ classDetails }) {
   };
 
   const validateDate = () => {
-    if (grades.length > 0 && !isNaN(grades)) {
+    if (grades.length > 0 && isNaN(grades)) {
       setError("Grades should be a number");
       return false;
     } else if (deadline.length === 0) {
@@ -151,7 +151,7 @@ function PostAssignmentForm({ classDetails }) {
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
                 type="datetime-local"
-                className="text-sm block w-3full px-3 py-3 placeholder-blueGray-300 bg-gray-200 text-blueGray-600 relative rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+                className="text-sm bg-white block w-3full px-3 py-3 text-blueGray-600 relative rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
               />
             </label>
           </div>
