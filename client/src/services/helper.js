@@ -149,3 +149,14 @@ export const localTimeFormat = (time) => {
     second: "2-digit",
   }).format(time.seconds * 1000);
 };
+
+export const mimicClassAsUser = (classroom) => {
+  return {
+    uname: classroom.className,
+    uid: classroom.classId,
+    creatorName: classroom.creatorName,
+    classCode: classroom.classCode,
+    enrolledStudents: classroom.enrolledStudents,
+    createdAt: classroom.createdAt,
+  };
+};

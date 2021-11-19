@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { localTimeFormat } from "../../services/helper";
 
 function PendingAssignmentView({ pending }) {
   return (
@@ -29,7 +30,9 @@ function PendingAssignmentView({ pending }) {
             <Link to={`${assign.assignId}`}>
               <div className="flex flex-col py-3 hover:underline">
                 <div>{assign.title}</div>
-                <div className="text-xs">{assign.deadline}</div>
+                <div className="text-xs">
+                  {localTimeFormat(assign.deadline)}
+                </div>
               </div>
             </Link>
           );

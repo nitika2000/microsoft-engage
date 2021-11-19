@@ -19,7 +19,7 @@ import ImageViewer from "react-simple-image-viewer";
 import TaggedMsg from "./TaggedMsg";
 import { Transition } from "@headlessui/react";
 
-function MainView({ selectedUser, onMsgTag, taggedMsg }) {
+function MainView({ selectedUser, onMsgTag, taggedMsg, isClassroom }) {
   const { currentUser } = useAuth();
   const [msgs, setMsgs] = useState([]);
   const [chatDate, setChatDate] = useState("");
@@ -123,7 +123,9 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
     setLoading(true);
     setScrollToBottomVisibility(false);
 
-    const msgId = getMessageId(currentUser, selectedUser);
+    const msgId = isClassroom
+      ? selectedUser.uid
+      : getMessageId(currentUser, selectedUser);
     const msgsRef = collection(db, "messages", msgId, "chats");
     const q = query(msgsRef, orderBy("createdAt", "asc"));
 
@@ -172,7 +174,7 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
       }
       setLoading(false);
       setMsgs(msgsWithDate);
-      updateLastMsg(msgId);
+      if (!isClassroom) updateLastMsg(msgId);
     });
 
     return () => unsub();
@@ -331,6 +333,11 @@ function MainView({ selectedUser, onMsgTag, taggedMsg }) {
                       </a>
                     )}
                   >
+                    {isClassroom && msg.from !== currentUser.uid ? (
+                      <div className="text-sm font-bold text-blue-600">
+                        {msg.senderName}
+                      </div>
+                    ) : null}
                     {msg.text}
                   </Linkify>
                 </div>
