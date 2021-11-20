@@ -11,7 +11,7 @@ function ClassAssignmentsView({ classId }) {
 
   useEffect(() => {
     const assignRef = collection(db, "classrooms", classId, "assignments");
-    const q = query(assignRef, orderBy("deadline", "asc"));
+    const q = query(assignRef, orderBy("createdAt", "desc"));
 
     const unsub = onSnapshot(q, (querySnapshot) => {
       let assignments = [];
