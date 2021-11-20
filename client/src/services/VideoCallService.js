@@ -4,6 +4,8 @@ import Peer from "simple-peer";
 import { useAuth } from "../Components/AuthContext";
 import IncomingCall from "../Components/IncomingCall";
 import { createBrowserHistory } from "history";
+import Calling from "../Components/Calling";
+import { useNavigate } from "react-router";
 
 const VideoCallContext = React.createContext();
 
@@ -17,10 +19,13 @@ export function VideoCallProvider({ children }) {
 
   const history = createBrowserHistory();
 
+  const navigate = useNavigate();
+
   console.log(history);
 
   const [incomingCall, setIncomingCall] = useState(null);
   const [ongoingCall, setOngoingCall] = useState(false);
+  const [outgoingCall, setOutgoingCall] = useState(null);
   const [callId, setCallId] = useState(null);
   const [stream, setStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
@@ -31,13 +36,16 @@ export function VideoCallProvider({ children }) {
     if (!currentUserData) {
       return;
     }
-    console.log("called use effect");
     io.auth = { uid: currentUserData.uid, name: currentUserData.uname };
     io.connect();
     io.on("call-rejected", (data) => {
       setCallId(null);
       setOngoingCall(false);
       setIncomingCall(null);
+      setOutgoingCall((outgoingCall) => ({ ...outgoingCall, rejected: true }));
+      setTimeout(() => {
+        setStartCleanup(true);
+      }, 1000);
     });
     io.on("incoming-call", (data) => {
       setIncomingCall({ from: data.from, callId: data.callId, signalData: data.signalData });
@@ -47,6 +55,7 @@ export function VideoCallProvider({ children }) {
       if (peerRef.current) {
         setOngoingCall(true);
         peerRef.current.signal(data.signalData);
+        navigate(`/meet/${callId}`);
       }
     });
     io.on("call-ended", (data) => {
@@ -56,8 +65,9 @@ export function VideoCallProvider({ children }) {
       io.off("call-rejected");
       io.off("incoming-call");
       io.off("call-accepted");
+      io.off("call-ended");
     };
-  }, [io, currentUserData, peerRef]);
+  }, [io, currentUserData, peerRef, callId, navigate]);
 
   useEffect(() => {
     if (startCleanup && stream) {
@@ -66,6 +76,7 @@ export function VideoCallProvider({ children }) {
       setCallId(null);
       setRemoteStream(null);
       setStartCleanup(false);
+      setOutgoingCall(null);
       if (stream) {
         stream.getTracks().forEach(function (track) {
           track.stop();
@@ -86,7 +97,7 @@ export function VideoCallProvider({ children }) {
     return window.navigator.mediaDevices.getUserMedia({ video: true });
   };
 
-  const callUser = async (userId) => {
+  const callUser = async (userId, userName) => {
     const stream = await requestVideoAudio();
     setStream(stream);
     const peer = new Peer({
@@ -104,6 +115,7 @@ export function VideoCallProvider({ children }) {
       io.emit("call-user", payload, (response) => {
         if (response.ok) {
           setCallId(response.callId);
+          setOutgoingCall({ callId: response.callId, name: userName });
         }
       });
     });
@@ -135,6 +147,15 @@ export function VideoCallProvider({ children }) {
     });
 
     peerRef.current = peer;
+
+    navigate(`/meet/${callId}`);
+  };
+
+  const rejectCall = () => {
+    io.emit("reject-call", { callId: callId, rejectedBy: currentUserData.uid });
+    setCallId(null);
+    setIncomingCall(null);
+    setOngoingCall(false);
   };
 
   const endCall = () => {
@@ -151,12 +172,14 @@ export function VideoCallProvider({ children }) {
     ongoingCall,
     callId,
     endCall,
+    rejectCall,
   };
 
   return (
     <VideoCallContext.Provider value={value}>
       {children}
       {incomingCall && !ongoingCall ? <IncomingCall name={incomingCall?.from.name || "bhutni"} uid={incomingCall?.from.uid || "fsdafsa"} /> : null}
+      {outgoingCall && !ongoingCall ? <Calling name={outgoingCall.name} rejected={outgoingCall.rejected} /> : null}
     </VideoCallContext.Provider>
   );
 }

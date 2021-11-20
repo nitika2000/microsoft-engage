@@ -109,6 +109,28 @@ io.on("connection", (socket) => {
       });
   });
 
+  socket.on("reject-call", (data) => {
+    console.log("call rejected cale", data);
+
+    const callId = data.callId;
+    const rejectedBy = data.rejectedBy;
+    firestore.doc(`calls/${callId}`).set({ callStatus: "rejected" }, { merge: true }).then();
+    firestore
+      .doc(`calls/${callId}`)
+      .get()
+      .then((doc) => {
+        console.log("data", doc.data());
+
+        io.fetchSockets().then((sock) => {
+          sock.forEach((conn) => {
+            if (conn.data.uid === doc.data()?.from && conn.data.uid != rejectedBy) {
+              conn.emit("call-rejected", { callId: callId });
+            }
+          });
+        });
+      });
+  });
+
   socket.on("call-user", (data, callback) => {
     const from = data.from;
     const to = data.to;
