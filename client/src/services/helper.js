@@ -1,21 +1,8 @@
 /* eslint-disable default-case */
-import {
-  doc,
-  getDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  limit,
-} from "@firebase/firestore";
+import { doc, getDoc, getDocs, collection, query, where, limit } from "@firebase/firestore";
 import db from "./firebase-config";
 
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import moment from "moment";
 
 export const getSlug = async (length) => {
@@ -55,11 +42,7 @@ export const getClassFromId = async (classId) => {
 };
 
 export const getClassFromCode = async (classCode) => {
-  const q = query(
-    collection(db, "classrooms"),
-    where("classCode", "==", classCode),
-    limit(1),
-  );
+  const q = query(collection(db, "classrooms"), where("classCode", "==", classCode), limit(1));
 
   const querySnapshot = await getDocs(q);
   var classObj = null;
@@ -86,11 +69,7 @@ export function truncate(str, n, useWordBoundary) {
     return str;
   }
   const subString = str.substr(0, n - 1);
-  return (
-    (useWordBoundary
-      ? subString.substr(0, subString.lastIndexOf(" "))
-      : subString) + "..."
-  );
+  return (useWordBoundary ? subString.substr(0, subString.lastIndexOf(" ")) : subString) + "...";
 }
 
 export const uploadFiles = (path, files) => {
@@ -107,8 +86,7 @@ export const uploadFiles = (path, files) => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case "paused":
@@ -142,6 +120,38 @@ export const uploadFiles = (path, files) => {
 
 export const localTimeFormat = (time) => {
   return moment(time.seconds * 1000).format("MMMM Do YYYY, hh:mm a");
+};
+
+export const formatDateTime = (dateTimeStamp) => {
+  const dateTime = moment.utc(dateTimeStamp.seconds * 1000).local();
+  const timeString = dateTime.format("hh:mm a");
+  const fulldays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const dt = new Date(dateTime),
+    date = dt.getDate(),
+    month = months[dt.getMonth()],
+    diffDays = new Date().getDate() - date,
+    diffMonths = new Date().getMonth() - dt.getMonth(),
+    diffYears = new Date().getFullYear() - dt.getFullYear();
+
+  let dateTimeString = "";
+
+  if (diffYears === 0 && diffDays === 0 && diffMonths === 0) {
+    dateTimeString += "Today";
+  } else if (diffYears === 0 && diffDays === 1) {
+    dateTimeString += "Yesterday";
+  } else if (diffYears === 0 && diffDays === -1) {
+    dateTimeString += "Tomorrow";
+  } else if (diffYears === 0 && diffDays > 1 && diffDays < 7) {
+    console.log(dt);
+    dateTimeString += fulldays[dt.getDay()];
+  } else if (diffYears >= 1) {
+    dateTimeString += date + " " + month + ", " + new Date(dateTimeStamp).getFullYear();
+  } else {
+    dateTimeString += date + " " + month;
+  }
+  return `${dateTimeString} ${timeString}`;
 };
 
 export const mimicClassAsUser = (classroom) => {

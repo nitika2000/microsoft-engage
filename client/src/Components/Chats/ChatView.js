@@ -1,20 +1,24 @@
-import { addDoc, collection, Timestamp, doc, setDoc } from "@firebase/firestore";
+import { addDoc, collection, Timestamp, doc, setDoc, query, where, onSnapshot } from "@firebase/firestore";
 import React, { useEffect } from "react";
 import db from "../../services/firebase-config";
 import { useAuth } from "../AuthContext";
 import MainView from "./MainView";
 import MessageForm from "./MessageForm";
 import { useState } from "react";
-import { getMessageId } from "../../services/helper";
+import { formatDateTime, getMessageId, localTimeFormat } from "../../services/helper";
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
+import { createBrowserHistory } from "history";
 
 function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [text, setText] = useState("");
   const { currentUser, currentUserData } = useAuth();
   const [taggedMsg, setTaggedMsg] = useState(null);
+  const [online, setOnline] = useState(false);
+  const [lastSeen, setLastSeen] = useState(null);
 
   const navigate = useNavigate();
+  const history = createBrowserHistory();
 
   useEffect(() => {
     setTaggedMsg(null);
@@ -52,8 +56,28 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
   };
 
   const handleCallClick = () => {
+    history.push(`/?selectedUser=${selectedUser.uid}`);
     navigate(`/meet?callUser=${selectedUser.uid}`);
   };
+
+  useEffect(() => {
+    if (selectedUser) {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "==", selectedUser.uid));
+
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        let users = [];
+        querySnapshot.forEach((doc) => {
+          // if (changes.type === "modified") {
+          console.log(doc.data());
+          setOnline(doc.data().isOnline);
+          setLastSeen(doc.data().lastSeen);
+          // }
+        });
+      });
+      return unsub;
+    }
+  }, [selectedUser]);
 
   return (
     <div className="flex h-full flex-col justify-between ">
@@ -66,9 +90,13 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
             <Avatar name={selectedUser.uname} w="w-12" h="h-12" />
             <div>
               <h1 className="text-xl font-bold">{selectedUser.uname}</h1>
-              <p className="text-gray-500 text-sm">{selectedUser.isOnline ? "Online" : "Down"}</p>
+              <p className="text-gray-500 text-sm">{online ? "Online" : lastSeen ? formatDateTime(lastSeen) : ""}</p>
             </div>
-            <button onClick={handleCallClick} className="bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm">
+            <button
+              disabled={!online}
+              onClick={handleCallClick}
+              className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
+            >
               Call
             </button>
           </div>

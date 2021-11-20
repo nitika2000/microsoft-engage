@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { createBrowserHistory } from "history";
 
 const IncomingCall = ({ name, uid }) => {
   const navigate = useNavigate();
 
-  // const history =
+  const history = createBrowserHistory();
 
   const navigateToMeet = () => {
+    history.push(window.location.pathname);
     navigate(`/meet?acceptCall=${uid}`);
   };
 
