@@ -21,15 +21,24 @@ module.exports = {
             transform: "scale(0.50); opacity: 0; visibility: hidden;",
           },
         },
+        "pulse-slow": {
+          "50%": {
+            transform: "scale(1.05)",
+          },
+        },
       },
       animation: {
         fadein: "fadein 200ms ease-in-out",
         fadeout: "fadeout 200ms ease-in-out forwards",
+        pulseSlow: "pulse-slow 1000ms linear infinite",
       },
     },
   },
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/forms"),
+    // ...
+  ],
 };
