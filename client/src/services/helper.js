@@ -16,6 +16,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import moment from "moment";
 
 export const getSlug = async (length) => {
   var result = "";
@@ -140,14 +141,7 @@ export const uploadFiles = (path, files) => {
 };
 
 export const localTimeFormat = (time) => {
-  return Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(time.seconds * 1000);
+  return moment(time.seconds * 1000).format("MMMM Do YYYY, hh:mm a");
 };
 
 export const mimicClassAsUser = (classroom) => {
