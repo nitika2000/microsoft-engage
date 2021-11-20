@@ -9,6 +9,7 @@ import { formatDateTime, getMessageId, localTimeFormat } from "../../services/he
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
 import { createBrowserHistory } from "history";
+import { useVideoCall } from "../../services/VideoCallService";
 
 function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [text, setText] = useState("");
@@ -16,6 +17,8 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [taggedMsg, setTaggedMsg] = useState(null);
   const [online, setOnline] = useState(false);
   const [lastSeen, setLastSeen] = useState(null);
+
+  const { callUser } = useVideoCall();
 
   const navigate = useNavigate();
   const history = createBrowserHistory();
@@ -57,7 +60,8 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
 
   const handleCallClick = () => {
     history.push(`/?selectedUser=${selectedUser.uid}`);
-    navigate(`/meet?callUser=${selectedUser.uid}`);
+    // navigate(`/meet?callUser=${selectedUser.uid}`);
+    callUser(selectedUser.uid, selectedUser.uname);
   };
 
   useEffect(() => {

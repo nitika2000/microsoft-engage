@@ -65,7 +65,7 @@ const App = () => {
             />
             <Route path="/signup" exact element={<SignUpForm />} />
             <Route path="/login" exact element={<LoginForm />} />
-            <Route path="/meet" exact element={<MeetPage />} />
+            <Route path="/meet/:id" exact element={<MeetPage />} />
           </Routes>
         </VideoCallProvider>
       </AuthProvider>
