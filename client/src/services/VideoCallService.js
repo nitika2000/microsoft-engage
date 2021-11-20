@@ -3,6 +3,7 @@ import { io as SocketIo } from "socket.io-client";
 import Peer from "simple-peer";
 import { useAuth } from "../Components/AuthContext";
 import IncomingCall from "../Components/IncomingCall";
+import { createBrowserHistory } from "history";
 
 const VideoCallContext = React.createContext();
 
@@ -13,6 +14,10 @@ export function useVideoCall() {
 export function VideoCallProvider({ children }) {
   const { currentUserData } = useAuth();
   const io = useMemo(() => SocketIo("http://localhost:5000", { autoConnect: false }), []);
+
+  const history = createBrowserHistory();
+
+  console.log(history);
 
   const [incomingCall, setIncomingCall] = useState(null);
   const [ongoingCall, setOngoingCall] = useState(false);
@@ -60,6 +65,7 @@ export function VideoCallProvider({ children }) {
       setOngoingCall(false);
       setCallId(null);
       setRemoteStream(null);
+      setStartCleanup(false);
       if (stream) {
         stream.getTracks().forEach(function (track) {
           track.stop();
@@ -71,9 +77,10 @@ export function VideoCallProvider({ children }) {
       }
       setTimeout(() => {
         setStream(null);
+        history.back();
       }, 2000);
     }
-  }, [startCleanup, peerRef, stream]);
+  }, [startCleanup, peerRef, stream, history]);
 
   const requestVideoAudio = async () => {
     return window.navigator.mediaDevices.getUserMedia({ video: true });
@@ -149,7 +156,6 @@ export function VideoCallProvider({ children }) {
   return (
     <VideoCallContext.Provider value={value}>
       {children}
-      {peerRef.current ? "Yes" : "no"}
       {incomingCall && !ongoingCall ? <IncomingCall name={incomingCall?.from.name || "bhutni"} uid={incomingCall?.from.uid || "fsdafsa"} /> : null}
     </VideoCallContext.Provider>
   );

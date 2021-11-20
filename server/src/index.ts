@@ -52,18 +52,18 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   console.log("user connected with", socket.data.uid);
-  // firestore
-  //   .doc(`users/${socket.data.uid}`)
-  //   .set({ isOnline: true }, { merge: true })
-  //   .then()
-  //   .catch((err) => console.log(err));
+  firestore
+    .doc(`users/${socket.data.uid}`)
+    .set({ isOnline: true }, { merge: true })
+    .then()
+    .catch((err) => console.log(err));
 
   socket.on("disconnect", () => {
-    // firestore
-    //   .doc(`users/${socket.data.uid}`)
-    //   .set({ isOnline: false, lastSeen: new Date() }, { merge: true })
-    //   .then()
-    //   .catch((err) => console.log(err));
+    firestore
+      .doc(`users/${socket.data.uid}`)
+      .set({ isOnline: false, lastSeen: new Date() }, { merge: true })
+      .then()
+      .catch((err) => console.log(err));
   });
 
   socket.on("peer-connected", (id) => {
@@ -82,17 +82,11 @@ io.on("connection", (socket) => {
     const from = data.from;
     const signalData = data.signalData;
     const callId = data.callId;
-    firestore
-      .doc(`calls/${callId}`)
-      .set({ callStatus: "accepted" }, { merge: true })
-      .then();
+    firestore.doc(`calls/${callId}`).set({ callStatus: "accepted" }, { merge: true }).then();
     io.fetchSockets().then((sock) => {
       sock.forEach((conn) => {
         if (conn.data.uid == from) {
-          conn.emit("call-accepted", {
-            signalData: signalData,
-            callId: callId,
-          });
+          conn.emit("call-accepted", { signalData: signalData, callId: callId });
         }
       });
     });
@@ -100,20 +94,14 @@ io.on("connection", (socket) => {
 
   socket.on("end-call", (data) => {
     const callId = data.callId;
-    firestore
-      .doc(`calls/${callId}`)
-      .set({ callStatus: "ended" }, { merge: true })
-      .then();
+    firestore.doc(`calls/${callId}`).set({ callStatus: "ended" }, { merge: true }).then();
     firestore
       .doc(`calls/${callId}`)
       .get()
       .then((doc) => {
         io.fetchSockets().then((sock) => {
           sock.forEach((conn) => {
-            if (
-              conn.data.uid == doc.data()?.from ||
-              conn.data.uid == doc.data()?.to
-            ) {
+            if (conn.data.uid == doc.data()?.from || conn.data.uid == doc.data()?.to) {
               conn.emit("call-ended", { callId: callId });
             }
           });
@@ -134,11 +122,7 @@ io.on("connection", (socket) => {
     io.fetchSockets().then((sock) => {
       sock.forEach((conn) => {
         if (conn.data.uid == to) {
-          conn.emit("incoming-call", {
-            from: from,
-            signalData: signalData,
-            callId: callId,
-          });
+          conn.emit("incoming-call", { from: from, signalData: signalData, callId: callId });
         }
       });
     });
