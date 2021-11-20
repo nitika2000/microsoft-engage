@@ -1,29 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useState } from "react";
 import Video from "../Components/Video";
 import { useAuth } from "../Components/AuthContext";
-import { useLocation, useNavigate } from "react-router";
 import { useVideoCall } from "../services/VideoCallService";
 
 const MeetPage = () => {
   const [id, setId] = useState("");
 
-  const navigate = useNavigate();
-
-  const { receiveCall, callUser, stream, remoteStream, incomingCall, ongoingCall, callId, endCall } = useVideoCall();
+  const { callUser, stream, remoteStream, callId, endCall } = useVideoCall();
 
   const { currentUser } = useAuth();
-  const location = useLocation();
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const uid = queryParams.get("callUser");
-    const acceptCall = queryParams.get("acceptCall");
-    if (acceptCall) {
-      receiveCall();
-    } else if (uid) {
-      callUser(uid);
-    }
-  }, []);
 
   return (
     <div>

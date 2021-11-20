@@ -26,6 +26,7 @@ export function VideoCallProvider({ children }) {
   const [incomingCall, setIncomingCall] = useState(null);
   const [ongoingCall, setOngoingCall] = useState(false);
   const [outgoingCall, setOutgoingCall] = useState(null);
+  const [cancellingCall, setCancellingCall] = useState(false);
   const [callId, setCallId] = useState(null);
   const [stream, setStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
@@ -47,6 +48,16 @@ export function VideoCallProvider({ children }) {
         setStartCleanup(true);
       }, 1000);
     });
+    io.on("call-cancelled", (data) => {
+      setCallId(null);
+      setOngoingCall(false);
+      setIncomingCall(null);
+      setOutgoingCall(null);
+      setCancellingCall(false);
+      setTimeout(() => {
+        setStartCleanup(true);
+      }, 1000);
+    });
     io.on("incoming-call", (data) => {
       setIncomingCall({ from: data.from, callId: data.callId, signalData: data.signalData });
       setCallId(data.callId);
@@ -59,18 +70,25 @@ export function VideoCallProvider({ children }) {
       }
     });
     io.on("call-ended", (data) => {
-      setStartCleanup(true);
+      setCallId(null);
+      setOngoingCall(false);
+      setIncomingCall(null);
+      setOutgoingCall(null);
+      setTimeout(() => {
+        setStartCleanup(true);
+      }, 1000);
     });
     return () => {
       io.off("call-rejected");
       io.off("incoming-call");
       io.off("call-accepted");
       io.off("call-ended");
+      io.off("call-cancelled");
     };
   }, [io, currentUserData, peerRef, callId, navigate]);
 
   useEffect(() => {
-    if (startCleanup && stream) {
+    if (startCleanup) {
       setIncomingCall(null);
       setOngoingCall(false);
       setCallId(null);
@@ -159,8 +177,12 @@ export function VideoCallProvider({ children }) {
   };
 
   const endCall = () => {
-    console.log("my stream", stream, peerRef);
     io.emit("end-call", { callId: callId });
+  };
+
+  const cancelCall = () => {
+    setCancellingCall(true);
+    io.emit("cancel-call", { callId: callId });
   };
 
   const value = {
@@ -173,13 +195,14 @@ export function VideoCallProvider({ children }) {
     callId,
     endCall,
     rejectCall,
+    cancelCall,
   };
 
   return (
     <VideoCallContext.Provider value={value}>
       {children}
       {incomingCall && !ongoingCall ? <IncomingCall name={incomingCall?.from.name || "bhutni"} uid={incomingCall?.from.uid || "fsdafsa"} /> : null}
-      {outgoingCall && !ongoingCall ? <Calling name={outgoingCall.name} rejected={outgoingCall.rejected} /> : null}
+      {outgoingCall && !ongoingCall ? <Calling name={outgoingCall.name} rejected={outgoingCall.rejected} cancellingCall={cancellingCall} /> : null}
     </VideoCallContext.Provider>
   );
 }

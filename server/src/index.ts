@@ -150,6 +150,27 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("cancel-call", (data) => {
+    const callId = data.callId;
+    firestore
+      .doc(`calls/${callId}`)
+      .set({ callStatus: "cancelled" }, { merge: true })
+      .then((data) => {
+        firestore
+          .doc(`calls/${callId}`)
+          .get()
+          .then((doc) => {
+            io.fetchSockets().then((sock) => {
+              sock.forEach((conn) => {
+                if (conn.data.uid === doc.data()?.from || conn.data.uid == doc.data()?.to) {
+                  conn.emit("call-cancelled", { callId: callId });
+                }
+              });
+            });
+          });
+      });
+  });
+
   socket.on("room:join", (data) => {
     if (rooms[data.roomId]) {
       rooms[data.roomId].push(data.id);
