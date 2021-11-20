@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const Video = ({ stream }) => {
+const Video = ({ stream, muted = false }) => {
   const elemRef = React.createRef();
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const Video = ({ stream }) => {
 
   return (
     <div>
-      <video ref={elemRef} autoPlay playsInline></video>
+      <video ref={elemRef} muted={muted} autoPlay playsInline></video>
     </div>
   );
 };

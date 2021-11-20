@@ -1,4 +1,11 @@
-import React, { useContext, useState, useMemo, useEffect, useCallback, useRef } from "react";
+import React, {
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
 import { io as SocketIo } from "socket.io-client";
 import Peer from "simple-peer";
 import { useAuth } from "../Components/AuthContext";
@@ -15,7 +22,10 @@ export function useVideoCall() {
 
 export function VideoCallProvider({ children }) {
   const { currentUserData } = useAuth();
-  const io = useMemo(() => SocketIo("http://localhost:5000", { autoConnect: false }), []);
+  const io = useMemo(
+    () => SocketIo("http://localhost:5000", { autoConnect: false }),
+    [],
+  );
 
   const history = createBrowserHistory();
 
@@ -59,7 +69,11 @@ export function VideoCallProvider({ children }) {
       }, 1000);
     });
     io.on("incoming-call", (data) => {
-      setIncomingCall({ from: data.from, callId: data.callId, signalData: data.signalData });
+      setIncomingCall({
+        from: data.from,
+        callId: data.callId,
+        signalData: data.signalData,
+      });
       setCallId(data.callId);
     });
     io.on("call-accepted", (data) => {
@@ -112,7 +126,10 @@ export function VideoCallProvider({ children }) {
   }, [startCleanup, peerRef, stream, history]);
 
   const requestVideoAudio = async () => {
-    return window.navigator.mediaDevices.getUserMedia({ video: true });
+    return window.navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
   };
 
   const callUser = async (userId, userName) => {
@@ -154,7 +171,11 @@ export function VideoCallProvider({ children }) {
       stream: stream,
     });
     peer.on("signal", (signalData) => {
-      io.emit("accept-call", { from: incomingCall.from.uid, signalData: signalData, callId: callId });
+      io.emit("accept-call", {
+        from: incomingCall.from.uid,
+        signalData: signalData,
+        callId: callId,
+      });
     });
 
     peer.signal(incomingCall.signalData);
@@ -201,8 +222,19 @@ export function VideoCallProvider({ children }) {
   return (
     <VideoCallContext.Provider value={value}>
       {children}
-      {incomingCall && !ongoingCall ? <IncomingCall name={incomingCall?.from.name || "bhutni"} uid={incomingCall?.from.uid || "fsdafsa"} /> : null}
-      {outgoingCall && !ongoingCall ? <Calling name={outgoingCall.name} rejected={outgoingCall.rejected} cancellingCall={cancellingCall} /> : null}
+      {incomingCall && !ongoingCall ? (
+        <IncomingCall
+          name={incomingCall?.from.name || "bhutni"}
+          uid={incomingCall?.from.uid || "fsdafsa"}
+        />
+      ) : null}
+      {outgoingCall && !ongoingCall ? (
+        <Calling
+          name={outgoingCall.name}
+          rejected={outgoingCall.rejected}
+          cancellingCall={cancellingCall}
+        />
+      ) : null}
     </VideoCallContext.Provider>
   );
 }

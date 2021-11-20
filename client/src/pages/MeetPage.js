@@ -13,19 +13,22 @@ const MeetPage = () => {
   return (
     <div>
       <form>
-        <input type="text" className="form-input" value={id} onChange={(e) => setId(e.target.value)} />
+        <input
+          type="text"
+          className="form-input"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+        />
         <button type="button" onClick={() => callUser(id)}>
           Call
         </button>
         <p className="font-bold text-2xl">{currentUser.uid}</p>
       </form>
-
-      <Video stream={stream} />
-
-      <h1>dusra</h1>
-      <Video stream={remoteStream} />
+      <div className="flex flex-row mx-auto w-full">
+        <Video stream={stream} muted={true} />
+        <Video stream={remoteStream} />
+      </div>
       <p>Call id {callId}</p>
-
       <button className="px-4 py-2 bg-red-500" onClick={endCall}>
         End
       </button>
