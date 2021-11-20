@@ -31,7 +31,7 @@ function AssignmentCard({ asssignment }) {
             Due : {localTimeFormat(asssignment.deadline)}
           </div>
           <div className="text-xs">
-            Created at {localTimeFormat(asssignment.createdAt)}
+            Created at: {localTimeFormat(asssignment.createdAt)}
           </div>
         </div>
       </div>
