@@ -9,6 +9,7 @@ import ClassesHomePage from "./pages/ClassroomPage";
 import { RequireAuth } from "./Components/RequireAuth";
 import ChatPage from "./pages/ChatPage";
 import AssignmentView from "./pages/AssignmentView";
+import Profile from "./Components/Profile";
 
 const App = () => {
   return (
@@ -31,6 +32,15 @@ const App = () => {
             element={
               <RequireAuth>
                 <ClassesHomePage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            exact
+            element={
+              <RequireAuth>
+                <Profile />
               </RequireAuth>
             }
           />
