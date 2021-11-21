@@ -31,7 +31,7 @@ function PendingAssignmentView({ pending }) {
               <div className="flex flex-col py-3 hover:underline">
                 <div>{assign.title}</div>
                 <div className="text-xs">
-                  {localTimeFormat(assign.deadline)}
+                  Due : {localTimeFormat(assign.deadline)}
                 </div>
               </div>
             </Link>
