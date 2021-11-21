@@ -25,7 +25,7 @@ const JoinedClasses = () => {
     <Loading />
   ) : (
     <div className="p-4 flex flex-wrap content-evenly gap-4">
-      {enrolledClasses ? (
+      {enrolledClasses && enrolledClasses.length != 0 ? (
         enrolledClasses.map((classroom, key) => {
           return (
             <ClassCard

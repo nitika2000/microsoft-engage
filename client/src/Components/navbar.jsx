@@ -139,19 +139,19 @@ function Nav() {
         >
           <div className="md:hidden" id="mobile-menu">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Chats
-              </a>
+              </Link>
 
-              <a
-                href="#"
+              <Link
+                    to="/classroom"
                 className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Classroom
-              </a>
+              </Link>
 
               <a
                 href="#"
@@ -167,12 +167,38 @@ function Nav() {
                 Create Meet
               </a>
 
-              <a
-                href="#"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              {!currentUser ? (
+              <>
+                <Link
+                  to = "/signup"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  SignUp
+                {/* Login/Logout */}
+              </Link>
+              <Link
+                  to = "/login"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
-                Login/Logout
-              </a>
+                Login
+              </Link>
+              </>)
+              : 
+              <>
+              <Link
+                  to = "/profile"
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Profile
+              </Link>
+              <Link
+                  to = "/"
+                  onClick={logout}
+                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              >
+                Logout
+              </Link>
+              </>}
             </div>
           </div>
         </Transition>
