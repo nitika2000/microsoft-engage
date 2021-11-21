@@ -1,5 +1,5 @@
 import React from "react";
-import { localTimeFormat } from "../../services/helper";
+import { formatDateTime } from "../../services/helper";
 import { useState } from "react";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import db from "../../services/firebase-config";
@@ -41,7 +41,7 @@ function GradingCard({ submission }) {
       <div className="flex flex-col font-sans w-full">
         <div>{submission.studentName}</div>
         <div className="text-xs">
-          Submitted At : {localTimeFormat(submission.submittedAt)}
+          Submitted At : {formatDateTime(submission.submittedAt)}
         </div>
 
         <div className="text-sm pt-2">

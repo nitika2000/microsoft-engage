@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { localTimeFormat } from "../../services/helper";
+import { formatDateTime } from "../../services/helper";
 
 function AssignmentCard({ asssignment }) {
   return (
@@ -28,10 +28,10 @@ function AssignmentCard({ asssignment }) {
             {asssignment.title}
           </div>
           <div className="text-xs">
-            Due : {localTimeFormat(asssignment.deadline)}
+            Due : {formatDateTime(asssignment.deadline)}
           </div>
           <div className="text-xs">
-            Created at: {localTimeFormat(asssignment.createdAt)}
+            Created at: {formatDateTime(asssignment.createdAt)}
           </div>
         </div>
       </div>
