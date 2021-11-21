@@ -2,7 +2,14 @@ import React from "react";
 import { useAuth } from "../AuthContext";
 import UserCard from "./UserCard";
 import { useState, useEffect } from "react";
-import { collection, where, query, onSnapshot, doc } from "@firebase/firestore";
+import {
+  collection,
+  where,
+  query,
+  onSnapshot,
+  doc,
+  getDoc,
+} from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import { mimicClassAsUser } from "../../services/helper";
 
@@ -14,33 +21,71 @@ function LeftPane({ onSelect, setIsClassroom }) {
   const [activeTab, setActiveTab] = useState("social");
   const [selectedUser, setSelectedUser] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [lastMsgs, setLastMsgs] = useState();
+
+  const getLastMsgTime = async (currentUserUid, otherUserUid) => {
+    const msgId =
+      currentUserUid > otherUserUid
+        ? `${currentUserUid + otherUserUid}`
+        : `${currentUserUid + otherUserUid}`;
+    return await getDoc(doc(collection(db, "lastMsgs"), msgId));
+  };
 
   useEffect(() => {
     setLoading(true);
+
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("uid", "not-in", [currentUser.uid]));
-
     const unsub = onSnapshot(q, (querySnapshot) => {
       let users = [];
       querySnapshot.forEach((doc) => {
         users.push(doc.data());
       });
-      setUsersList(users);
-      setLoading(false);
+
+      var promises = [];
+      users.forEach((user) => {
+        const promise = new Promise(async (resolve, reject) => {
+          const msgId =
+            currentUser.uid > user.uid
+              ? `${currentUser.uid + user.uid}`
+              : `${currentUser.uid + user.uid}`;
+          await getDoc(doc(collection(db, "lastMsgs"), msgId)).then((msg) => {
+            resolve({
+              ...user,
+              lastMsgTime: msg.data()
+                ? msg.data().createdAt
+                : new Date(-8640000000000000),
+            });
+          });
+        });
+        promises.push(promise);
+      });
+
+      Promise.all(promises).then((data) => {
+        data.sort(function (a, b) {
+          const keyA = a.lastMsgTime;
+          const keyB = b.lastMsgTime;
+          if (keyA < keyB) return 1;
+          if (keyA > keyB) return -1;
+          return 0;
+        });
+        setUsersList(data);
+        setLoading(false);
+      });
     });
 
     const classSub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
       setEnrolledClasses(doc.data().enrolledClasses);
+      setLoading(false);
     });
-    setLoading(false);
 
     return () => {
       unsub();
       classSub();
     };
-  }, []);
+  }, [lastMsgs]);
 
-  console.log(enrolledClasses);
+  console.log(usersList);
 
   const activeTabClasses = " bg-blue-600 text-white";
   const deactiveTabClasses = " bg-transparent text-blue-500";
