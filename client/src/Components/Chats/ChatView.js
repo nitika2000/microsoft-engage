@@ -1,11 +1,24 @@
-import { addDoc, collection, Timestamp, doc, setDoc, query, where, onSnapshot } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  Timestamp,
+  doc,
+  setDoc,
+  query,
+  where,
+  onSnapshot,
+} from "@firebase/firestore";
 import React, { useEffect } from "react";
 import db from "../../services/firebase-config";
 import { useAuth } from "../AuthContext";
 import MainView from "./MainView";
 import MessageForm from "./MessageForm";
 import { useState } from "react";
-import { formatDateTime, getMessageId, localTimeFormat } from "../../services/helper";
+import {
+  formatDateTime,
+  getMessageId,
+  localTimeFormat,
+} from "../../services/helper";
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
 import { createBrowserHistory } from "history";
@@ -31,7 +44,9 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
     const inputText = text;
     setText("");
     const tempTaggedMsg = taggedMsg;
-    const msgId = isClassroom ? selectedUser.uid : getMessageId(currentUser, selectedUser);
+    const msgId = isClassroom
+      ? selectedUser.uid
+      : getMessageId(currentUser, selectedUser);
     setTaggedMsg(null);
     await addDoc(collection(db, "messages", msgId, "chats"), {
       text: inputText,
@@ -51,6 +66,20 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
       createdAt: Timestamp.fromDate(new Date()),
       unread: true,
     });
+    await setDoc(
+      doc(db, "users", currentUser.uid),
+      {
+        lastMsg: Timestamp.fromDate(new Date()),
+      },
+      { merge: true },
+    );
+    await setDoc(
+      doc(db, "users", selectedUser.uid),
+      {
+        lastMsg: Timestamp.fromDate(new Date()),
+      },
+      { merge: true },
+    );
   };
 
   const handleMsgTag = (msg) => {
@@ -94,7 +123,9 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
             <Avatar name={selectedUser.uname} w="w-12" h="h-12" />
             <div>
               <h1 className="text-xl font-bold">{selectedUser.uname}</h1>
-              <p className="text-gray-500 text-sm">{online ? "Online" : lastSeen ? formatDateTime(lastSeen) : ""}</p>
+              <p className="text-gray-500 text-sm">
+                {online ? "Online" : lastSeen ? formatDateTime(lastSeen) : ""}
+              </p>
             </div>
             <button
               disabled={!online}
@@ -104,8 +135,18 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
               Call
             </button>
           </div>
-          <MainView selectedUser={selectedUser} taggedMsg={taggedMsg} onMsgTag={handleMsgTag} isClassroom={isClassroom} />
-          <MessageForm text={text} setText={setText} handleSubmit={handleSubmit} isClassroom={isClassroom} />
+          <MainView
+            selectedUser={selectedUser}
+            taggedMsg={taggedMsg}
+            onMsgTag={handleMsgTag}
+            isClassroom={isClassroom}
+          />
+          <MessageForm
+            text={text}
+            setText={setText}
+            handleSubmit={handleSubmit}
+            isClassroom={isClassroom}
+          />
         </>
       ) : (
         <div>Select User/Classroom to start chat</div>
