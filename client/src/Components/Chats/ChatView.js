@@ -23,6 +23,7 @@ import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
 import { createBrowserHistory } from "history";
 import { useVideoCall } from "../../services/VideoCallService";
+import PollCard from "./PollCard";
 
 function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [text, setText] = useState("");
@@ -30,6 +31,7 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
   const [taggedMsg, setTaggedMsg] = useState(null);
   const [online, setOnline] = useState(false);
   const [lastSeen, setLastSeen] = useState(null);
+  const [showPoll, setShowPoll] = useState(false);
 
   const { callUser } = useVideoCall();
 
@@ -128,6 +130,12 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
               </p>
             </div>
             <button
+              onClick={() => setShowPoll(true)}
+              className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
+            >
+              Poll
+            </button>
+            <button
               disabled={!online}
               onClick={handleCallClick}
               className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
@@ -135,6 +143,12 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
               Call
             </button>
           </div>
+          {showPoll ? (
+            <PollCard
+              classDetails={selectedUser}
+              closeForm={() => setShowPoll(false)}
+            />
+          ) : null}
           <MainView
             selectedUser={selectedUser}
             taggedMsg={taggedMsg}
