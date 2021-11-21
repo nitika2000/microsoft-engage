@@ -40,9 +40,10 @@ function PollCard({ classDetails, closeForm }) {
         return { option: value, count: 0 };
       }),
       submissionList: [],
+      pollId: "",
     };
 
-    await addDoc(collection(db, "messages", msgId, "chats"), {
+    const docRef = await addDoc(collection(db, "messages", msgId, "chats"), {
       pollObj: msg,
       text: "Please Respond: " + title,
       from: msgId,
@@ -53,6 +54,12 @@ function PollCard({ classDetails, closeForm }) {
       taggedMsg: null,
       senderName: classDetails.uname,
     });
+
+    await setDoc(
+      docRef,
+      { pollObj: { ...msg, pollId: docRef.id } },
+      { merge: true },
+    );
 
     await setDoc(doc(db, "lastMsgs", msgId), {
       text: "Please Respond",
