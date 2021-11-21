@@ -129,19 +129,23 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
                 {online ? "Online" : lastSeen ? formatDateTime(lastSeen) : ""}
               </p>
             </div>
-            <button
-              onClick={() => setShowPoll(true)}
-              className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
-            >
-              Poll
-            </button>
-            <button
-              disabled={!online}
-              onClick={handleCallClick}
-              className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
-            >
-              Call
-            </button>
+            {currentUserData.role === "Teacher" && isClassroom ? (
+              <button
+                onClick={() => setShowPoll(true)}
+                className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
+              >
+                Poll
+              </button>
+            ) : null}
+            {!isClassroom ? (
+              <button
+                disabled={!online}
+                onClick={handleCallClick}
+                className="disabled:opacity-40 bg-blue-500 px-8 shadow-sm py-1 hover:opacity-80 active:scale-95 text-white font-bold ml-auto rounded-sm"
+              >
+                Call
+              </button>
+            ) : null}
           </div>
           {showPoll ? (
             <PollCard
