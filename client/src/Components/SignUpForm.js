@@ -143,6 +143,7 @@ function SignupForm() {
             onChange={handleChange}
             className="focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="repPassword"
+            type="password"
             placeholder="Re-enter Password"
           />
         </div>
