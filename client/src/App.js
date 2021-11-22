@@ -1,5 +1,5 @@
 import "./styles/output.css";
-import Nav from "./Components/navbar.jsx";
+import Nav from "./Components/navbar.js";
 import { Route, Routes } from "react-router-dom";
 import ClassView from "./Components/Classroom/ClassView";
 import SignUpForm from "./Components/SignUpForm";
