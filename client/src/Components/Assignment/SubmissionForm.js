@@ -72,6 +72,13 @@ function SubmissionForm({ classId, assignId, setIsSubmit }) {
       let updatedList = doc.data().submissionList;
       updatedList.push(currentUser.uid);
       setDoc(assignRef, { submissionList: updatedList }, { merge: true });
+      setDoc(
+        docRef,
+        doc.data().deadline >= solutionObj.submittedAt
+          ? { turnedInLate: false }
+          : { turnedInLate: true },
+        { merge: true },
+      );
     });
   };
 
