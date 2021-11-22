@@ -1,15 +1,25 @@
 import React from "react";
 import { formatDateTime } from "../../services/helper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 
 function GradingCard({ submission }) {
-  console.log(submission);
   const [feedback, setFeedback] = useState();
   const [grades, setGrades] = useState();
   const [submitLoader, setSubmitLoader] = useState();
   const [error, setError] = useState("");
+  const [graded, setGraded] = useState(false);
+  useEffect(() => {
+    if (submission.grades.length > 0) {
+      setGraded(true);
+      setGrades(submission.grades);
+    }
+    if (submission.feedback.length > 0) {
+      setFeedback(submission.feedback);
+    }
+    return () => {};
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -24,8 +34,12 @@ function GradingCard({ submission }) {
       { feedback: feedback, grades: grades },
       { merge: true },
     ).then(() => setSubmitLoader(false));
+    if (grades.length > 0) {
+      setGraded(true);
+    }
   };
 
+  console.log("sub", submission);
   return (
     <div className="w-9/12 border-2 border-gray-200 flex flex-row p-4 rounded-md my-2 m-auto hover:border-blue-600 hover:border-2 hover:border-opacity-25">
       <div className="my-auto mx-3 bg-blue-700 p-2 rounded-full">
@@ -86,8 +100,9 @@ function GradingCard({ submission }) {
         <div className="flex flex-row justify-between">
           <textarea
             value={feedback}
+            disabled={graded}
             onChange={(e) => setFeedback(e.target.value)}
-            className="mt-5 text-sm form-textarea block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+            className="mt-5 text-sm form-textarea disabled:bg-gray-200 block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
             rows="3"
             placeholder="Write your feedback here if any..."
           />
@@ -97,19 +112,30 @@ function GradingCard({ submission }) {
               <div className="text-xs text-red-600">{error}</div>
             ) : null}
             <input
+              disabled={graded}
               value={grades}
               onChange={(e) => setGrades(e.target.value)}
               placeholder="Grades Alloted"
-              className="mt-5 text-sm block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
+              className="mt-5 text-sm block disabled:bg-gray-200 w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
             />
-            <button
-              className="bg-blue-500 w-full mt-1 disabled:opacity-30 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={handleSubmit}
-              disabled={!(grades || feedback) || submitLoader}
-            >
-              {submitLoader ? <span>Wait...</span> : <span>Done</span>}
-            </button>
+            {graded ? (
+              <button
+                className="bg-white w-full mt-1 text-green-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                disabled="true"
+              >
+                Graded
+              </button>
+            ) : (
+              <button
+                className="bg-blue-500 w-full mt-1 disabled:opacity-30 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={handleSubmit}
+                disabled={!(grades || feedback) || submitLoader}
+              >
+                {submitLoader ? <span>Wait...</span> : <span>Done</span>}
+              </button>
+            )}
           </div>
         </div>
       </div>

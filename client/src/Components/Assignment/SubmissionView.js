@@ -1,15 +1,24 @@
 import React from "react";
+import { formatDateTime } from "../../services/helper";
 
 function SubmissionView({ submission }) {
   return (
     <div>
       <div className="p-4 border-gray-200 border-2 rounded-md">
+        {submission.turnedInLate ? (
+          <div className="text-sm italic text-red-700">Turned in Late</div>
+        ) : null}
         <div className="w-full flex flex-col items-center px-0 py-2 rounded-md shadow-md tracking-wide uppercase border border-green-600 bg-green-600 text-white">
           <span className="mt-2 text-sm font-bold leading-normal">
             Your work
           </span>
         </div>
-
+        <div>
+          <p className="text-gray-600 italic pt-4">
+            <span className="font-bold text-gray-600">Submitted At: </span>
+            {formatDateTime(submission.submittedAt)}
+          </p>
+        </div>
         {submission.comments && submission.comments.length > 0 ? (
           <div>
             <p className="text-gray-600 italic pt-4">
