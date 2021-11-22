@@ -72,7 +72,8 @@ function ClassView() {
       querySnapshot.forEach((doc) => {
         const isSubmited = checkSubmission(doc.data().submissionList);
         const currentDate = new Date();
-        if (!isSubmited && doc.data().deadline > currentDate) {
+        const deadlineDate = new Date(doc.data().deadline.seconds * 1000);
+        if (!isSubmited && deadlineDate > currentDate) {
           pendingAssign.push(doc.data());
         }
       });

@@ -117,7 +117,7 @@ function AssignmentView() {
           </div>
           <div className="text-gray-600">{assignment.creatorName}</div>
           <div className="text-gray-600 text-xs">
-            {assignment.grades} Points
+            {assignment.grades ? assignment.grades : "No "} Points
           </div>
           <div className="text-red-600 text-xs">
             Due : {formatDateTime(assignment.deadline)}
