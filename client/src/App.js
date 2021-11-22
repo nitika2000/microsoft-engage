@@ -63,8 +63,24 @@ const App = () => {
                 </RequireAuth>
               }
             />
-            <Route path="/signup" exact element={<SignUpForm />} />
-            <Route path="/login" exact element={<LoginForm />} />
+            <Route
+              path="/signup"
+              exact
+              element={
+                <RequireAuth pathType="signUp">
+                  <SignUpForm />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/login"
+              exact
+              element={
+                <RequireAuth pathType="login">
+                  <LoginForm />
+                </RequireAuth>
+              }
+            />
             <Route path="/meet/:id" exact element={<MeetPage />} />
           </Routes>
         </VideoCallProvider>
