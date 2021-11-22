@@ -149,6 +149,7 @@ function LeftPane({ onSelect, setIsClassroom }) {
                     onSelect={() => {
                       setSelectedUser(user.uid);
                       onSelect(user);
+                      setIsClassroom(false);
                     }}
                     user={user}
                     key={user.uid}

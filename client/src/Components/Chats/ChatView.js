@@ -14,10 +14,7 @@ import { useAuth } from "../AuthContext";
 import MainView from "./MainView";
 import MessageForm from "./MessageForm";
 import { useState } from "react";
-import {
-  formatDateTime,
-  getMessageId,
-} from "../../services/helper";
+import { formatDateTime, getMessageId } from "../../services/helper";
 import Avatar from "./Avatar";
 import { useNavigate } from "react-router";
 import { createBrowserHistory } from "history";

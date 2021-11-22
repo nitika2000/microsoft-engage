@@ -5,7 +5,6 @@ import { doc, getDoc, setDoc } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 
 function GradingCard({ submission }) {
-  console.log(submission);
   const [feedback, setFeedback] = useState();
   const [grades, setGrades] = useState();
   const [submitLoader, setSubmitLoader] = useState();
