@@ -16,6 +16,7 @@ import SubmissionView from "../Components/Assignment/SubmissionView";
 import { formatDateTime, isTeacher } from "../services/helper";
 import Loading from "../Components/Loading";
 import GradingCard from "../Components/Assignment/GradingCard";
+import Error from "../Components/Error";
 
 function AssignmentView() {
   const searchParams = useParams();
@@ -29,12 +30,19 @@ function AssignmentView() {
   const [loading, setLoading] = useState(true);
   const [isSubmit, setIsSubmit] = useState(false);
   const [submissionList, setSubmissionList] = useState(null);
-
+  const [error, setError] = useState("");
   useEffect(() => {
     setLoading(true);
     const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
+    console.log(assignRef);
     const docSnap = getDoc(assignRef).then((assign) => {
-      setAssignment(assign.data());
+      if (assign.data()) {
+        setAssignment(assign.data());
+      } else {
+        setError("Assignment ID doesn't exist");
+        setLoading(false);
+        return;
+      }
     });
 
     if (isTeacher(currentUserData.role)) {
@@ -180,7 +188,7 @@ function AssignmentView() {
         : null}
     </div>
   ) : (
-    <h1>Url is incorrent : 404</h1>
+    <Error error={error} />
   );
 }
 

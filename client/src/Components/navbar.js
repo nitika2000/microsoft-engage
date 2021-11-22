@@ -36,16 +36,6 @@ function Nav() {
                     Classroom
                   </Link>
 
-                  <a className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                    Join Meet
-                  </a>
-
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                  >
-                    Create Meet
-                  </a>
                   {!currentUser ? (
                     <>
                       <Link
@@ -153,19 +143,6 @@ function Nav() {
                 Classroom
               </Link>
 
-              <a
-                href="#"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Join Meet
-              </a>
-
-              <a
-                href="#"
-                className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Create Meet
-              </a>
 
               {!currentUser ? (
               <>

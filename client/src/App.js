@@ -1,5 +1,5 @@
 import "./styles/output.css";
-import Nav from "./Components/navbar.jsx";
+import Nav from "./Components/navbar.js";
 import { Route, Routes } from "react-router-dom";
 import ClassView from "./Components/Classroom/ClassView";
 import SignUpForm from "./Components/SignUpForm";
@@ -63,8 +63,24 @@ const App = () => {
                 </RequireAuth>
               }
             />
-            <Route path="/signup" exact element={<SignUpForm />} />
-            <Route path="/login" exact element={<LoginForm />} />
+            <Route
+              path="/signup"
+              exact
+              element={
+                <RequireAuth pathType="signUp">
+                  <SignUpForm />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/login"
+              exact
+              element={
+                <RequireAuth pathType="login">
+                  <LoginForm />
+                </RequireAuth>
+              }
+            />
             <Route path="/meet/:id" exact element={<MeetPage />} />
           </Routes>
         </VideoCallProvider>

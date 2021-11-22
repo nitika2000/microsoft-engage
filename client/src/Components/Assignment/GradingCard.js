@@ -9,10 +9,16 @@ function GradingCard({ submission }) {
   const [feedback, setFeedback] = useState();
   const [grades, setGrades] = useState();
   const [submitLoader, setSubmitLoader] = useState();
-
+  const [error, setError] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
     setSubmitLoader(true);
+    if (grades.length > 0 && isNaN(grades)) {
+      setError("Grades should be a number");
+      setSubmitLoader(false);
+      return;
+    }
     setDoc(
       doc(db, "submissions", submission.assignId + submission.submittedBy),
       { feedback: feedback, grades: grades },
@@ -83,10 +89,13 @@ function GradingCard({ submission }) {
             onChange={(e) => setFeedback(e.target.value)}
             className="mt-5 text-sm form-textarea block w-full px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded border border-blueGray-300 outline-none focus:outline-none focus:ring"
             rows="3"
-            placeholder="Write your here here if any..."
+            placeholder="Write your feedback here if any..."
           />
 
           <div className="mx-4 flex flex-col">
+            {error.length > 0 ? (
+              <div className="text-xs text-red-600">{error}</div>
+            ) : null}
             <input
               value={grades}
               onChange={(e) => setGrades(e.target.value)}
