@@ -181,11 +181,16 @@ function AssignmentView() {
           </div>
         ) : null}
       </div>
-      {isTeacher(currentUserData.role) && submissionList
-        ? submissionList.map((submission) => (
-            <GradingCard submission={submission} />
-          ))
-        : null}
+      <div className="w-full bg-gray-300 text-center rounded-md">
+        Submissions
+      </div>
+      {isTeacher(currentUserData.role) && submissionList ? (
+        submissionList.map((submission) => (
+          <GradingCard submission={submission} />
+        ))
+      ) : (
+        <div className="text-gray-400 pt-2">No Submissions</div>
+      )}
     </div>
   ) : (
     <Error error={error} />
