@@ -9,13 +9,16 @@ import {
   onSnapshot,
   doc,
   getDoc,
+  orderBy,
 } from "@firebase/firestore";
 import db from "../../services/firebase-config";
 import { mimicClassAsUser } from "../../services/helper";
 
 function LeftPane({ onSelect, setIsClassroom }) {
   const { currentUser } = useAuth();
+  const [usersList1, setUsersList1] = useState(null);
   const [usersList, setUsersList] = useState([]);
+  const [usersList2, setUsersList2] = useState(null);
   const [enrolledClasses, setEnrolledClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("social");
@@ -23,6 +26,7 @@ function LeftPane({ onSelect, setIsClassroom }) {
   const [searchInput, setSearchInput] = useState("");
   const [lastMsgs, setLastMsgs] = useState();
 
+  // let usersList2 = [];
   const getLastMsgTime = async (currentUserUid, otherUserUid) => {
     const msgId =
       currentUserUid > otherUserUid
@@ -32,7 +36,43 @@ function LeftPane({ onSelect, setIsClassroom }) {
   };
 
   useEffect(() => {
+    if (usersList1 && usersList2) {
+      var newList = [];
+      usersList1.forEach((user) => newList.push(user));
+      usersList2.forEach((user) => {
+        const userLength = usersList1.filter((user1) => user1.uid === user.uid);
+        if (userLength.length === 0) {
+          newList.push(user);
+        }
+      });
+      setUsersList(newList);
+      setLoading(false);
+    }
+  }, [usersList1, usersList2]);
+  useEffect(() => {
     setLoading(true);
+
+    const lastMsgRef = collection(db, "lastMsgs");
+    const q_lastMsg = query(
+      lastMsgRef,
+      where("users", "array-contains", currentUser.uid),
+      orderBy("createdAt", "desc"),
+    );
+    const unsub_lastMsg = onSnapshot(q_lastMsg, (q_snap) => {
+      let promises = [];
+      q_snap.forEach((lastMsgDoc) => {
+        const promise = new Promise(async (resolve, reject) => {
+          const user2 =
+            lastMsgDoc.data().to === currentUser.uid
+              ? lastMsgDoc.data().from
+              : lastMsgDoc.data().to;
+          const docRef = await getDoc(doc(collection(db, "users"), user2));
+          resolve(docRef.data());
+        });
+        promises.push(promise);
+      });
+      Promise.all(promises).then((data) => setUsersList1(data));
+    });
 
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("uid", "not-in", [currentUser.uid]));
@@ -41,51 +81,19 @@ function LeftPane({ onSelect, setIsClassroom }) {
       querySnapshot.forEach((doc) => {
         users.push(doc.data());
       });
-
-      var promises = [];
-      users.forEach((user) => {
-        const promise = new Promise(async (resolve, reject) => {
-          const msgId =
-            currentUser.uid > user.uid
-              ? `${currentUser.uid + user.uid}`
-              : `${currentUser.uid + user.uid}`;
-          await getDoc(doc(collection(db, "lastMsgs"), msgId)).then((msg) => {
-            resolve({
-              ...user,
-              lastMsgTime: msg.data()
-                ? msg.data().createdAt
-                : new Date(-8640000000000000),
-            });
-          });
-        });
-        promises.push(promise);
-      });
-
-      Promise.all(promises).then((data) => {
-        data.sort(function (a, b) {
-          const keyA = a.lastMsgTime;
-          const keyB = b.lastMsgTime;
-          if (keyA < keyB) return 1;
-          if (keyA > keyB) return -1;
-          return 0;
-        });
-        setUsersList(data);
-        setLoading(false);
-      });
+      setUsersList2(users);
     });
 
     const classSub = onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
       setEnrolledClasses(doc.data().enrolledClasses);
-      setLoading(false);
     });
 
     return () => {
       unsub();
       classSub();
+      unsub_lastMsg();
     };
-  }, [lastMsgs]);
-
-  console.log(usersList);
+  }, []);
 
   const activeTabClasses = " bg-blue-600 text-white";
   const deactiveTabClasses = " bg-transparent text-blue-500";
