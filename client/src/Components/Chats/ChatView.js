@@ -62,22 +62,9 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
       from: currentUser.uid,
       to: selectedUser.uid,
       createdAt: Timestamp.fromDate(new Date()),
+      users: [selectedUser.uid, currentUser.uid],
       unread: true,
     });
-    await setDoc(
-      doc(db, "users", currentUser.uid),
-      {
-        lastMsg: Timestamp.fromDate(new Date()),
-      },
-      { merge: true },
-    );
-    await setDoc(
-      doc(db, "users", selectedUser.uid),
-      {
-        lastMsg: Timestamp.fromDate(new Date()),
-      },
-      { merge: true },
-    );
   };
 
   const handleMsgTag = (msg) => {

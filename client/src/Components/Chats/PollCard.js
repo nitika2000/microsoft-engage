@@ -65,6 +65,7 @@ function PollCard({ classDetails, closeForm }) {
       text: "Please Respond",
       from: msgId,
       to: msgId,
+      users: [msgId],
       createdAt: Timestamp.fromDate(new Date()),
       unread: true,
     });

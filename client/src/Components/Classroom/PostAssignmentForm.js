@@ -127,6 +127,7 @@ function PostAssignmentForm({ classDetails }) {
       text: "New assignment Posted",
       from: classDetails.classId,
       to: classDetails.classId,
+      users: [classDetails.classId],
       createdAt: Timestamp.fromDate(new Date()),
       unread: true,
     });
