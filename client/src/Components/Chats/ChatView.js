@@ -62,13 +62,14 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
       from: currentUser.uid,
       to: selectedUser.uid,
       createdAt: Timestamp.fromDate(new Date()),
-      users: [selectedUser.uid, currentUser.uid],
+      users: isClassroom
+        ? [selectedUser.uid]
+        : [selectedUser.uid, currentUser.uid],
       unread: true,
     });
   };
 
   const handleMsgTag = (msg) => {
-    console.log("tagged", msg);
     setTaggedMsg(msg);
   };
 
@@ -87,7 +88,6 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
         let users = [];
         querySnapshot.forEach((doc) => {
           // if (changes.type === "modified") {
-          console.log(doc.data());
           setOnline(doc.data().isOnline);
           setLastSeen(doc.data().lastSeen);
           // }
