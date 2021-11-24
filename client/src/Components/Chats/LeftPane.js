@@ -26,7 +26,6 @@ function LeftPane({ onSelect, setIsClassroom }) {
   const [searchInput, setSearchInput] = useState("");
   const [lastMsgs, setLastMsgs] = useState();
 
-  // let usersList2 = [];
   const getLastMsgTime = async (currentUserUid, otherUserUid) => {
     const msgId =
       currentUserUid > otherUserUid
