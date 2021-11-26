@@ -11,20 +11,22 @@ Build a functional prototype of a platform that gives student an array of digita
 - [x] Status : Accomplised by integrating all academic features in social chats in form of groups.
 
 ## 🚩 Database Design:
-<img src="/readme_assets/Engage_final_page-0001.jpg">
+<kbd><img src="/readme_assets/Engage_final_page-0001.jpg"></kbd>
+</br>
 
 ## 🚩 Features:
-<img src="/readme_assets/Engage_final_page-0002.jpg">
-<img src="/readme_assets/Engage_final_page-0003.jpg">
-<img src="/readme_assets/Engage_final_page-0004.jpg">
-<img src="/readme_assets/Engage_final_page-0005.jpg">
-<img src="/readme_assets/Engage_final_page-0006.jpg">
-<img src="/readme_assets/Engage_final_page-0007.jpg">
-<img src="/readme_assets/Engage_final_page-0008.jpg">
-<img src="/readme_assets/Engage_final_page-0009.jpg">
-<img src="/readme_assets/Engage_final_page-0010.jpg">
-<img src="/readme_assets/Engage_final_page-0011.jpg">
-<img src="/readme_assets/Engage_final_page-0012.jpg">
+<kbd><img src="/readme_assets/Engage_final_page-0002.jpg" ></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0003.jpg" ></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0004.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0005.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0006.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0007.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0008.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0009.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0010.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0011.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0012.jpg"></kbd>
+</br>
 
 ##  🚩 Technologies used:
 #### Technology : <img alt="React" src="https://img.shields.io/badge/-React-blue" /> <img alt="React" src="https://img.shields.io/badge/-NodeJs-green" /> <img alt="React" src="https://img.shields.io/badge/-Tailwind-orange" /> <img alt="React" src="https://img.shields.io/badge/-SocketIO-red" /> <img alt="React" src="https://img.shields.io/badge/-PeerJS-yellow" />
