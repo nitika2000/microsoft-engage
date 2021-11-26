@@ -10,6 +10,28 @@ This is solely built during the period of **Microsoft Engage Mentorship program'
 Build a functional prototype of a platform that gives student an array of digital academic and social tools to stay engaged with their studies, peers and broader university community during pandemic.
 - [x] Status : Accomplised by integrating all academic features in social chats in form of groups.
 
+## 🚩 Features:
+Feature | Images
+------------ | -------------
+**Authentication**: Used Firebase Auth setup to authorize user. User can either be **Teacher** or **Student** | Login: <img width="750px" height="350px" src="/readme_assets/login.PNG"> Signup: <img width="750px" height="350px" src="/readme_assets/signup.PNG">
+**Teacher View** | Images
+**Create Class** | <img width="750px" height="350px" src="/readme_assets/CreatedClass_TeacherView.PNG">
+**Post Assignment** | **Post Assignment View:** <img width="750px" height="350px" src="/readme_assets/classView_teacher.PNG"> **Integration of Post Assignment with Chats:**<img width="750px" height="350px" src="/readme_assets/chat_view_classroom_teacher.PNG">
+**Enrolled Students** | <img width="750px" height="350px" src="/readme_assets/Enrolled_students_teacher.PNG">
+**Accept Assignment Submissions** | <img width="750px" height="350px" src="/readme_assets/Submissions_teacher.PNG">
+**Create Poll** | **Create Poll**: <img width="750px" height="350px" src="/readme_assets/Poll_teacher.PNG"> **Poll Results**: <img width="650px" height="300px" src="/readme_assets/Poll_answers_teacher.PNG">
+**Student View** | Images
+**Join Class** | <img width="750px" height="350px" src="/readme_assets/joinedClasses_studentView.PNG">
+**View Class** | <img width="750px" height="350px" src="/readme_assets/Assinments_Student.PNG">
+**View Assignment** | <img width="750px" height="350px" src="/readme_assets/AssignmentView_Student.PNG">
+**Submit Solution** | <img width="750px" height="350px" src="/readme_assets/AssignmentView_Student_answer_submitted.PNG">
+**Chats** | Images
+**Chat View** | <img width="750px" height="350px" src="/readme_assets/chat_main_view.PNG">
+**Search User** | <img  src="/readme_assets/Search_Name.PNG">
+**Emoji / Attachment** | <img src="/readme_assets/Send_file_Emojis_IN_Chat.PNG">
+**Read / Unread feature with highlight** | <img width="750px" height="350px" src="/readme_assets/ChatView_LastMsg_Highlighted.PNG">
+**Academic / Group Discussion** | <img width="750px" height="350px" src="/readme_assets/classroom_chatView.PNG">
+
 ##  🚩 Technologies used:
 #### Technology : <img alt="React" src="https://img.shields.io/badge/-React-blue" /> <img alt="React" src="https://img.shields.io/badge/-NodeJs-green" /> <img alt="React" src="https://img.shields.io/badge/-Tailwind-orange" /> <img alt="React" src="https://img.shields.io/badge/-SocketIO-red" /> <img alt="React" src="https://img.shields.io/badge/-PeerJS-yellow" />
 #### Version Control : <img alt="Git" src="https://img.shields.io/badge/-Git-orange"/>  
