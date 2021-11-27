@@ -23,15 +23,16 @@ export function useVideoCall() {
 export function VideoCallProvider({ children }) {
   const { currentUserData } = useAuth();
   const io = useMemo(
-    () => SocketIo("http://localhost:5000", { autoConnect: false }),
+    () =>
+      SocketIo("https://protected-oasis-07887.herokuapp.com/", {
+        autoConnect: false,
+      }),
     [],
   );
 
   const history = createBrowserHistory();
 
   const navigate = useNavigate();
-
-  console.log(history);
 
   const [incomingCall, setIncomingCall] = useState(null);
   const [ongoingCall, setOngoingCall] = useState(false);

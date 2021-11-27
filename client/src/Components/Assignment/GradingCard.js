@@ -39,7 +39,6 @@ function GradingCard({ submission }) {
     }
   };
 
-  console.log("sub", submission);
   return (
     <div className="w-9/12 border-2 border-gray-200 flex flex-row p-4 rounded-md my-2 m-auto hover:border-blue-600 hover:border-2 hover:border-opacity-25">
       <div className="my-auto mx-3 bg-blue-700 p-2 rounded-full">

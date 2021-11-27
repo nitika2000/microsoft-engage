@@ -111,7 +111,6 @@ function MainView({ selectedUser, onMsgTag, taggedMsg, isClassroom }) {
     } else if (diffYears === 0 && diffDays === -1) {
       return "Tomorrow";
     } else if (diffYears === 0 && diffDays > 1 && diffDays < 7) {
-      console.log(dt);
       return fulldays[dt.getDay()];
     } else if (diffYears >= 1) {
       return date + " " + month + ", " + new Date(dateTimeStamp).getFullYear();

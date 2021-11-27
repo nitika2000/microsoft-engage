@@ -29,7 +29,6 @@ function ChatPage() {
     if (queryParams.get("selectedUser")) {
       const uid = queryParams.get("selectedUser");
       getDoc(doc(db, `users/${uid}`)).then((user) => {
-        console.log(user.data());
         setSelectedUser(user.data());
         history.replace("/");
       });
@@ -40,7 +39,6 @@ function ChatPage() {
   }, [history]);
 
   const onUserSelect = (user) => {
-    console.log("run selecte");
 
     setActivePage("chat");
     setSelectedUser(user);

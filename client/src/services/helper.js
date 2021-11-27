@@ -35,7 +35,6 @@ export const getSlug = async (length) => {
         isFound = true;
       }
     });
-    console.log("class code", result);
     return result;
   }
 };
@@ -109,18 +108,18 @@ export const uploadFiles = (path, files) => {
         (snapshot) => {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
+          // console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case "paused":
-              console.log("Upload is paused");
+              // console.log("Upload is paused");
               break;
             case "running":
-              console.log("Upload is running");
+              // console.log("Upload is running");
               break;
           }
         },
         (error) => {
-          console.log("error occured", error);
+          // console.log("error occured", error);
           reject(error.code);
         },
         async () => {
@@ -187,7 +186,6 @@ export const formatDateTime = (dateTimeStamp) => {
   } else if (diffYears === 0 && diffDays === -1) {
     dateTimeString += "Tomorrow";
   } else if (diffYears === 0 && diffDays > 1 && diffDays < 7) {
-    console.log(dt);
     dateTimeString += fulldays[dt.getDay()];
   } else if (diffYears >= 1) {
     dateTimeString +=

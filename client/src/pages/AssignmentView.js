@@ -34,7 +34,6 @@ function AssignmentView() {
   useEffect(() => {
     setLoading(true);
     const assignRef = doc(db, "classrooms", classId, "assignments", assignId);
-    console.log(assignRef);
     const docSnap = getDoc(assignRef).then((assign) => {
       if (assign.data()) {
         setAssignment(assign.data());
@@ -52,7 +51,6 @@ function AssignmentView() {
       const unsub = onSnapshot(q, (querySnapshot) => {
         let submissions = [];
         querySnapshot.forEach((doc) => {
-          console.log("submission", doc.data());
           submissions.push(doc.data());
         });
         setSubmissionList(submissions);
@@ -87,7 +85,6 @@ function AssignmentView() {
     }
   }, [assignment, submissionList, submission]);
 
-  console.log(submissionList);
 
   return loading ? (
     <Loading />

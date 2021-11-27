@@ -47,7 +47,6 @@ function ClassCard({ classroom, isTeacher }) {
             pendingAssign.push(doc.data());
           }
         });
-        console.log(pendingAssign);
         setPending(pendingAssign);
       });
       setPendingLoader(false);

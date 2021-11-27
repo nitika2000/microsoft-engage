@@ -31,9 +31,7 @@ const MessageForm = ({
   useEffect(() => {
     const sub = document
       .querySelector("body")
-      .addEventListener("click", (e) => {
-        // console.log(e, "dd");
-      });
+      .addEventListener("click", (e) => {});
     return sub;
   }, []);
 
@@ -48,7 +46,6 @@ const MessageForm = ({
       const path = `chat-attachments/`;
       uploadFiles(path, selectedFiles)
         .then((data) => {
-          console.log(data);
           setFilesUploading(false);
           handleSubmit(data);
           setSelectedFiles(null);

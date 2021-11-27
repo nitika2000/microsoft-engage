@@ -54,7 +54,6 @@ function LoginForm() {
           default:
             message = "Failed to login";
         }
-        console.log(err.code);
         setData({ ...data, error: message, loading: false });
       }
     }
