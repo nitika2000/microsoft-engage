@@ -15,7 +15,7 @@ function StudentList({ studentList }) {
           {studentList && studentList.length > 0
             ? studentList.map((student, index) => {
                 return (
-                  <tr className="border-t border border-gray-400">
+                  <tr key={index} className="border-t border border-gray-400">
                     <td className="p-2">{index + 1}</td>
                     <td className="p-2">{student.name}</td>
                     <td className="p-2">{student.email}</td>

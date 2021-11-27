@@ -103,7 +103,7 @@ function ChatView({ selectedUser, onBackClick, isClassroom }) {
         <>
           <div className="bg-white shadow-sm rounded-md py-4 text-black px-4 flex items-center gap-2">
             <button className="inline-block md:hidden" onClick={onBackClick}>
-              <i class="text-2xl fas fa-arrow-left"></i>
+              <i className="text-2xl fas fa-arrow-left"></i>
             </button>
             <Avatar name={selectedUser.uname} w="w-12" h="h-12" />
             <div>

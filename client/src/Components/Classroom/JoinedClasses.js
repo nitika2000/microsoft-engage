@@ -25,11 +25,11 @@ const JoinedClasses = () => {
     <Loading />
   ) : (
     <div className="p-4 flex flex-wrap content-evenly gap-4">
-      {enrolledClasses && enrolledClasses.length != 0 ? (
-        enrolledClasses.map((classroom, key) => {
+      {enrolledClasses && enrolledClasses.length !== 0 ? (
+        enrolledClasses.map((classroom) => {
           return (
             <ClassCard
-              key={key}
+              key={classroom.classId}
               classroom={classroom}
               isTeacher={isTeacher(currentUserData.role)}
             />

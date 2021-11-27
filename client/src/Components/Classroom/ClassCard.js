@@ -98,8 +98,11 @@ function ClassCard({ classroom, isTeacher }) {
               ) : (
                 pending.map((assign) => {
                   return (
-                    <Link to={`${classroom.classId}/${assign.assignId}`}>
-                      <div class="flex flex-col p-2 hover:underline">
+                    <Link
+                      key={assign.assignId}
+                      to={`${classroom.classId}/${assign.assignId}`}
+                    >
+                      <div className="flex flex-col p-2 hover:underline">
                         <div>{assign.title}</div>
                         <div>Deadline : {formatDateTime(assign.deadline)}</div>
                       </div>

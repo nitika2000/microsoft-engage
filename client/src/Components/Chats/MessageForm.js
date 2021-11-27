@@ -72,7 +72,7 @@ const MessageForm = ({
         onClick={() => inputFileRef.current.click()}
         className="disabled:opacity-70 btn px-4 py-2 bg-green-400 flex items-center justify-center rounded-md hover:opacity-80 active:scale-95"
       >
-        <span class="material-icons">attachment</span>
+        <span className="material-icons">attachment</span>
         <input
           className="hidden"
           type="file"
@@ -106,7 +106,7 @@ const MessageForm = ({
         {filesUploading ? (
           <span className="inline-block w-4 h-4 border-2 border-gray-200 rounded-full border-t-blue-400 animate-spin"></span>
         ) : (
-          <span class="material-icons">send</span>
+          <span className="material-icons">send</span>
         )}
       </button>
     </form>

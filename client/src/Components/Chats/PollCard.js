@@ -127,11 +127,11 @@ function PollCard({ classDetails, closeForm }) {
                         onClick={() => clearOption(index)}
                         type="button"
                         disabled={index <= 1}
-                        class="inline-flex display disabled:invisible items-center justify-center focus:ring-indigo-500"
+                        className="inline-flex display disabled:invisible items-center justify-center focus:ring-indigo-500"
                       >
-                        <span class="sr-only">Close menu</span>
+                        <span className="sr-only">Close menu</span>
                         <svg
-                          class="h-4 w-4"
+                          className="h-4 w-4"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -139,9 +139,9 @@ function PollCard({ classDetails, closeForm }) {
                           aria-hidden="true"
                         >
                           <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
                             d="M6 18L18 6M6 6l12 12"
                           />
                         </svg>

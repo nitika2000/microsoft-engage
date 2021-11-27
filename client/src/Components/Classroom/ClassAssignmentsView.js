@@ -32,8 +32,8 @@ function ClassAssignmentsView({ classId }) {
     </div>
   ) : (
     <div>
-      {assignList.map((assignment) => (
-        <AssignmentCard asssignment={assignment} />
+      {assignList.map((assignment, key) => (
+        <AssignmentCard key={key} asssignment={assignment} />
       ))}
     </div>
   );
