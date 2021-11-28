@@ -10,6 +10,10 @@ This is solely built during the period of **Microsoft Engage Mentorship program'
 Build a functional prototype of a platform that gives student an array of digital academic and social tools to stay engaged with their studies, peers and broader university community during pandemic.
 - [x] Status : Accomplised by integrating all academic features in social chats in form of groups.
 
+## 🚩 Links:
+### Demo Link: https://ms-engage-11f78.web.app
+### Video Link: https://www.youtube.com/watch?v=HpnG8EOrnIw
+
 ## 🚩 Database Design:
 <kbd><img src="/readme_assets/Engage_final_page-0001.jpg"></kbd>
 </br>
