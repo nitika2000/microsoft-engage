@@ -26,12 +26,17 @@ Build a functional prototype of a platform that gives student an array of digita
 <kbd><img src="/readme_assets/Engage_final_page-0010.jpg"></kbd>
 <kbd><img src="/readme_assets/Engage_final_page-0011.jpg"></kbd>
 <kbd><img src="/readme_assets/Engage_final_page-0012.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0013.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0014.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0015.jpg"></kbd>
+<kbd><img src="/readme_assets/Engage_final_page-0016.jpg"></kbd>
 </br>
 
 ##  🚩 Technologies used:
 #### Technology : <img alt="React" src="https://img.shields.io/badge/-React-blue" /> <img alt="React" src="https://img.shields.io/badge/-NodeJs-green" /> <img alt="React" src="https://img.shields.io/badge/-Tailwind-orange" /> <img alt="React" src="https://img.shields.io/badge/-SocketIO-red" /> <img alt="React" src="https://img.shields.io/badge/-PeerJS-yellow" />
 #### Version Control : <img alt="Git" src="https://img.shields.io/badge/-Git-orange"/>  
 #### Auth Control : <img alt="Git" src="https://img.shields.io/badge/-Firebase-yellow"/>  
+#### Hosting : <img alt="Git" src="https://img.shields.io/badge/-Firebase-yellow"/> <img alt="Git" src="https://img.shields.io/badge/-Heroku-orange"/>  
 ###### You can also see the list of dependencies in the package.json file.
 
 ## 🚩Installation/Environment Setup 
