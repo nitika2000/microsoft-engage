@@ -12,8 +12,10 @@ import AssignmentView from "./pages/AssignmentView";
 import Profile from "./Components/Profile";
 import MeetPage from "./pages/MeetPage";
 import { VideoCallProvider } from "./services/VideoCallService";
+import { useEffect } from "react";
 
 const App = () => {
+  useEffect(() => (document.title = "Socio"), []);
   return (
     <div>
       <AuthProvider>
