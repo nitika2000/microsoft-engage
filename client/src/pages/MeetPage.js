@@ -26,7 +26,7 @@ const MeetPage = () => {
           className="bg-red-500 m-auto font-semibold text-white py-2 px-4 border-transparent rounded"
           type="button"
         >
-          Close
+          End
         </button>
       </div>
     </div>

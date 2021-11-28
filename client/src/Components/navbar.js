@@ -24,6 +24,7 @@ function Nav() {
                 <div className="ml-10 flex items-baseline space-x-4">
                   <Link
                     to="/"
+                    onClick={() => setIsOpen(false)}
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Chats
@@ -31,6 +32,7 @@ function Nav() {
 
                   <Link
                     to="/classroom"
+                    onClick={() => setIsOpen(false)}
                     className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Classroom
@@ -40,12 +42,14 @@ function Nav() {
                     <>
                       <Link
                         to="/signup"
+                        onClick={() => setIsOpen(false)}
                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                       >
                         SignUp
                       </Link>
                       <Link
                         to="/login"
+                        onClick={() => setIsOpen(false)}
                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                       >
                         Login
@@ -55,13 +59,17 @@ function Nav() {
                     <>
                       <Link
                         to="/profile"
+                        onClick={() => setIsOpen(false)}
                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                       >
                         Profile
                       </Link>
                       <Link
                         to="/"
-                        onClick={logout}
+                        onClick={() => {
+                          logout();
+                          setIsOpen(false);
+                        }}
                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                       >
                         Logout
@@ -131,51 +139,59 @@ function Nav() {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <Link
                 to="/"
+                onClick={() => setIsOpen(false)}
                 className="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Chats
               </Link>
 
               <Link
-                    to="/classroom"
+                to="/classroom"
+                onClick={() => setIsOpen(false)}
                 className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
               >
                 Classroom
               </Link>
 
-
               {!currentUser ? (
-              <>
-                <Link
-                  to = "/signup"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  SignUp
-                {/* Login/Logout */}
-              </Link>
-              <Link
-                  to = "/login"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Login
-              </Link>
-              </>)
-              : 
-              <>
-              <Link
-                  to = "/profile"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Profile
-              </Link>
-              <Link
-                  to = "/"
-                  onClick={logout}
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-              >
-                Logout
-              </Link>
-              </>}
+                <>
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsOpen(false)}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    SignUp
+                    {/* Login/Logout */}
+                  </Link>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    Login
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsOpen(false)}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    to="/"
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    Logout
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </Transition>
