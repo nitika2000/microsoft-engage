@@ -38,7 +38,7 @@ Build a functional prototype of a platform that gives student an array of digita
 </br>
 
 ##  🚩 Technologies used:
-#### Technology : <img alt="React" src="https://img.shields.io/badge/-React-blue" /> <img alt="React" src="https://img.shields.io/badge/-NodeJs-green" /> <img alt="React" src="https://img.shields.io/badge/-Tailwind-orange" /> <img alt="React" src="https://img.shields.io/badge/-SocketIO-red" /> <img alt="React" src="https://img.shields.io/badge/-PeerJS-yellow" />
+#### Technology : <img alt="React" src="https://img.shields.io/badge/-React-blue" /> <img alt="React" src="https://img.shields.io/badge/-NodeJs-green" /> <img alt="React" src="https://img.shields.io/badge/-Tailwind-orange" /> <img alt="React" src="https://img.shields.io/badge/-SocketIO-red" /> <img alt="React" src="https://img.shields.io/badge/-SimplePeerJS-yellow" />
 #### Version Control : <img alt="Git" src="https://img.shields.io/badge/-Git-orange"/>  
 #### Auth Control : <img alt="Git" src="https://img.shields.io/badge/-Firebase-yellow"/>  
 #### Hosting : <img alt="Git" src="https://img.shields.io/badge/-Firebase-yellow"/> <img alt="Git" src="https://img.shields.io/badge/-Heroku-orange"/>  
@@ -74,5 +74,24 @@ Build a functional prototype of a platform that gives student an array of digita
  ```
    $ npm start
  ```
+#### 5. Go to Server Folder
   
- ###### NOTE: The port by default will be ```https://localhost:3000/```
+  ```
+    $ cd server
+  ```
+    
+ #### 6. Install node packages
+  * Write the following command and press enter to download all required node modules.
+ 
+   ```
+   $ npm install 
+  ```
+  
+#### 7. Run Locally
+
+ * Write the following command to run the website locally. 
+ 
+ ```
+   $ npm run dev
+ ```
+
